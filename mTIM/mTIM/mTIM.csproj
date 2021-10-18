@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Label="MultilingualAppToolkit">
+    <MultilingualAppToolkitVersion>4.0</MultilingualAppToolkitVersion>
+    <MultilingualFallbackLanguage>en-US</MultilingualFallbackLanguage>
+    <TranslationReport Condition="'$(Configuration)' == 'Release'">true</TranslationReport>
+    <SuppressPseudoWarning Condition="'$(Configuration)' == 'Debug'">true</SuppressPseudoWarning>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <ApplicationIcon />
+    <Win32Resource />
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.ResxResources.targets" Label="MultilingualAppToolkit" Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\v$(MultilingualAppToolkitVersion)\Microsoft.Multilingual.ResxResources.targets')" />
+  <Target Name="MATPrerequisite" BeforeTargets="PrepareForBuild" Condition="!Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.ResxResources.targets')" Label="MultilingualAppToolkit">
+    <Warning Text="$(MSBuildProjectFile) is Multilingual build enabled, but the Multilingual App Toolkit is unavailable during the build. If building with Visual Studio, please check to ensure that toolkit is properly installed." />
+  </Target>
+  <ItemGroup>
+    <EmbeddedResource Remove="Resources\AppResources.en.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
+    <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.759" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2125" />
+    <PackageReference Include="TouchView" Version="4.1.100" />
+    <PackageReference Include="ZXing.Net.Mobile" Version="3.1.0-beta2" />
+    <PackageReference Include="ZXing.Net.Mobile.Forms" Version="3.1.0-beta2" />
+    <PackageReference Include="Grpc.Tools" Version="2.23.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Google.Protobuf" Version="3.9.1" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.23.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Acr.UserDialogs" Version="7.1.0.514" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.0-preview.140" />
+    <PackageReference Include="UrhoSharp.Forms" Version="1.9.67" />
+    <PackageReference Include="System.IO" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="MultilingualResources\mTIM.de.xlf" />
+    <None Remove="MultilingualResources\mTIM.pl.xlf" />
+    <None Remove="MultilingualResources\mTIM.ru.xlf" />
+    <None Remove="MultilingualResources\mTIM.zh-Hans.xlf" />
+    <None Remove="MultilingualResources\mTIM.zh-Hant.xlf" />
+    <None Remove="Plugin.Permissions" />
+    <None Remove="BottomSheetXF" />
+    <None Remove="Xamarin.Forms.PancakeView" />
+    <None Remove="Xamarin.Forms" />
+    <None Remove="ViewModels\" />
+    <None Remove="Models\" />
+    <None Remove="TouchView" />
+    <None Remove="ZXing.Net.Mobile" />
+    <None Remove="ZXing.Net.Mobile.Forms" />
+    <None Remove="PluginsPopup" />
+    <None Remove="Pages\" />
+    <None Remove="Views\" />
+    <None Remove="Resources\" />
+    <None Remove="Interfaces\" />
+    <None Remove="Grpc.Tools" />
+    <None Remove="Google.Protobuf" />
+    <None Remove="Grpc.Net.ClientFactory" />
+    <None Remove="Newtonsoft.Json" />
+    <None Remove="Acr.UserDialogs" />
+    <None Remove="SkiaSharp.Views.Forms" />
+    <None Remove="OpenTK" />
+    <None Remove="OpenTK.NetStandard" />
+    <None Remove="OpenTK.Graphics" />
+    <None Remove="OpenGL.Net" />
+    <None Remove="PCLStorage" />
+    <None Remove="OpenTK.Core" />
+    <None Remove="UrhoSharp.Forms" />
+    <None Remove="System.IO" />
+    <None Remove="Celeste.GameFiles.XMLParser" />
+    <None Remove="Meshes\Model.obj" />
+    <None Remove="Meshes\Model2.obj" />
+    <None Remove="Meshes\Model2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Properties\" />
+    <Folder Include="Pages\" />
+    <Folder Include="Views\" />
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+  <ItemGroup>
+    <XliffResource Include="MultilingualResources\mTIM.de.xlf" />
+    <XliffResource Include="MultilingualResources\mTIM.pl.xlf" />
+    <XliffResource Include="MultilingualResources\mTIM.ru.xlf" />
+    <XliffResource Include="MultilingualResources\mTIM.zh-Hans.xlf" />
+    <XliffResource Include="MultilingualResources\mTIM.zh-Hant.xlf" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Meshes\Model.obj" />
+    <EmbeddedResource Include="Meshes\Model2.obj" />
+    <EmbeddedResource Include="Meshes\Model2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\AppResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\AppResources.Designer.cs">
+      <DependentUpon>AppResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+</Project>

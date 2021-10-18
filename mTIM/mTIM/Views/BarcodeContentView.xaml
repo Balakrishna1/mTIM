@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<bottomSheet:BaseBottomSheet xmlns="http://xamarin.com/schemas/2014/forms" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:bottomSheet="clr-namespace:BottomSheet.Core;assembly=BottomSheetXF"
+        xmlns:panacake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+        xmlns:zxing="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
+        xmlns:local="clr-namespace:mTIM;assembly=mTIM"
+        x:Class="mTIM.BarcodeContentView">
+    <bottomSheet:BaseBottomSheet.View>
+        <ContentView>
+            <panacake:PancakeView>
+                <Grid BackgroundColor="Black">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="60"></RowDefinition>
+                    </Grid.RowDefinitions>
+                        <ImageButton Grid.Row="0" x:Name="btnClose" HorizontalOptions="End" HeightRequest="40" WidthRequest="40" Source="icon_close" Aspect="AspectFit" BackgroundColor="Transparent" Margin="0,20,20,0"/><!--Command="{Binding CloseBarcodeCommand}"-->
+                        <zxing:ZXingScannerView Grid.Row="1" x:Name="_scanView" OnScanResult="Handle_OnScanResult" IsScanning="{Binding IsScanning}" Margin="0,30,0,60"/>
+                </Grid>
+            </panacake:PancakeView>
+        </ContentView>
+    </bottomSheet:BaseBottomSheet.View>
+</bottomSheet:BaseBottomSheet>

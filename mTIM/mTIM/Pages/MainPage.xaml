@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:mTIM"
+             mc:Ignorable="d"
+             x:Class="mTIM.MainPage">
+    <Grid>
+    <Grid.GestureRecognizers>
+        <TapGestureRecognizer Tapped="TapGestureRecognizer" NumberOfTapsRequired="1" />
+    </Grid.GestureRecognizers>
+    <StackLayout Orientation="Vertical">
+        <Frame x:Name="frameHeader" BackgroundColor="#E8E8E8" Padding="8" CornerRadius="0">
+            <StackLayout Orientation="Horizontal">
+             <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand">
+                <ImageButton Source="icon_back" BackgroundColor="Transparent" HorizontalOptions="StartAndExpand" x:Name="btnBack" IsVisible="{Binding IsShowBackButton}" Command="{Binding BackButtonCommand}" HeightRequest="30" WidthRequest="30" Aspect="AspectFill"/>
+                <Label Text="{Binding SelectedItemText}" TextColor="Black" FontSize="Body" VerticalOptions="Center"  HorizontalOptions="StartAndExpand"/>
+             </StackLayout>
+             <StackLayout x:Name="stackHeader" Orientation="Vertical">
+                <ImageButton Source="logo" Padding="5" IsEnabled="False"  BackgroundColor="#E8E8E8" Aspect="AspectFill" HeightRequest="40" WidthRequest="160" HorizontalOptions="EndAndExpand"/>
+                <StackLayout x:Name="stackMenuOptions" BackgroundColor="#E8E8E8" Orientation="Horizontal" HorizontalOptions="EndAndExpand">
+                    <ImageButton x:Name="btnMessage" BackgroundColor="#E8E8E8" IsVisible="false"  HeightRequest="40" WidthRequest="40"  VerticalOptions="Center"/>
+                    <ImageButton x:Name="btnBarcode" BackgroundColor="#E8E8E8" Source="icon_barcode" Padding="3" HeightRequest="40" WidthRequest="40" Aspect="AspectFill" VerticalOptions="Center"
+                    Command="{Binding BarcodeClickCommand}"/>
+                    <ImageButton x:Name="btnMenu" BackgroundColor="#E8E8E8" Source="icon_menu" Padding="5,0,5,0" HeightRequest="40" WidthRequest="40" Aspect="AspectFill" VerticalOptions="Center" 
+                    Command="{Binding MenuClickCommand}"/>
+                </StackLayout>
+             </StackLayout>
+        </StackLayout>
+        </Frame>
+        <StackLayout x:Name="stackList" Orientation="Vertical">
+            <ListView  x:Name="listView" HasUnevenRows="True" HorizontalOptions="FillAndExpand"/>
+            <!--<sk:SKGLView x:Name="glBuilding" PaintSurface="glBuilding_PaintSurface" BackgroundColor="LightCoral" VerticalOptions="Fill" HorizontalOptions="Fill" IsVisible="false" />-->
+            <local:UrhoView x:Name="glBuilding" BackgroundColor="LightCoral">
+        </local:UrhoView>
+        </StackLayout>
+    </StackLayout>
+    <local:BottomMenuContentView
+        x:Name="CustomBottomSheet"
+        IsOpen="{Binding IsOpenMenuOptions}"
+        ContentPosition="Bottom"
+        Movement="BottomUp"/>
+        
+    <local:BarcodeContentView
+        x:Name="BarcodeView"
+        IsVisible="false"
+        IsOpen="{Binding IsOpenBarcodeView}"
+        HorizontalOptions="FillAndExpand"
+        VerticalOptions="FillAndExpand"
+        ContentPosition="Bottom"
+        Movement="BottomUp"/>
+  </Grid>
+</ContentPage>

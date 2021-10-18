@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="mTIM.ElementViewCell">
+  <ViewCell.View>
+      <Grid>
+		  <!--<Grid.GestureRecognizers>
+			<TapGestureRecognizer Tapped="OnItemTapped"/>
+		  </Grid.GestureRecognizers>-->
+            <Grid.RowDefinitions>
+			    <RowDefinition Height="60"></RowDefinition>
+			    <RowDefinition Height="*"></RowDefinition>
+		    </Grid.RowDefinitions>
+		    <Grid.ColumnDefinitions>
+			    <ColumnDefinition Width="*"></ColumnDefinition>
+			    <ColumnDefinition Width="40"></ColumnDefinition>
+		    </Grid.ColumnDefinitions>
+          <Label x:Name="lblName" Padding="10,0,10,0" HorizontalOptions="StartAndExpand"  VerticalOptions="Center" Grid.Row="0" Grid.Column="0"  Text="sample text" FontSize="Medium"/>
+		  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" Source="icon_info" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="30" HeightRequest="30"  Margin="0,0,15,0"/>
+		  <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Grid.Row="1">
+			<Label IsVisible="false" x:Name="lblValue" Margin="0,0,50,10" VerticalOptions="Center" HeightRequest="28" WidthRequest="70" BackgroundColor="Gray" Text="1" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
+		</StackLayout>
+      </Grid>
+  </ViewCell.View>
+</ViewCell>

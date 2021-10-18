@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    NavigationPage.HasNavigationBar="false"
+    xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
+    x:Class="mTIM.SettingsPage">
+    <Grid BackgroundColor="White">
+        <StackLayout Orientation="Vertical" HorizontalOptions="Fill" Padding="10">
+            <StackLayout x:Name="stackHeader" HeightRequest="60" Orientation="Horizontal" VerticalOptions="Center">
+                <Label x:Name="lblTittle" Text="{Binding LabelSettings}" TextColor="Black" FontSize="Title" HorizontalTextAlignment="Center" HorizontalOptions="StartAndExpand" VerticalOptions="Center" FontAttributes="Bold"/>
+                <ImageButton x:Name="btnClose" Command="{Binding CloseCommand}" BackgroundColor="Transparent" Source="icon_black_close" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" HorizontalOptions="EndAndExpand"/>
+            </StackLayout>
+            <ScrollView Orientation="Vertical">
+            <StackLayout Orientation="Vertical">
+            <StackLayout Orientation="Vertical" VerticalOptions="Center" HeightRequest="80" HorizontalOptions="Fill">
+                <Label x:Name="lblUrl" Text="{Binding LabelURL}" TextColor="Black" FontSize="Medium"/>
+                <Entry x:Name="entryUrl" Placeholder="{Binding LabelHintURL}" Text="{Binding EntryAppURL}" PlaceholderColor="LightGray" BackgroundColor="Black" FontSize="Small" TextColor="White" HorizontalTextAlignment="Center" HorizontalOptions="Fill" VerticalOptions="Fill" HeightRequest="45"/>
+            </StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="110"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackLayout x:Name="stackDE" BackgroundColor="{Binding DULangugaeBackground}"
+                         touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
+                         touch:TouchEff.CommandParameter="de"
+                         Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+                    <Image Source="language_de" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label Text="deutsch" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
+                </StackLayout>
+                        <StackLayout x:Name="stackEN" BackgroundColor="{Binding ENLangugaeBackground}"
+                         touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
+                         touch:TouchEff.CommandParameter="en"
+                         Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                    <Image Source="language_en" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label Text="english" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
+                </StackLayout>
+                        <StackLayout  x:Name="stackZH" BackgroundColor="{Binding ZHLangugaeBackground}"
+                         touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
+                         touch:TouchEff.CommandParameter="zh-Hant"
+                         Orientation="Vertical" Grid.Row="1" Grid.Column="0">
+                    <Image Source="language_zh" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label Text="中文" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
+                </StackLayout>
+                        <StackLayout  x:Name="stackRU" BackgroundColor="{Binding RULangugaeBackground}"
+                         touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
+                         touch:TouchEff.CommandParameter="ru"
+                         Orientation="Vertical" Grid.Row="1" Grid.Column="1">
+                    <Image Source="language_ru" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Label Text="русский" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
+                </StackLayout>
+            </Grid>
+                <StackLayout Orientation="Vertical">
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="{Binding LabelSyncTime}" TextColor="Black" FontSize="Large"/>
+                        <Label Text="{Binding StringSyncTime}" TextColor="Black" FontSize="Large"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" HeightRequest="50">
+                        <ImageButton Source="icon_minus" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"
+                         IsVisible="{Binding IsDecrementIocnVisible}"
+                         touch:TouchEff.Command="{Binding IncrementORDecrementCommand}"
+                         touch:TouchEff.CommandParameter="dc"/>
+                        <Label Text="{Binding SyncMinites}" Margin="10,0,10,0" VerticalOptions="CenterAndExpand" FontSize="Title" FontAttributes="Bold" TextColor="Black"/>
+                        <ImageButton Source="icon_plus" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"
+                         IsVisible="{Binding IsIncrementIocnVisible}"
+                         touch:TouchEff.Command="{Binding IncrementORDecrementCommand}"
+                         touch:TouchEff.CommandParameter="in"/>
+                    </StackLayout>
+                </StackLayout>
+            </StackLayout>
+           </ScrollView>
+        </StackLayout>
+    </Grid>
+</ContentPage>

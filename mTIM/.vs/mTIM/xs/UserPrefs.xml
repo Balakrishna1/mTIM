@@ -1,0 +1,56 @@
+﻿<Properties StartupConfiguration="{3737C059-9102-4633-AF90-D7B4D34FE5D9}|Default">
+  <MonoDevelop.Ide.ItemProperties.mTIM.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.C7B96E46-E1AC-4AAC-BC26-D32D59955A88" />
+  <MonoDevelop.Ide.ItemProperties.mTIM.Android AndroidDesignerPreferredTheme="MainTheme" PreferredExecutionTarget="Android.pixel_2_q_10_0_-_api_29" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="mTIM/Pages/MainPage.xaml.cs">
+    <Files>
+      <File FileName="mTIM/Pages/MainPage.xaml.cs" Line="45" Column="56" IsPinned="True" />
+      <File FileName="mTIM/Components/Mesh.cs" />
+      <File FileName="mTIM/UrhoView.cs" />
+      <File FileName="mTIM/Components/ObjectModel.cs" />
+      <File FileName="mTIM/Components/WorldInputHandler.cs" />
+      <File FileName="mTIM/ViewModels/BaseViewModel.cs" />
+      <File FileName="mTIM/Common/ScanFormatted.cs" />
+      <File FileName="mTIM/Pages/MainPage.xaml" />
+      <File FileName="mTIM/Pages/SettingsPage.xaml.cs" />
+      <File FileName="mTIM/ViewModels/SettingsViewModel.cs" />
+      <File FileName="mTIM/Models/TimTaskModel.cs" />
+      <File FileName="mTIM/ViewModels/MainViewModel.cs" />
+      <File FileName="mTIM/Common/ScopeTimer.cs" />
+      <File FileName="mTIM/ViewModels/BaseViewModelBase.cs" />
+      <File FileName="mTIM.Android/Services/WebSevice.cs" />
+      <File FileName="mTIM/Models/SettingsModel.cs" />
+      <File FileName="mTIM/Helpers/GlobalConstants.cs" />
+      <File FileName="mTIM/Interfaces/IWebService.cs" />
+      <File FileName="mTIM.Android/Web References/mtimtest.precast_software.com/Reference.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="mTIM" expanded="True">
+            <Node name="mTIM" expanded="True">
+              <Node name="Pages" expanded="True">
+                <Node name="MainPage.xaml" expanded="True">
+                  <Node name="MainPage.xaml.cs" selected="True" />
+                </Node>
+              </Node>
+              <Node name="ViewModels" expanded="True" />
+              <Node name="Views" expanded="True" />
+            </Node>
+            <Node name="mTIM.Android" expanded="True">
+              <Node name="Services" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <Debugger.DebugSourceFolders>
+    <String>/Users/bala/Library/Caches/VisualStudio/8.0/Symbols/mono/mono/b4a385816ed4f1398d0184c38f19f560e868fd80</String>
+  </Debugger.DebugSourceFolders>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
