@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Acr.UserDialogs;
 using mTIM.Droid.mtimtest.precast_software.com;
 using mTIM.Droid.Services;
@@ -9,6 +10,7 @@ using mTIM.Models;
 using mTIM.ViewModels;
 using Newtonsoft.Json;
 using PCLStorage;
+using Xamarin.Forms;
 
 [assembly: Xamarin.Forms.Dependency(typeof(WebSevice))]
 namespace mTIM.Droid.Services
@@ -30,17 +32,29 @@ namespace mTIM.Droid.Services
             timService.GetTaskListIdForDayAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, DateTime.Now.Year, true, DateTime.Now.Month, true, DateTime.Now.Day, true);
         }
 
-        private void TimService_GetTaskListIdForDayCompleted(object sender, GetTaskListIdForDayCompletedEventArgs e)
+        private async void TimService_GetTaskListIdForDayCompleted(object sender, GetTaskListIdForDayCompletedEventArgs e)
         {
             if (e.Error == null && !e.Cancelled)
             {
-                if(!fromAutoSync)
-                UserDialogs.Instance.ShowLoading(string.Empty, MaskType.Gradient);
-
-                timService.GetTaskListAsCsvCompleted -= TimService_GetTaskListAsCsvCompleted;
-                timService.GetTaskListAsCsvCompleted += TimService_GetTaskListAsCsvCompleted;
-                //timService.GetTaskListCompleted += TimService_GetTaskListCompleted;
-                timService.GetTaskListAsCsvAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);
+                if (!fromAutoSync)
+                    UserDialogs.Instance.ShowLoading(string.Empty, MaskType.Gradient);
+                if (Application.Current.Properties.ContainsKey("GetTasksListIDsFortheData"))
+                {
+                    int tasksListID = (int)Application.Current.Properties["GetTasksListIDsFortheData"];
+                    if(tasksListID == e.GetTaskListIdForDayResult)
+                    {
+                        if (!fromAutoSync)
+                            UserDialogs.Instance.HideLoading();
+                        return;
+                    }
+                }
+                Application.Current.Properties["GetTasksListIDsFortheData"] = e.GetTaskListIdForDayResult;
+                await Application.Current.SavePropertiesAsync();
+                //timService.GetTaskListAsCsvCompleted -= TimService_GetTaskListAsCsvCompleted;
+                //timService.GetTaskListAsCsvCompleted += TimService_GetTaskListAsCsvCompleted;
+                timService.GetTaskListCompleted -= TimService_GetTaskListCompleted;
+                timService.GetTaskListCompleted += TimService_GetTaskListCompleted;
+                timService.GetTaskListAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);
                 timService.GetGraphicsBlobProtobufGZippedCompleted -= TimService_GetGraphicsBlobProtobufGZippedCompleted;
                 timService.GetGraphicsBlobProtobufGZippedCompleted += TimService_GetGraphicsBlobProtobufGZippedCompleted;
                 timService.GetGraphicsBlobProtobufGZippedAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);
@@ -93,7 +107,17 @@ namespace mTIM.Droid.Services
 
         private void TimService_GetTaskListCompleted(object sender, GetTaskListCompletedEventArgs e)
         {
-            Console.WriteLine(e.Result);
+            UserDialogs.Instance.HideLoading();
+            if (e.Error == null && !e.Cancelled)
+            {
+                string json = JsonConvert.SerializeObject(e.Result);
+                Debug.WriteLine("Task Data:" + json);
+                ViewModel.UpdateList(json);
+            }
+            else if (e.Error != null && !fromAutoSync)
+            {
+                ViewModel.DisplayErrorMessage(e.Error.Message);
+            }
         }
     }
 }

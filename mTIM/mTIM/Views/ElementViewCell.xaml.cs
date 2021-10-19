@@ -15,7 +15,7 @@ namespace mTIM
         public static readonly BindableProperty NameProperty =
             BindableProperty.Create("Name", typeof(string), typeof(ElementViewCell), "Name");
         public static readonly BindableProperty TypeProperty =
-            BindableProperty.Create("Type", typeof(string), typeof(ElementViewCell), "Type");
+            BindableProperty.Create("Type", typeof(object), typeof(ElementViewCell), "Type");
         public static readonly BindableProperty ColorProperty =
             BindableProperty.Create("Color", typeof(string), typeof(ElementViewCell), "Color");
         public static readonly BindableProperty LevelProperty =
@@ -27,9 +27,9 @@ namespace mTIM
             set { SetValue(NameProperty, value); }
         }
 
-        public string Type
+        public object Type
         {
-            get { return (string)GetValue(TypeProperty); }
+            get { return (object)GetValue(TypeProperty); }
             set { SetValue(TypeProperty, value); }
         }
 
@@ -49,13 +49,14 @@ namespace mTIM
         {
             base.OnBindingContextChanged();
             lblName.Text = Name;
-            lblValue.Text = Type.ToString();
+            lblValue.Text = Type?.ToString();
             if (!string.IsNullOrEmpty(Level) && Level.Equals("1"))
             {
                 imgInfoButton.Source = ImageSource.FromFile("icon_forword.png");
             }
             else
             {
+                rootView.BackgroundColor = Xamarin.Forms.Color.GhostWhite;
                 imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
             }
             imgInfoButton.Clicked -= ImgInfoButton_Clicked;

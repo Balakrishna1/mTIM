@@ -6,24 +6,31 @@ namespace mTIM.Models
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class TimTaskModel
     {
-        public string Level { get; set; }
-        public string Parent { get; set; }
-        public string Id { get; set; }
-        public string Path { get; set; }
-        public string ObjectId { get; set; }
-        public string Name { get; set; }
-        public string ForSubLevel { get; set; }
-        public string Type { get; set; }
-        public string ShowInList { get; set; }
-        public string Range { get; set; }
+        public object Action { get; set; }
         public string Color { get; set; }
-        public string HasGPS { get; set; }
-        public string SortNr { get; set; }
-        public string EvaluationType { get; set; }
-        public string Value { get; set; }
-        public string SplitGraphic { get; set; }
-        public string Action { get; set; }
-        [JsonProperty("ExternId")]
+        public object EvaluationType { get; set; }
         public string ExternId { get; set; }
+        public int ForSubLevel { get; set; }
+        public bool ForSubLevelSpecified { get; set; }
+        public bool HasGPS { get; set; }
+        public bool HasGPSSpecified { get; set; }
+        public int Id { get; set; }
+        public bool IdSpecified { get; set; }
+        public int Level { get; set; }
+        public bool LevelSpecified { get; set; }
+        public string Name { get; set; }
+        public string ObjectId { get; set; }
+        public int Parent { get; set; }
+        public bool ParentSpecified { get; set; }
+        public string Path { get; set; }
+        public string Range { get; set; }
+        public bool ShowInList { get; set; }
+        public bool ShowInListSpecified { get; set; }
+        public int SortNr { get; set; }
+        public bool SortNrSpecified { get; set; }
+        public bool SplitGraphic { get; set; }
+        public bool SplitGraphicSpecified { get; set; }
+        public object Type { get; set; }
+        public object Value { get; set; }
     }
 }

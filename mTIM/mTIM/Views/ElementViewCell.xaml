@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="mTIM.ElementViewCell">
   <ViewCell.View>
+	  <StackLayout x:Name="rootView">
       <Grid>
 		  <!--<Grid.GestureRecognizers>
 			<TapGestureRecognizer Tapped="OnItemTapped"/>
@@ -21,5 +22,6 @@
 			<Label IsVisible="false" x:Name="lblValue" Margin="0,0,50,10" VerticalOptions="Center" HeightRequest="28" WidthRequest="70" BackgroundColor="Gray" Text="1" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
 		</StackLayout>
       </Grid>
+	 </StackLayout>
   </ViewCell.View>
 </ViewCell>

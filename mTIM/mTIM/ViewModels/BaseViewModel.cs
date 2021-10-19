@@ -58,8 +58,15 @@ namespace mTIM.ViewModels
             set
             {
                 GlobalConstants.SyncMinutes = value;
-                SyncTime = value * 60;
                 updateTimer();
+                if (value == 10)
+                {
+                    IsIncrementIocnVisible = false;
+                }
+                else if (value == 1)
+                {
+                    IsDecrementIocnVisible = false;
+                }
                 SetAndRaisePropertyChanged(ref syncMinites, value);
             }
         }
@@ -71,7 +78,7 @@ namespace mTIM.ViewModels
             TimerHelper.Instance.Create(CallBack);
         }
 
-        private int syncTime = GlobalConstants.DefaultSyncMinites * 60;
+        private int syncTime = 0;
         public int SyncTime
         {
             get => syncTime;
@@ -85,9 +92,14 @@ namespace mTIM.ViewModels
         public BaseViewModel()
         {
             Webservice = DependencyService.Get<IWebService>();
+            SyncMinites = GlobalConstants.SyncMinutes > 0 ? GlobalConstants.SyncMinutes : GlobalConstants.DefaultSyncMinites;
             if (GlobalConstants.StatusSyncTime > 0)
             {
                 SyncTime = GlobalConstants.StatusSyncTime;
+            }
+            else
+            {
+                SyncTime = SyncMinites * 60;
             }
             StringSyncTime = string.Format(syncTimeFormat, SyncTime);
         }
@@ -96,7 +108,7 @@ namespace mTIM.ViewModels
         {
             SyncTime--;
             StringSyncTime = string.Format(syncTimeFormat, SyncTime == 0 ? "Sync" : SyncTime.ToString());
-            Console.WriteLine("{0:h:mm:ss.fff} Updating timer.\n", DateTime.Now);
+            Console.WriteLine("{0} Updating timer.\n", SyncTime);
             if (SyncTime == 0)
             {
                 Refresh();
@@ -109,9 +121,9 @@ namespace mTIM.ViewModels
             SyncTime = SyncMinites * 60;
         }
 
-        public async void UpdateList(string csvList)
+        public async void UpdateList(string json)
         {
-            var json = CsvToJsonConverter.ConvertCsvToJson(csvList);
+            //var json = CsvToJsonConverter.ConvertCsvToJson(csvList);
             if (!string.IsNullOrEmpty(json))
             {
                 if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
@@ -136,6 +148,10 @@ namespace mTIM.ViewModels
 
         public override void OnAppearing()
         {
+            if (GlobalConstants.StatusSyncTime > 0)
+            {
+                SyncTime = GlobalConstants.StatusSyncTime;
+            }
             TimerHelper.Instance.Create(CallBack);
             base.OnAppearing();
         }

@@ -55,12 +55,12 @@ namespace mTIM.ViewModels
                 ListBackgroundColor = GlobalConstants.IsLandscape? Color.White: Color.DimGray;
                 seletedIndex = position;
                 var slectedItem = SelectedItemList[position];
-                if (slectedItem != null && !slectedItem.Level.Equals("2"))
+                if (slectedItem != null && !slectedItem.Level.Equals(2))
                 {
                     IsShowBackButton = true;
                     SelectedItemText = slectedItem.Name;
                     SelectedItemList.Clear();
-                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals("2") && x.Parent.Equals(slectedItem.Id)));
+                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(2) && x.Parent.Equals(slectedItem.Id)));
                 }
             }
         }
@@ -162,7 +162,7 @@ namespace mTIM.ViewModels
             SelectedItemText = string.Empty;
             IsShowBackButton = false;
             SelectedItemList.Clear();
-            SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals("1") && x.Parent.Equals("0")));
+            SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(1) && x.Parent.Equals(0)));
         }
 
         public async void UpdateList()
