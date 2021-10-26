@@ -32,5 +32,8 @@ namespace mTIM.Models
         public bool SplitGraphicSpecified { get; set; }
         public object Type { get; set; }
         public object Value { get; set; }
+
+        [JsonIgnore]
+        public bool HasChailds { get; set; } 
     }
 }

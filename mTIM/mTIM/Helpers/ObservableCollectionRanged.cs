@@ -327,6 +327,11 @@ namespace mTIM.Helpers
             ReplaceRange(0, Count, collection, EqualityComparer<T>.Default);
         }
 
+        public void Update()
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
         public void ClearAndAssumeRange(IEnumerable<T> collection)
         {
             Items?.Clear();

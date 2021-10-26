@@ -44,6 +44,7 @@
     <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.0-preview.140" />
     <PackageReference Include="UrhoSharp.Forms" Version="1.9.67" />
     <PackageReference Include="System.IO" Version="4.3.0" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.14" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="MultilingualResources\mTIM.de.xlf" />
@@ -83,6 +84,7 @@
     <None Remove="Meshes\Model.obj" />
     <None Remove="Meshes\Model2.obj" />
     <None Remove="Meshes\Model2.png" />
+    <None Remove="Rg.Plugins.Popup" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />

@@ -18,8 +18,12 @@
 		    </Grid.ColumnDefinitions>
           <Label x:Name="lblName" Padding="10,0,10,0" HorizontalOptions="StartAndExpand"  VerticalOptions="Center" Grid.Row="0" Grid.Column="0"  Text="sample text" FontSize="Medium"/>
 		  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" Source="icon_info" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="30" HeightRequest="30"  Margin="0,0,15,0"/>
-		  <StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Grid.Row="1">
-			<Label IsVisible="false" x:Name="lblValue" Margin="0,0,50,10" VerticalOptions="Center" HeightRequest="28" WidthRequest="70" BackgroundColor="Gray" Text="1" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
+		  <StackLayout x:Name="stackValue" Margin="0,0,0,10" BackgroundColor="LightGray" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center" Grid.Row="1">
+			<StackLayout.GestureRecognizers>
+				<TapGestureRecognizer Tapped="OnTapped"/>
+			</StackLayout.GestureRecognizers>
+			<Label x:Name="lblValue" HeightRequest="28" WidthRequest="80" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
+			<Image Source="icon_document" VerticalOptions="Center" HorizontalOptions="End"/>
 		</StackLayout>
       </Grid>
 	 </StackLayout>

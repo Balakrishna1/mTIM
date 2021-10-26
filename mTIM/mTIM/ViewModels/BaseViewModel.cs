@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using mTIM.Helpers;
@@ -134,8 +135,20 @@ namespace mTIM.ViewModels
                 TotalListList.Clear();
                 if (list != null)
                 {
+                    UpdateChaildValues(list);
                     TotalListList.AddRange(list);
                     RefreshData();
+                }
+            }
+        }
+
+        public void UpdateChaildValues(List<TimTaskModel> list)
+        {
+            foreach (var item in list)
+            {
+                if (list.Where(x => x.Parent.Equals(item.Id)).ToList()?.Count > 0)
+                {
+                    item.HasChailds = true;
                 }
             }
         }

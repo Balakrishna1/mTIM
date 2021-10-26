@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using mTIM.Components;
@@ -29,20 +30,29 @@ namespace mTIM
             BarcodeView.IsVisible = false;
             BarcodeView.SetBindingViewModel(ViewModel);
             var customCell = new DataTemplate(typeof(ElementViewCell));
+            customCell.SetBinding(ElementViewCell.IdProperty, "Id");
             customCell.SetBinding(ElementViewCell.NameProperty, "Name");
             customCell.SetBinding(ElementViewCell.TypeProperty, "Type");
             customCell.SetBinding(ElementViewCell.ColorProperty, "Color");
             customCell.SetBinding(ElementViewCell.LevelProperty, "Level");
+            customCell.SetBinding(ElementViewCell.ValueProperty, "Value");
+            customCell.SetBinding(ElementViewCell.HasChaildsProperty, "HasChailds");
+            ElementViewCell.ActionArrowClicked -= ArrowClicked;
+            ElementViewCell.ActionArrowClicked += ArrowClicked;
+            ElementViewCell.ActionValueClicked -= ValueClicked;
+            ElementViewCell.ActionValueClicked += ValueClicked;
             listView.SelectionMode = ListViewSelectionMode.Single;
             listView.ItemTemplate = customCell;
             listView.ItemsSource = ViewModel.SelectedItemList;
+            lstValues.ItemsSource = ViewModel.LstValues;
             ViewModel.SelectedItemList.CollectionChanged += SelectedItemList_CollectionChanged;
-          
+            ViewModel.LstValues.CollectionChanged += LstValues_CollectionChanged;
+
             Task.Run(async () =>
             {
                 if (!await GetPermissions())
                 {
-                    //Need to write app killing process
+                    //TODO:Need to write application kill process
                 }
                 else
                 {
@@ -51,6 +61,36 @@ namespace mTIM
             });
             listView.ItemSelected -= ListView_ItemSelected;
             listView.ItemSelected += ListView_ItemSelected;
+            lstValues.ItemSelected -= LstValues_ItemSelected;
+            lstValues.ItemSelected += LstValues_ItemSelected;
+        }
+
+        private void LstValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //lstValues.SelectedItem = null;
+        }
+
+        private void LstValues_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (e.SelectedItemIndex < 0)
+            {
+                return;
+            }
+            ViewModel.SelectedValueIndex(e.SelectedItemIndex);
+        }
+
+        private void ArrowClicked(int id)
+        {
+            var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            if (item != null)
+                ViewModel.SelectedItemIndex(ViewModel.SelectedItemList.IndexOf(item));
+        }
+
+        private void ValueClicked(int id)
+        {
+            var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            if (item != null)
+                ViewModel.SelectedValueItemIndex(ViewModel.SelectedItemList.IndexOf(item));
         }
 
         private void updateInfo()
@@ -122,11 +162,14 @@ namespace mTIM
 
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            if(e.SelectedItemIndex < 0)
+            if (!GlobalConstants.IsLandscape)
             {
-                return;
+                if (e.SelectedItemIndex < 0)
+                {
+                    return;
+                }
+                ViewModel.SelectedItemIndex(e.SelectedItemIndex);
             }
-            ViewModel.SelectedItemIndex(e.SelectedItemIndex);
             loadTexturedMesh();
         }
 
@@ -160,7 +203,7 @@ namespace mTIM
                 stackHeader.FlowDirection = FlowDirection.LeftToRight;
                 stackMenuOptions.FlowDirection= FlowDirection.LeftToRight;
                 stackList.Orientation = StackOrientation.Horizontal;
-                listView.WidthRequest = width;
+                absListView.WidthRequest = width;
                 glBuilding.IsVisible = false;
             }
             else
@@ -173,7 +216,7 @@ namespace mTIM
                 stackHeader.FlowDirection = FlowDirection.RightToLeft;
                 stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
                 stackList.Orientation = StackOrientation.Horizontal;
-                listView.WidthRequest = 250;
+                absListView.WidthRequest = 250;
                 glBuilding.WidthRequest = width - 250;
                 glBuilding.HeightRequest = height - frameHeader.Height;
                 loadUrhoView();

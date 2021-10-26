@@ -13,9 +13,12 @@
     <StackLayout Orientation="Vertical">
         <Frame x:Name="frameHeader" BackgroundColor="#E8E8E8" Padding="8" CornerRadius="0">
             <StackLayout Orientation="Horizontal">
-             <StackLayout Orientation="Horizontal" VerticalOptions="EndAndExpand">
+            <StackLayout Orientation="Vertical">
+             <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
                 <ImageButton Source="icon_back" BackgroundColor="Transparent" HorizontalOptions="StartAndExpand" x:Name="btnBack" IsVisible="{Binding IsShowBackButton}" Command="{Binding BackButtonCommand}" HeightRequest="30" WidthRequest="30" Aspect="AspectFill"/>
                 <Label Text="{Binding SelectedItemText}" TextColor="Black" FontSize="Body" VerticalOptions="Center"  HorizontalOptions="StartAndExpand"/>
+             </StackLayout>
+             <Label VerticalOptions="EndAndExpand" HorizontalOptions="StartAndExpand" Text="{Binding SubText}" TextColor="LightGray" FontSize="Body" />
              </StackLayout>
              <StackLayout x:Name="stackHeader" Orientation="Vertical">
                 <ImageButton Source="logo" Padding="5" IsEnabled="False"  BackgroundColor="#E8E8E8" Aspect="AspectFill" HeightRequest="40" WidthRequest="160" HorizontalOptions="EndAndExpand"/>
@@ -30,7 +33,20 @@
         </StackLayout>
         </Frame>
         <StackLayout x:Name="stackList" Orientation="Vertical">
-            <ListView  x:Name="listView" HasUnevenRows="True" HorizontalOptions="FillAndExpand"/>
+            <AbsoluteLayout x:Name="absListView">
+                <ListView  x:Name="listView" HasUnevenRows="True" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"/>
+                <ListView x:Name="lstValues" SelectedItem="{Binding SelectedValue}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" BackgroundColor="White" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                    <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                            <Label Text="{Binding .}" Padding="0,20,0,20" FontSize="Medium" TextColor="Black" FontAttributes="Bold"  VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+                </ListView>
+            </AbsoluteLayout>
             <!--<sk:SKGLView x:Name="glBuilding" PaintSurface="glBuilding_PaintSurface" BackgroundColor="LightCoral" VerticalOptions="Fill" HorizontalOptions="Fill" IsVisible="false" />-->
             <local:UrhoView x:Name="glBuilding" BackgroundColor="LightCoral">
         </local:UrhoView>

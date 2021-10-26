@@ -1,47 +1,54 @@
 ﻿<Properties StartupConfiguration="{3737C059-9102-4633-AF90-D7B4D34FE5D9}|Default">
   <MonoDevelop.Ide.ItemProperties.mTIM.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.C7B96E46-E1AC-4AAC-BC26-D32D59955A88" />
   <MonoDevelop.Ide.ItemProperties.mTIM.Android AndroidDesignerPreferredTheme="MainTheme" PreferredExecutionTarget="Android.58efe314" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="mTIM/Views/ElementViewCell.xaml.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="mTIM/Pages/MainPage.xaml.cs">
     <Files>
-      <File FileName="mTIM/Pages/MainPage.xaml.cs" Line="31" Column="59" IsPinned="True" />
+      <File FileName="mTIM/Pages/MainPage.xaml.cs" Line="208" Column="46" IsPinned="True" />
       <File FileName="mTIM/Components/Mesh.cs" />
       <File FileName="mTIM/UrhoView.cs" />
       <File FileName="mTIM/Components/ObjectModel.cs" />
       <File FileName="mTIM/Components/WorldInputHandler.cs" />
-      <File FileName="mTIM/ViewModels/BaseViewModel.cs" Line="114" Column="17" />
+      <File FileName="mTIM/ViewModels/BaseViewModel.cs" />
       <File FileName="mTIM/Common/ScanFormatted.cs" />
-      <File FileName="mTIM/Pages/MainPage.xaml" />
+      <File FileName="mTIM/Pages/MainPage.xaml" Line="36" Column="48" />
       <File FileName="mTIM/Pages/SettingsPage.xaml.cs" />
       <File FileName="mTIM/ViewModels/SettingsViewModel.cs" />
-      <File FileName="mTIM/Models/TimTaskModel.cs" Line="33" Column="22" />
-      <File FileName="mTIM/ViewModels/MainViewModel.cs" Line="64" Column="1" />
+      <File FileName="mTIM/Models/TimTaskModel.cs" Line="1" Column="1" />
+      <File FileName="mTIM/ViewModels/MainViewModel.cs" Line="164" Column="18" />
       <File FileName="mTIM/Common/ScopeTimer.cs" />
       <File FileName="mTIM/ViewModels/BaseViewModelBase.cs" />
-      <File FileName="mTIM.Android/Services/WebSevice.cs" Line="56" Column="61" />
+      <File FileName="mTIM.Android/Services/WebSevice.cs" />
       <File FileName="mTIM/Helpers/GlobalConstants.cs" />
       <File FileName="mTIM/Interfaces/IWebService.cs" />
       <File FileName="mTIM.Android/Web References/mtimtest.precast_software.com/Reference.cs" />
       <File FileName="mTIM/Helpers/TimerHelper.cs" />
-      <File FileName="mTIM/Views/ElementViewCell.xaml.cs" Line="8" Column="26" />
-      <File FileName="mTIM/Views/ElementViewCell.xaml" Line="11" Column="6" />
-      <File FileName="mTIM/obj/Debug/netstandard2.1/Views/ElementViewCell.xaml.g.cs" Line="17" Column="26" />
+      <File FileName="mTIM/Views/ElementViewCell.xaml.cs" Line="92" Column="51" />
+      <File FileName="../../../.nuget/packages/rg.plugins.popup/2.0.0.14/readme.txt" />
+      <File FileName="mTIM.Android/MainActivity.cs" />
+      <File FileName="mTIM.iOS/AppDelegate.cs" />
+      <File FileName="mTIM/Views/BarcodeContentView.xaml" />
+      <File FileName="mTIM/Helpers/ObservableCollectionRanged.cs" Line="330" Column="27" />
+      <File FileName="mTIM/Views/ElementViewCell.xaml" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="mTIM" expanded="True">
+            <Node name="BottomSheetXF" expanded="True">
+              <Node name="Core" expanded="True" />
+            </Node>
             <Node name="mTIM" expanded="True">
+              <Node name="Helpers" expanded="True" />
+              <Node name="Models" expanded="True" />
               <Node name="Pages" expanded="True">
-                <Node name="MainPage.xaml" expanded="True" />
-              </Node>
-              <Node name="Views" expanded="True">
-                <Node name="ElementViewCell.xaml" expanded="True">
-                  <Node name="ElementViewCell.xaml.cs" selected="True" />
+                <Node name="MainPage.xaml" expanded="True">
+                  <Node name="MainPage.xaml.cs" selected="True" />
                 </Node>
               </Node>
-            </Node>
-            <Node name="mTIM.Android" expanded="True">
-              <Node name="Services" expanded="True" />
+              <Node name="ViewModels" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="ElementViewCell.xaml" expanded="True" />
+              </Node>
             </Node>
           </Node>
         </State>

@@ -35,7 +35,7 @@ namespace mTIM.Helpers
             string file = Path.Combine(AppDirectory, fileName);
             if(File.Exists(file))
             {
-                File.Delete(fileName);
+                File.Delete(file);
             }
             await File.WriteAllTextAsync(file, content);
         }
@@ -50,7 +50,7 @@ namespace mTIM.Helpers
             }
             else
             {
-                File.Delete(fileName);
+                File.Delete(file);
             }
             File.WriteAllText(file, content);
         }
