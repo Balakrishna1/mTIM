@@ -18,7 +18,7 @@
                 <ImageButton Source="icon_back" BackgroundColor="Transparent" HorizontalOptions="StartAndExpand" x:Name="btnBack" IsVisible="{Binding IsShowBackButton}" Command="{Binding BackButtonCommand}" HeightRequest="30" WidthRequest="30" Aspect="AspectFill"/>
                 <Label Text="{Binding SelectedItemText}" TextColor="Black" FontSize="Body" VerticalOptions="Center"  HorizontalOptions="StartAndExpand"/>
              </StackLayout>
-             <Label VerticalOptions="EndAndExpand" HorizontalOptions="StartAndExpand" Text="{Binding SubText}" TextColor="LightGray" FontSize="Body" />
+             <Label VerticalOptions="EndAndExpand" HorizontalOptions="StartAndExpand" Text="{Binding SubText}" TextColor="Gray" FontSize="Body" />
              </StackLayout>
              <StackLayout x:Name="stackHeader" Orientation="Vertical">
                 <ImageButton Source="logo" Padding="5" IsEnabled="False"  BackgroundColor="#E8E8E8" Aspect="AspectFill" HeightRequest="40" WidthRequest="160" HorizontalOptions="EndAndExpand"/>
@@ -35,7 +35,7 @@
         <StackLayout x:Name="stackList" Orientation="Vertical">
             <AbsoluteLayout x:Name="absListView">
                 <ListView  x:Name="listView" HasUnevenRows="True" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"/>
-                <ListView x:Name="lstValues" SelectedItem="{Binding SelectedValue}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" BackgroundColor="White" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                <ListView x:Name="lstValues" ItemsSource="{Binding LstValues}" SelectedItem="{Binding SelectedValue}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" BackgroundColor="White" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                     <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -45,6 +45,18 @@
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
+                </ListView>
+                <ListView x:Name="lstDocuments" ItemsSource="{Binding LstFiles}" SelectionMode="Single" IsVisible="{Binding IsDocumentListVisible}" BackgroundColor="White" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                <Label Text="{Binding Comment}" Padding="20,20,0,20" FontSize="Medium" TextColor="Black" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
+                                <Image Source="icon_eye" HeightRequest="35" WidthRequest="35" Margin="0,0,16,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
                 </ListView>
             </AbsoluteLayout>
             <!--<sk:SKGLView x:Name="glBuilding" PaintSurface="glBuilding_PaintSurface" BackgroundColor="LightCoral" VerticalOptions="Fill" HorizontalOptions="Fill" IsVisible="false" />-->

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace mTIM.Helpers
@@ -26,8 +27,7 @@ namespace mTIM.Helpers
             if (timer == null)
             {
                 // Create a timer that invokes CheckStatus after one second, 
-                Console.WriteLine("{0:h:mm:ss.fff} Creating timer.\n",
-                                  DateTime.Now);
+                Debug.WriteLine("{0:h:mm:ss.fff} Creating timer.\n", DateTime.Now);
                 timer = new Timer(callback, this, 0, dueTime);
             }
         }
@@ -35,7 +35,7 @@ namespace mTIM.Helpers
         public void Dispose() {
             timer?.Dispose();
             timer = null;
-            Console.WriteLine("\nDestroying timer.");
+            Debug.WriteLine("\nDestroying timer.");
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using mTIM.Helpers;
@@ -80,6 +80,7 @@ namespace mTIM.ViewModels
                     IsIncrementIocnVisible = true;
                     break;
             }
+            SaveSettings();
         }
 
         public async Task SaveSettings()
@@ -92,12 +93,18 @@ namespace mTIM.ViewModels
             {
                 BaseUrl = GlobalConstants.AppBaseURL,
                 Language = SelectedLanguage,
-                StatusSyncTime = SyncTime
+                StatusSyncTime = SyncTime,
+                StatusSyncMinutes = SyncMinites
             };
 
             string content = JsonConvert.SerializeObject(settingsModel);
-            Console.WriteLine("mTIM Settings JSON:" + content);
+            Debug.WriteLine("mTIM Settings JSON:" + content);
             await FileHelper.WriteTextAsync(GlobalConstants.SETTINGS_FILE, content);
+        }
+
+        public override void OnSyncCommand(bool isFromAuto = true)
+        {
+            base.OnSyncCommand(isFromAuto);
         }
     }
 }

@@ -17,5 +17,6 @@ namespace mTIM.Models
         public string BaseUrl { get; set; } 
         public string Language { get; set; }
         public int StatusSyncTime { get; set; }
+        public int StatusSyncMinutes { get; set; }
     }
 }

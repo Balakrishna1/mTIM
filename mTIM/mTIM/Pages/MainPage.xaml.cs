@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,7 +45,6 @@ namespace mTIM
             listView.SelectionMode = ListViewSelectionMode.Single;
             listView.ItemTemplate = customCell;
             listView.ItemsSource = ViewModel.SelectedItemList;
-            lstValues.ItemsSource = ViewModel.LstValues;
             ViewModel.SelectedItemList.CollectionChanged += SelectedItemList_CollectionChanged;
             ViewModel.LstValues.CollectionChanged += LstValues_CollectionChanged;
 
@@ -63,12 +63,24 @@ namespace mTIM
             listView.ItemSelected += ListView_ItemSelected;
             lstValues.ItemSelected -= LstValues_ItemSelected;
             lstValues.ItemSelected += LstValues_ItemSelected;
+            lstDocuments.ItemSelected -= LstDocuments_ItemSelected;
+            lstDocuments.ItemSelected += LstDocuments_ItemSelected;
         }
 
         private void LstValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            //lstValues.SelectedItem = null;
+            lstValues.SelectedItem = null;
         }
+
+        private void LstDocuments_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (e.SelectedItemIndex < 0)
+            {
+                return;
+            }
+            lstDocuments.SelectedItem = null;
+        }
+
 
         private void LstValues_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
@@ -90,7 +102,7 @@ namespace mTIM
         {
             var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
             if (item != null)
-                ViewModel.SelectedValueItemIndex(ViewModel.SelectedItemList.IndexOf(item));
+                ViewModel.SelectedValueItem(item);
         }
 
         private void updateInfo()
@@ -103,7 +115,7 @@ namespace mTIM
             }else
             {
                 string jsonIMEI = FileHelper.ReadText(GlobalConstants.IMEI_FILE);
-                Console.WriteLine("mTIM Device JSON:" + jsonIMEI);
+                Debug.WriteLine("mTIM Device JSON:" + jsonIMEI);
                 AndroidMessageModel messageModel = JsonConvert.DeserializeObject<AndroidMessageModel>(jsonIMEI);
                 if (messageModel != null)
                 {
@@ -118,7 +130,7 @@ namespace mTIM
             if (FileHelper.IsFileExists(GlobalConstants.SETTINGS_FILE))
             {
                 string jsonSettings = FileHelper.ReadText(GlobalConstants.SETTINGS_FILE);
-                Console.WriteLine("mTIM Device JSON:" + jsonSettings);
+                Debug.WriteLine("mTIM Device JSON:" + jsonSettings);
                 SettingsModel messageModel = JsonConvert.DeserializeObject<SettingsModel>(jsonSettings);
                 if (messageModel != null)
                 {
@@ -126,7 +138,8 @@ namespace mTIM
                     ViewModel.SelectedLanguage = messageModel.Language;
                     ViewModel.UpdateLanguage(ViewModel.SelectedLanguage);
                     GlobalConstants.AppBaseURL = messageModel.BaseUrl;
-                    GlobalConstants.StatusSyncTime = messageModel.StatusSyncTime;
+                    GlobalConstants.StatusSyncTime = ViewModel.SyncTime = messageModel.StatusSyncTime;
+                    GlobalConstants.SyncMinutes = ViewModel.SyncMinites = messageModel.StatusSyncMinutes;
                 }
             }
 
@@ -151,7 +164,7 @@ namespace mTIM
             androidMessage.VersionCode = GlobalConstants.VersionCode;
             androidMessage.VersionName = GlobalConstants.VersionNumber;
             string content = JsonConvert.SerializeObject(androidMessage);
-            Console.WriteLine("mTIM Device JSON:" + content);
+            Debug.WriteLine("mTIM Device JSON:" + content);
             await FileHelper.WriteTextAsync(GlobalConstants.IMEI_FILE, content);
         }
 
@@ -266,7 +279,7 @@ namespace mTIM
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
@@ -371,7 +384,7 @@ namespace mTIM
                 if (location != null)
                 {
                     fillLocationInfo(location);
-                    Console.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
+                    Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
                 }else
                 {
                    await GetCurrentLocation();
@@ -407,7 +420,7 @@ namespace mTIM
                 if (location != null)
                 {
                     fillLocationInfo(location);
-                    Console.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
+                    Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
                 }
             }
             catch (Location.FeatureNotSupportedException fnsEx)

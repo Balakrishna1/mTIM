@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:syncfusion="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
              x:Class="mTIM.ElementViewCell">
   <ViewCell.View>
 	  <StackLayout x:Name="rootView">
@@ -16,15 +17,30 @@
 			    <ColumnDefinition Width="*"></ColumnDefinition>
 			    <ColumnDefinition Width="40"></ColumnDefinition>
 		    </Grid.ColumnDefinitions>
-          <Label x:Name="lblName" Padding="10,0,10,0" HorizontalOptions="StartAndExpand"  VerticalOptions="Center" Grid.Row="0" Grid.Column="0"  Text="sample text" FontSize="Medium"/>
+          <Label x:Name="lblName" TextColor="Black" Padding="10,0,10,0" HorizontalOptions="StartAndExpand"  VerticalOptions="Center" Grid.Row="0" Grid.Column="0"  Text="sample text" FontSize="Medium"/>
 		  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" Source="icon_info" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="30" HeightRequest="30"  Margin="0,0,15,0"/>
-		  <StackLayout x:Name="stackValue" Margin="0,0,0,10" BackgroundColor="LightGray" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center" Grid.Row="1">
-			<StackLayout.GestureRecognizers>
-				<TapGestureRecognizer Tapped="OnTapped"/>
-			</StackLayout.GestureRecognizers>
-			<Label x:Name="lblValue" HeightRequest="28" WidthRequest="80" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
-			<Image Source="icon_document" VerticalOptions="Center" HorizontalOptions="End"/>
-		</StackLayout>
+		  <StackLayout x:Name="absContent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Grid.Row="1">
+			  <StackLayout x:Name="stackValue" Margin="0,0,0,10" BackgroundColor="LightGray" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+				<StackLayout.GestureRecognizers>
+					<TapGestureRecognizer Tapped="OnTapped"/>
+				</StackLayout.GestureRecognizers>
+				<Label x:Name="lblValue" HeightRequest="28" WidthRequest="80" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
+				<Image Source="icon_document" VerticalOptions="Center" HorizontalOptions="End"/>
+			  </StackLayout>
+			  <StackLayout x:Name="stackCheckBox" Margin="0,0,0,10" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+				  <StackLayout.GestureRecognizers>
+					<TapGestureRecognizer Tapped="OnCheckBoxTapped"/>
+				</StackLayout.GestureRecognizers>
+				  <Image x:Name="chbValue" HeightRequest="35" WidthRequest="35" Source="icon_unchecked" HorizontalOptions="Center" VerticalOptions="Center"/>
+			  </StackLayout>
+			  <StackLayout x:Name="stackDocument" Orientation="Vertical" Padding="10,5,10,0" Margin="0,0,0,10" BackgroundColor="LightGray" IsVisible="false" HorizontalOptions="EndAndExpand" VerticalOptions="EndAndExpand">
+				<StackLayout.GestureRecognizers>
+					<TapGestureRecognizer Tapped="OnDocumentTapped"/>
+				</StackLayout.GestureRecognizers>
+				<Image Source="icons8_document" HeightRequest="25" WidthRequest="25" VerticalOptions="Center" HorizontalOptions="End"/>
+				<Label x:Name="lblDocValue" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Small" />
+			  </StackLayout>
+		  </StackLayout>
       </Grid>
 	 </StackLayout>
   </ViewCell.View>

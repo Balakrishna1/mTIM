@@ -1,4 +1,5 @@
 ﻿using System;
+using mTIM.Helpers;
 using Xamarin.Forms;
 
 namespace mTIM
@@ -76,13 +77,13 @@ namespace mTIM
             lblName.Text = Name;
             if (HasChailds)
             {
+                absContent.IsVisible = false;
                 imgInfoButton.Source = ImageSource.FromFile("icon_forword.png");
                 imgInfoButton.Clicked -= ImgInfoButton_Clicked;
                 imgInfoButton.Clicked += ImgInfoButton_Clicked;
             }
             else
             {
-                rootView.BackgroundColor = Xamarin.Forms.Color.GhostWhite;
                 if (Type != null)
                 {
                     switch (Type)
@@ -92,15 +93,27 @@ namespace mTIM
                             lblValue.Text = Value;
                             stackValue.IsVisible = true;
                             break;
+                        case "bool":
+                            imgInfoButton.IsVisible = false;
+                            chbValue.Source = ImageSource.FromFile(Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
+                            stackCheckBox.IsVisible = true;
+                            break;
+                        case "Doc":
+                            imgInfoButton.IsVisible = false;
+                            lblDocValue.Text = FileInfoHelper.Instance.GetCount(ID).ToString();
+                            stackDocument.IsVisible = true;
+                            break;
                         default:
+                            rootView.BackgroundColor = Xamarin.Forms.Color.GhostWhite;
                             imgInfoButton.IsVisible = true;
-                            stackValue.IsVisible = false;
+                            absContent.IsVisible = false;
                             imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
                             break;
                     }
                 }
                 else
                 {
+                    absContent.IsVisible = false;
                     imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
                 }
             }
@@ -114,6 +127,17 @@ namespace mTIM
         private void ImgInfoButton_Clicked(object sender, EventArgs e)
         {
             ActionArrowClicked?.Invoke(ID);
+        }
+
+        void OnCheckBoxTapped(object sender, EventArgs e)
+        {
+            chbValue.Source = ImageSource.FromFile(!Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
+            ActionValueClicked?.Invoke(ID);
+        }
+
+        void OnDocumentTapped(object sender, EventArgs e)
+        {
+            ActionValueClicked?.Invoke(ID);
         }
     }
 }

@@ -200,6 +200,14 @@
     <ImageAsset Include="Assets.xcassets\icon_back.imageset\icon_back-1.png" />
     <ImageAsset Include="Assets.xcassets\icon_document.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_document.imageset\icon_document.png" />
+    <ImageAsset Include="Assets.xcassets\icon_checked.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\icon_checked.imageset\icon_checked.png" />
+    <ImageAsset Include="Assets.xcassets\icon_unchecked.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\icon_unchecked.imageset\icon_unchecked.png" />
+    <ImageAsset Include="Assets.xcassets\icons8_document.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\icons8_document.imageset\icons8_document.png" />
+    <ImageAsset Include="Assets.xcassets\icon_eye.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\icon_eye.imageset\icon_eye.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -253,11 +261,30 @@
     <Folder Include="Assets.xcassets\icon_back.imageset\" />
     <Folder Include="Assets.xcassets\icon_gray_info.imageset\" />
     <Folder Include="Assets.xcassets\icon_document.imageset\" />
+    <Folder Include="Assets.xcassets\icon_checked.imageset\" />
+    <Folder Include="Assets.xcassets\icon_unchecked.imageset\" />
+    <Folder Include="Assets.xcassets\icons8_document.imageset\" />
+    <Folder Include="Assets.xcassets\icon_eye.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References" />
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>

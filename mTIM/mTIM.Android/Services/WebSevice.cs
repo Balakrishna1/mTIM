@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Acr.UserDialogs;
 using mTIM.Droid.mtimtest.precast_software.com;
 using mTIM.Droid.Services;
 using mTIM.Helpers;
 using mTIM.Interfaces;
-using mTIM.Models;
 using mTIM.ViewModels;
 using Newtonsoft.Json;
-using PCLStorage;
 using Xamarin.Forms;
 
 [assembly: Xamarin.Forms.Dependency(typeof(WebSevice))]
@@ -26,7 +23,7 @@ namespace mTIM.Droid.Services
             fromAutoSync = isFromAutoSync;
             if(!fromAutoSync)
             UserDialogs.Instance.ShowLoading(string.Empty, MaskType.Gradient);
-            Console.WriteLine(string.Format("Method Executed: GetTasksListIDsFortheData"));
+            Debug.WriteLine(string.Format("Method Executed: GetTasksListIDsFortheData"));
             timService.GetTaskListIdForDayCompleted -= TimService_GetTaskListIdForDayCompleted;
             timService.GetTaskListIdForDayCompleted += TimService_GetTaskListIdForDayCompleted;
             timService.GetTaskListIdForDayAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, DateTime.Now.Year, true, DateTime.Now.Month, true, DateTime.Now.Day, true);
@@ -58,6 +55,9 @@ namespace mTIM.Droid.Services
                 timService.GetGraphicsBlobProtobufGZippedCompleted -= TimService_GetGraphicsBlobProtobufGZippedCompleted;
                 timService.GetGraphicsBlobProtobufGZippedCompleted += TimService_GetGraphicsBlobProtobufGZippedCompleted;
                 timService.GetGraphicsBlobProtobufGZippedAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);
+                timService.GetFilesInformationCompleted -= TimService_GetFilesInformationCompleted;
+                timService.GetFilesInformationCompleted += TimService_GetFilesInformationCompleted;
+                timService.GetFilesInformationAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);
             }
             else if (e.Error != null)
             {
@@ -66,6 +66,17 @@ namespace mTIM.Droid.Services
                     UserDialogs.Instance.HideLoading();
                     ViewModel.DisplayErrorMessage(e.Error.Message);
                 }
+            }
+        }
+
+        private async void TimService_GetFilesInformationCompleted(object sender, GetFilesInformationCompletedEventArgs e)
+        {
+            if (e.Error == null && !e.Cancelled)
+            {
+                var json = JsonConvert.SerializeObject(e.Result);
+                await FileHelper.WriteTextAsync(GlobalConstants.FILES_INFO, json);
+                FileInfoHelper.Instance.SaveFileInfo(json);
+                Debug.WriteLine(String.Format("File information: {0}", json));
             }
         }
 
@@ -83,8 +94,8 @@ namespace mTIM.Droid.Services
                     }
                 }
                 ViewModel.ImageSource = e.Result;
-                    //await FileHelper.ReadAllBytesAsync(path);
-                Console.WriteLine(e.Result);
+                //await FileHelper.ReadAllBytesAsync(path);
+                Debug.WriteLine(e.Result);
             }
             else if (e.Error != null && !fromAutoSync)
             {

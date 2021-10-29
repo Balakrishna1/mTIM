@@ -269,6 +269,22 @@
       <SubType></SubType>
       <Generator></Generator>
     </AndroidResource>
+    <AndroidResource Include="Resources\drawable\icon_checked.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\icon_unchecked.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\icons8_document.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\icon_eye.png">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\splash_logo.png" />
@@ -297,6 +313,11 @@
     <WebReferences Include="Web References" />
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>

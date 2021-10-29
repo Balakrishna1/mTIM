@@ -45,6 +45,7 @@
     <PackageReference Include="UrhoSharp.Forms" Version="1.9.67" />
     <PackageReference Include="System.IO" Version="4.3.0" />
     <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.14" />
+    <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="19.3.0.47" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="MultilingualResources\mTIM.de.xlf" />
@@ -85,6 +86,7 @@
     <None Remove="Meshes\Model2.obj" />
     <None Remove="Meshes\Model2.png" />
     <None Remove="Rg.Plugins.Popup" />
+    <None Remove="Syncfusion.Xamarin.Buttons" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />

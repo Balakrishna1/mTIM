@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using mTIM.Helpers;
 using mTIM.Interfaces;
@@ -109,7 +108,7 @@ namespace mTIM.ViewModels
         {
             SyncTime--;
             StringSyncTime = string.Format(syncTimeFormat, SyncTime == 0 ? "Sync" : SyncTime.ToString());
-            Console.WriteLine("{0} Updating timer.\n", SyncTime);
+            Debug.WriteLine("{0} seconds left to sync.\n", SyncTime);
             if (SyncTime == 0)
             {
                 Refresh();
@@ -127,10 +126,7 @@ namespace mTIM.ViewModels
             //var json = CsvToJsonConverter.ConvertCsvToJson(csvList);
             if (!string.IsNullOrEmpty(json))
             {
-                if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
-                {
-                    await FileHelper.WriteTextAsync(GlobalConstants.TASKLIST_FILE, json);
-                }
+                await FileHelper.WriteTextAsync(GlobalConstants.TASKLIST_FILE, json);
                 var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
                 TotalListList.Clear();
                 if (list != null)
@@ -198,7 +194,18 @@ namespace mTIM.ViewModels
 
         public virtual void OnSyncCommand(bool isFromAuto = true)
         {
+            SaveTaskList();
+            Webservice.ViewModel = this;
+            Webservice.GetTasksListIDsFortheData(isFromAuto);
+        }
 
+        public void SaveTaskList()
+        {
+            if (TotalListList != null && TotalListList.Count > 0)
+            {
+                var json = JsonConvert.SerializeObject(TotalListList);
+                FileHelper.WriteTextAsync(GlobalConstants.TASKLIST_FILE, json);
+            }
         }
 
         public virtual void RefreshData()

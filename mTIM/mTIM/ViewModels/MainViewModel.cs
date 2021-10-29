@@ -12,13 +12,15 @@ namespace mTIM.ViewModels
     public class MainViewModel : BaseViewModel
     {
         public ObservableCollectionRanged<TimTaskModel> SelectedItemList { get; set; }
-        public ObservableCollectionRanged<int> LstValues { get; set; } = new ObservableCollectionRanged<int>();
+        public ObservableCollectionRanged<object> LstValues { get; set; } = new ObservableCollectionRanged<object>();
+        public ObservableCollectionRanged<FileInfo> LstFiles { get; set; } = new ObservableCollectionRanged<FileInfo>();
 
         public AndroidMessageModel MessageModel { get; set; } = new AndroidMessageModel();
         public MainViewModel(INavigation navigation)
         {
             this.Navigation = navigation;
             SelectedItemList = new ObservableCollectionRanged<TimTaskModel>();
+            FileInfoHelper.Instance.LoadFileList();
         }
 
         private Color listBackgroundColor = Color.White;
@@ -63,6 +65,13 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isValueListVisible, value);
         }
 
+        private bool isDocumentListVisible;
+        public bool IsDocumentListVisible
+        {
+            get => isDocumentListVisible;
+            set => SetAndRaisePropertyChanged(ref isDocumentListVisible, value);
+        }
+
         private object selectedValue;
         public object SelectedValue
         {
@@ -71,18 +80,16 @@ namespace mTIM.ViewModels
         }
 
         List<string> headerStrings = new List<string>();
-        private int previousIndex;
-        private int seletedIndex;
+        private int previousId;
         public void SelectedItemIndex(int position)
         {
             if (position >= 0)
             {
                 ListBackgroundColor = GlobalConstants.IsLandscape? Color.White: Color.DimGray;
-                seletedIndex = position;
                 var selectedItem = SelectedItemList[position];
                 if (selectedItem != null && selectedItem.HasChailds)
                 {
-                    previousIndex = selectedItem.Parent;
+                    previousId = selectedItem.Id;
                     IsShowBackButton = true;
                     //SelectedItemText = selectedItem.Name;
                     headerStrings.Add(selectedItem.Name);
@@ -93,82 +100,119 @@ namespace mTIM.ViewModels
             }
         }
 
-        public void SelectedValueItemIndex(int position)
+        public void SelectedValueItem(TimTaskModel model)
         {
-            setValues(position);
+            openValues(model);
+        }
+
+        public void SelectedDocumentItem(int id)
+        {
+            openDocumentValues(id);
+        }
+
+        private void openDocumentValues(int id)
+        {
+            var values = FileInfoHelper.Instance.GetValues(id);
+            LstFiles?.Clear();
+            if (values?.Count > 0)
+            {
+                IsDocumentListVisible = true;
+                LstFiles.AddRange(values);
+            }
         }
 
         public ICommand BackButtonCommand => new Command(BackButtonCommandExecute);
 
         private void BackButtonCommandExecute()
         {
-            if(IsValueListVisible)
+            if(IsValueListVisible || IsDocumentListVisible)
             {
+                IsDocumentListVisible = false;
                 IsValueListVisible = false;
                 return;
             }
-            if (previousIndex >= 0)
+            if (previousId >= 0)
             {
                 ListBackgroundColor = GlobalConstants.IsLandscape ? Color.White : Color.DimGray;
-                seletedIndex = previousIndex;
-                var selectedItem = TotalListList.Where(x => x.Level.Equals(previousIndex)).FirstOrDefault();
+                var selectedItem = TotalListList.Where(x => x.Id.Equals(previousId)).FirstOrDefault();
                 if (selectedItem != null)
                 {
-                    previousIndex = selectedItem.Parent;
+                    previousId = selectedItem.Parent;
                     IsShowBackButton = true;
                     headerStrings.RemoveAt(headerStrings.Count - 1);
                     updateHeaderTexts();
                     //SelectedItemText = selectedItem.Name;
                     SelectedItemList.Clear();
-                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedItem.Level + 1) && x.Parent.Equals(selectedItem.Id)));
+                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedItem.Level) && x.Parent.Equals(selectedItem.Parent)));
                 }
             }
             //RefreshData();
         }
 
         TimTaskModel SelectedModel = new TimTaskModel();
-        private void setValues(int position)
+        private void openValues(TimTaskModel model)
         {
             LstValues?.Clear();
-            List<int> valuesList = new List<int>();
-            SelectedModel = SelectedItemList[position];
-            if(SelectedModel != null)
+            List<object> valuesList = new List<object>();
+            SelectedModel = model;
+            if (SelectedModel != null)
             {
-                IsValueListVisible = true;
-                if (!string.IsNullOrEmpty(SelectedModel.Range))
+                if (SelectedModel.Type != null)
                 {
-                    var result = SelectedModel.Range.Split(':', '-');
-                    if (result != null)
+                    switch (SelectedModel.Type)
                     {
-                        int startvalue;
-                        int endValue;
-                        int splitValue;
-                        switch (result.Length)
-                        {
-                            case 1:
-                                valuesList.Add(Convert.ToInt32(result[0]));
-                                break;
-                            case 2:
-                                startvalue = Convert.ToInt32(result[0]);
-                                endValue = Convert.ToInt32(result[1]);
-                                for (int i = startvalue; i <= endValue; i++)
+                        case "int":
+                            IsValueListVisible = true;
+                            if (!string.IsNullOrEmpty(SelectedModel.Range))
+                            {
+                                var result = SelectedModel.Range.Split(':', '-');
+                                if (result != null)
                                 {
-                                    valuesList.Add(i);
+                                    decimal startvalue;
+                                    decimal endValue;
+                                    int splitValue;
+                                    switch (result.Length)
+                                    {
+                                        case 1:
+                                            valuesList.Add(Convert.ToInt32(result[0]));
+                                            break;
+                                        case 2:
+                                            startvalue = Convert.ToInt32(result[0]);
+                                            endValue = Convert.ToInt32(result[1]);
+                                            for (decimal i = startvalue; i <= endValue; i++)
+                                            {
+                                                valuesList.Add(i);
+                                            }
+                                            break;
+                                        case 3:
+                                            startvalue = Convert.ToDecimal(result[0]);
+                                            endValue = Convert.ToDecimal(result[1]);
+                                            splitValue = Convert.ToInt32(result[2]);
+                                            var res = Math.Round(endValue / splitValue);
+                                            int value = (int)(startvalue + res);
+                                            valuesList.Add(startvalue);
+                                            for (int i = 1; i < splitValue; i++)
+                                            {
+                                                valuesList.Add(value * i);
+                                            }
+
+                                            break;
+                                    }
+                                    LstValues.AddRange(valuesList);
+                                    if (SelectedModel.Value != null)
+                                        SelectedValue = Convert.ToInt32(SelectedModel.Value);
                                 }
-                                break;
-                            case 3:
-                                startvalue = Convert.ToInt32(result[0]);
-                                endValue = Convert.ToInt32(result[1]);
-                                splitValue = Convert.ToInt32(result[2]);
-                                for (int i = startvalue; i <= endValue; i++)
-                                {
-                                    valuesList.Add(i);
-                                }
-                                break;
-                        }
-                        LstValues.AddRange(valuesList);
-                        if (SelectedModel.Value != null)
-                            SelectedValue = Convert.ToInt32(SelectedModel.Value);
+                            }
+                            break;
+                        case "bool":
+                            SelectedModel.Value = !Convert.ToBoolean(SelectedModel.Value);
+                            SelectedItemList.Update();
+                            break;
+                        case "Doc":
+                            SelectedDocumentItem(SelectedModel.Id);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -179,19 +223,22 @@ namespace mTIM.ViewModels
             IsValueListVisible = false;
             SelectedModel.Value = LstValues[position];
             SelectedItemList.Update();
+            SaveTaskList();
         }
 
         private void updateHeaderTexts()
         {
             SelectedItemText = headerStrings.LastOrDefault();
-            if(headerStrings.Count > 1)
+            if (headerStrings.Count > 1)
             {
                 SubText = String.Join("/", headerStrings.SkipLast(1));
                 IsShowBackButton = true;
-            }else if(headerStrings.Count == 0)
+            }
+            else if (headerStrings.Count == 0)
             {
                 IsShowBackButton = false;
-                SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
+                SelectedItemText = TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
+                SubText = string.Empty;
             }
             else
             {
@@ -319,8 +366,6 @@ namespace mTIM.ViewModels
         public override void OnSyncCommand(bool isFromAuto = true)
         {
             RefreshData();
-            Webservice.ViewModel = this;
-            Webservice.GetTasksListIDsFortheData(isFromAuto);
             base.OnSyncCommand();
         }
 

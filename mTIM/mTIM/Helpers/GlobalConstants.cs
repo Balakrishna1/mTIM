@@ -19,6 +19,7 @@ namespace mTIM.Helpers
         public const string SETTINGS_FILE = "settings.json";
         public const string IMEI_FILE = "imei_02.json";
         public const string TASKLIST_FILE = "tasklist.json";
+        public const string FILES_INFO = "filesinformation.json";
         public const string GraphicsBlob_FILE = "model_%06d.proto";
         public static  bool IsLandscape = false;
         public static int DefaultSyncMinites { get; set; } = 5;
@@ -28,7 +29,6 @@ namespace mTIM.Helpers
         {
 #if DEBUG
             return "354473060142487";
-
 #else 
             return UniqueID;
 #endif
