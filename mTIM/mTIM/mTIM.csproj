@@ -87,6 +87,8 @@
     <None Remove="Meshes\Model2.png" />
     <None Remove="Rg.Plugins.Popup" />
     <None Remove="Syncfusion.Xamarin.Buttons" />
+    <None Remove="Xamarin.Forms.SaveOpenPDFPackage" />
+    <None Remove="MimeTypesMap" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />

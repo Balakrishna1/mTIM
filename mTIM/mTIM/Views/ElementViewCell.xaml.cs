@@ -89,6 +89,7 @@ namespace mTIM
                     switch (Type)
                     {
                         case "int":
+                        case "string":
                             imgInfoButton.IsVisible = false;
                             lblValue.Text = Value;
                             stackValue.IsVisible = true;

@@ -79,6 +79,7 @@ namespace mTIM
                 return;
             }
             lstDocuments.SelectedItem = null;
+            ViewModel.SelectedDocument(e.SelectedItemIndex);
         }
 
 
@@ -206,7 +207,6 @@ namespace mTIM
                 CustomBottomSheet.Init(height, width);
             }
             CustomBottomSheet.InvokeView(height, width);
-            BarcodeView.IsVisible = true;
             if (height > width)
             {
                 ViewModel.IsOpenBarcodeView = false;
@@ -218,6 +218,8 @@ namespace mTIM
                 stackList.Orientation = StackOrientation.Horizontal;
                 absListView.WidthRequest = width;
                 glBuilding.IsVisible = false;
+                stackStringType.WidthRequest = width;
+                stackStringType.HeightRequest = height - frameHeader.Height;
             }
             else
             {
@@ -232,6 +234,8 @@ namespace mTIM
                 absListView.WidthRequest = 250;
                 glBuilding.WidthRequest = width - 250;
                 glBuilding.HeightRequest = height - frameHeader.Height;
+                stackStringType.WidthRequest = 250;
+                stackStringType.HeightRequest = height - frameHeader.Height;
                 loadUrhoView();
             }
         }

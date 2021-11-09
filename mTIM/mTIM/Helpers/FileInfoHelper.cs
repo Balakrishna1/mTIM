@@ -8,6 +8,8 @@ namespace mTIM.Helpers
 {
     public class FileInfoHelper
     {
+        Dictionary<int, string> FileExtensions = new Dictionary<int, string>();
+
         public List<FileInfoModel> TotalFilesList = new List<FileInfoModel>();
 
         public static FileInfoHelper _instance;
@@ -52,6 +54,20 @@ namespace mTIM.Helpers
             }
         }
 
+        public async void LoadExtensions()
+        {
+            if (FileHelper.IsFileExists(GlobalConstants.FileExtesons))
+            {
+                var json = await FileHelper.ReadTextAsync(GlobalConstants.FileExtesons);
+                FileExtensions = JsonConvert.DeserializeObject<Dictionary<int, string>>(json);
+            }
+        }
+
+        public int GetExtensionsCount()
+        {
+            return FileExtensions?.Count ?? 0;
+        }
+
         public int GetCount(int id)
         {
             int count = 0;
@@ -75,6 +91,28 @@ namespace mTIM.Helpers
                 values = item.Values;
             }
             return values;
+        }
+
+        public void AddExtesion(int fileId, string extesion)
+        {
+            FileExtensions.Add(fileId, extesion);
+        }
+
+        public string GetExtension(int fileId)
+        {
+            string extension = "";
+            FileExtensions?.TryGetValue(fileId, out extension);
+            return extension ?? ".pdf";
+        }
+
+        public Dictionary<int, string> GetExtensionList()
+        {
+            return FileExtensions;
+        }
+
+        public void Clear()
+        {
+            FileExtensions.Clear();
         }
     }
 }

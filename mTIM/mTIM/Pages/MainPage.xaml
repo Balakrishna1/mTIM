@@ -58,6 +58,15 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 </ListView>
+                <StackLayout x:Name="stackStringType" Orientation="Vertical" IsVisible="{Binding IsEditTextVisible}" BackgroundColor="White" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                    <StackLayout  BackgroundColor="LightGray" Orientation="Vertical" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                        <Editor TextTransform="None" Text="{Binding InputText}" MaxLength="500" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" TextColor="Black" BackgroundColor="LightGray" HeightRequest="150"/>
+                        <StackLayout Orientation="Horizontal" VerticalOptions="End" HorizontalOptions="CenterAndExpand">
+                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Cancel" HorizontalOptions="Start" VerticalOptions="End" Command="{Binding CancelButtonCommand}" Margin="0,0,30,0" />
+                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Save" HorizontalOptions="End" VerticalOptions="End" Command="{Binding OkButtonCommand}" Margin="30,0,0,0" />
+                        </StackLayout>
+                    </StackLayout>
+               </StackLayout>
             </AbsoluteLayout>
             <!--<sk:SKGLView x:Name="glBuilding" PaintSurface="glBuilding_PaintSurface" BackgroundColor="LightCoral" VerticalOptions="Fill" HorizontalOptions="Fill" IsVisible="false" />-->
             <local:UrhoView x:Name="glBuilding" BackgroundColor="LightCoral">

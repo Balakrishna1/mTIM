@@ -21,6 +21,7 @@ namespace mTIM.Helpers
         public const string TASKLIST_FILE = "tasklist.json";
         public const string FILES_INFO = "filesinformation.json";
         public const string GraphicsBlob_FILE = "model_%06d.proto";
+        public const string FileExtesons = "file_extesons.json";
         public static  bool IsLandscape = false;
         public static int DefaultSyncMinites { get; set; } = 5;
         public static int SyncMinutes { get; set; }

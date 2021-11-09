@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using mTIM.ViewModels;
 
 namespace mTIM.Interfaces
@@ -7,5 +8,7 @@ namespace mTIM.Interfaces
     {
         public BaseViewModel ViewModel { get; set; }
         void GetTasksListIDsFortheData(bool isFromAutoSync = false);
+        void DownloadFile(int fileId, bool fileIdSpecified);
+        void OpenPdfFile(int fileId, bool fileIdSpecified);
     }
 }

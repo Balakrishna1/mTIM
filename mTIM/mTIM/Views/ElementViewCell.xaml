@@ -24,7 +24,7 @@
 				<StackLayout.GestureRecognizers>
 					<TapGestureRecognizer Tapped="OnTapped"/>
 				</StackLayout.GestureRecognizers>
-				<Label x:Name="lblValue" HeightRequest="28" WidthRequest="80" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
+				<Label x:Name="lblValue" HeightRequest="30" MaxLines="1" WidthRequest="80" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
 				<Image Source="icon_document" VerticalOptions="Center" HorizontalOptions="End"/>
 			  </StackLayout>
 			  <StackLayout x:Name="stackCheckBox" Margin="0,0,0,10" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">

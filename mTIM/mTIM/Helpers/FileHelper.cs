@@ -16,6 +16,15 @@ namespace mTIM.Helpers
             }
         }
 
+        public static void DeleteAppDirectory()
+        {
+            DirectoryInfo directory = new DirectoryInfo(FileSystem.AppDataDirectory);
+            foreach (DirectoryInfo dir in directory.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+        }
+
         public static string GetFilePath(string fileName)
         {
             CreateAppDirectory();
@@ -61,7 +70,7 @@ namespace mTIM.Helpers
             string file = Path.Combine(AppDirectory, fileName);
             if (File.Exists(file))
             {
-                File.Delete(fileName);
+                File.Delete(file);
             }
             await File.WriteAllBytesAsync(file, content);
         }

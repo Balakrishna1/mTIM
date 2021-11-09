@@ -7,6 +7,7 @@ namespace mTIM.Helpers
     public class TimerHelper : IDisposable
     {
         private const int dueTime = 1000;
+        private TimerCallback _callback;
         public static TimerHelper _instance;
         public static TimerHelper Instance
         {
@@ -24,12 +25,23 @@ namespace mTIM.Helpers
         Timer timer;
         public void Create(TimerCallback callback)
         {
+            _callback = callback;
+        }
+
+        public void StartTimer()
+        {
             if (timer == null)
             {
                 // Create a timer that invokes CheckStatus after one second, 
                 Debug.WriteLine("{0:h:mm:ss.fff} Creating timer.\n", DateTime.Now);
-                timer = new Timer(callback, this, 0, dueTime);
+                timer = new Timer(_callback, this, 0, dueTime);
             }
+        }
+
+        public void StopTimer()
+        {
+            timer?.Dispose();
+            timer = null;
         }
 
         public void Dispose() {

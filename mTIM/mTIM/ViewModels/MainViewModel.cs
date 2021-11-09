@@ -21,6 +21,13 @@ namespace mTIM.ViewModels
             this.Navigation = navigation;
             SelectedItemList = new ObservableCollectionRanged<TimTaskModel>();
             FileInfoHelper.Instance.LoadFileList();
+            FileInfoHelper.Instance.LoadExtensions();
+        }
+
+        public override void OnAppearing()
+        {
+            base.OnAppearing();
+            TimerHelper.Instance.StartTimer();
         }
 
         private Color listBackgroundColor = Color.White;
@@ -51,6 +58,13 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref subText, value);
         }
 
+        private string inputText = "";
+        public string InputText
+        {
+            get => inputText;
+            set => SetAndRaisePropertyChanged(ref inputText, value);
+        }
+
         private bool isOpenMenuOptions;
         public bool IsOpenMenuOptions
         {
@@ -70,6 +84,13 @@ namespace mTIM.ViewModels
         {
             get => isDocumentListVisible;
             set => SetAndRaisePropertyChanged(ref isDocumentListVisible, value);
+        }
+
+        private bool isEditTextVisible;
+        public bool IsEditTextVisible
+        {
+            get => isEditTextVisible;
+            set => SetAndRaisePropertyChanged(ref isEditTextVisible, value);
         }
 
         private object selectedValue;
@@ -121,6 +142,16 @@ namespace mTIM.ViewModels
             }
         }
 
+        public void SelectedDocument(int position)
+        {
+            var file = LstFiles[position];
+            if(file!= null)
+            {
+                Webservice.ViewModel = this;
+                Webservice.OpenPdfFile(Math.Abs(file.FileID), file.FileIDSpecified);
+            }
+        }
+
         public ICommand BackButtonCommand => new Command(BackButtonCommandExecute);
 
         private void BackButtonCommandExecute()
@@ -165,38 +196,48 @@ namespace mTIM.ViewModels
                             IsValueListVisible = true;
                             if (!string.IsNullOrEmpty(SelectedModel.Range))
                             {
-                                var result = SelectedModel.Range.Split(':', '-');
-                                if (result != null)
+                                var result = SelectedModel.Range.Split(',', ':', '-');
+                                if (result!=null)
                                 {
                                     decimal startvalue;
                                     decimal endValue;
                                     int splitValue;
-                                    switch (result.Length)
+                                    if (SelectedModel.Range.Contains(","))
                                     {
-                                        case 1:
-                                            valuesList.Add(Convert.ToInt32(result[0]));
-                                            break;
-                                        case 2:
-                                            startvalue = Convert.ToInt32(result[0]);
-                                            endValue = Convert.ToInt32(result[1]);
-                                            for (decimal i = startvalue; i <= endValue; i++)
-                                            {
-                                                valuesList.Add(i);
-                                            }
-                                            break;
-                                        case 3:
-                                            startvalue = Convert.ToDecimal(result[0]);
-                                            endValue = Convert.ToDecimal(result[1]);
-                                            splitValue = Convert.ToInt32(result[2]);
-                                            var res = Math.Round(endValue / splitValue);
-                                            int value = (int)(startvalue + res);
-                                            valuesList.Add(startvalue);
-                                            for (int i = 1; i < splitValue; i++)
-                                            {
-                                                valuesList.Add(value * i);
-                                            }
+                                        if(result.Length>0)
+                                        {
+                                            valuesList.AddRange(result);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch (result.Length)
+                                        {
+                                            case 1:
+                                                valuesList.Add(Convert.ToInt32(result[0]));
+                                                break;
+                                            case 2:
+                                                startvalue = Convert.ToInt32(result[0]);
+                                                endValue = Convert.ToInt32(result[1]);
+                                                for (decimal i = startvalue; i <= endValue; i++)
+                                                {
+                                                    valuesList.Add(i);
+                                                }
+                                                break;
+                                            case 3:
+                                                startvalue = Convert.ToDecimal(result[0]);
+                                                endValue = Convert.ToDecimal(result[1]);
+                                                splitValue = Convert.ToInt32(result[2]);
+                                                var res = Math.Round(endValue / splitValue);
+                                                int value = (int)(startvalue + res);
+                                                valuesList.Add(startvalue);
+                                                for (int i = 1; i < splitValue; i++)
+                                                {
+                                                    valuesList.Add(value * i);
+                                                }
 
-                                            break;
+                                                break;
+                                        }
                                     }
                                     LstValues.AddRange(valuesList);
                                     if (SelectedModel.Value != null)
@@ -210,6 +251,10 @@ namespace mTIM.ViewModels
                             break;
                         case "Doc":
                             SelectedDocumentItem(SelectedModel.Id);
+                            break;
+                        case "string":
+                            InputText = SelectedModel.Value?.ToString(); ;
+                            IsEditTextVisible = true;
                             break;
                         default:
                             break;
@@ -237,7 +282,7 @@ namespace mTIM.ViewModels
             else if (headerStrings.Count == 0)
             {
                 IsShowBackButton = false;
-                SelectedItemText = TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
+                SelectedItemText = TotalListList?.Where(x => x.Level.Equals(0)).FirstOrDefault()?.Name;
                 SubText = string.Empty;
             }
             else
@@ -334,6 +379,8 @@ namespace mTIM.ViewModels
         {
             headerStrings = new List<string>();
             updateHeaderTexts();
+            IsDocumentListVisible = false;
+            IsValueListVisible = false;
             //SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
             ListBackgroundColor = Color.White;
             IsOpenMenuOptions = false;
@@ -366,13 +413,27 @@ namespace mTIM.ViewModels
         public override void OnSyncCommand(bool isFromAuto = true)
         {
             RefreshData();
-            base.OnSyncCommand();
+            base.OnSyncCommand(isFromAuto);
         }
 
         public ICommand MenuNewBuildItemCommand => new Command(MenuNewBuildItemCommandExecute);
         private void MenuNewBuildItemCommandExecute()
         {
             IsOpenMenuOptions = false;
+        }
+
+        public ICommand CancelButtonCommand => new Command(CancelButtonCommandExecute);
+        private void CancelButtonCommandExecute()
+        {
+            IsEditTextVisible = false;
+        }
+
+        public ICommand OkButtonCommand => new Command(OkButtonCommandExecute);
+        private void OkButtonCommandExecute()
+        {
+            SelectedModel.Value = InputText;
+            SelectedItemList.Update();
+            IsEditTextVisible = false;
         }
     }
 }
