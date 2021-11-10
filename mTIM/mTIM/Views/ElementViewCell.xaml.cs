@@ -90,6 +90,7 @@ namespace mTIM
                     {
                         case "int":
                         case "string":
+                        case "float":
                             imgInfoButton.IsVisible = false;
                             lblValue.Text = Value;
                             stackValue.IsVisible = true;

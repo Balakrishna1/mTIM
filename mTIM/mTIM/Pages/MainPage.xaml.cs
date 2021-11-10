@@ -47,6 +47,8 @@ namespace mTIM
             listView.ItemsSource = ViewModel.SelectedItemList;
             ViewModel.SelectedItemList.CollectionChanged += SelectedItemList_CollectionChanged;
             ViewModel.LstValues.CollectionChanged += LstValues_CollectionChanged;
+            frameHeader.SizeChanged -= FrameHeader_SizeChanged;
+            frameHeader.SizeChanged += FrameHeader_SizeChanged;
 
             Task.Run(async () =>
             {
@@ -215,11 +217,10 @@ namespace mTIM
                 stackHeader.HorizontalOptions = LayoutOptions.EndAndExpand;
                 stackHeader.FlowDirection = FlowDirection.LeftToRight;
                 stackMenuOptions.FlowDirection= FlowDirection.LeftToRight;
-                stackList.Orientation = StackOrientation.Horizontal;
-                absListView.WidthRequest = width;
+                stackList.Orientation = StackOrientation.Vertical;
+                listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = width;
+                listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
                 glBuilding.IsVisible = false;
-                stackStringType.WidthRequest = width;
-                stackStringType.HeightRequest = height - frameHeader.Height;
             }
             else
             {
@@ -231,16 +232,30 @@ namespace mTIM
                 stackHeader.FlowDirection = FlowDirection.RightToLeft;
                 stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
                 stackList.Orientation = StackOrientation.Horizontal;
-                absListView.WidthRequest = 250;
+                listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = 250;
+                listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
                 glBuilding.WidthRequest = width - 250;
                 glBuilding.HeightRequest = height - frameHeader.Height;
-                stackStringType.WidthRequest = 250;
-                stackStringType.HeightRequest = height - frameHeader.Height;
                 loadUrhoView();
             }
         }
 
-       
+
+        private void FrameHeader_SizeChanged(object sender, EventArgs e)
+        {
+            listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
+            if (GlobalConstants.IsLandscape)
+            {
+                glBuilding.HeightRequest = height - frameHeader.Height;
+            }
+        }
+
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+        }
+
+
 
         protected override void OnAppearing()
         {

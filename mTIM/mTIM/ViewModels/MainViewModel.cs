@@ -156,10 +156,9 @@ namespace mTIM.ViewModels
 
         private void BackButtonCommandExecute()
         {
-            if(IsValueListVisible || IsDocumentListVisible)
+            if(IsValueListVisible || IsDocumentListVisible || IsEditTextVisible)
             {
-                IsDocumentListVisible = false;
-                IsValueListVisible = false;
+                IsDocumentListVisible = IsValueListVisible = IsEditTextVisible = false;
                 return;
             }
             if (previousId >= 0)
@@ -193,18 +192,18 @@ namespace mTIM.ViewModels
                     switch (SelectedModel.Type)
                     {
                         case "int":
-                            IsValueListVisible = true;
                             if (!string.IsNullOrEmpty(SelectedModel.Range))
                             {
+                                IsValueListVisible = true;
                                 var result = SelectedModel.Range.Split(',', ':', '-');
-                                if (result!=null)
+                                if (result != null)
                                 {
                                     decimal startvalue;
                                     decimal endValue;
                                     int splitValue;
                                     if (SelectedModel.Range.Contains(","))
                                     {
-                                        if(result.Length>0)
+                                        if (result.Length > 0)
                                         {
                                             valuesList.AddRange(result);
                                         }
@@ -242,6 +241,64 @@ namespace mTIM.ViewModels
                                     LstValues.AddRange(valuesList);
                                     if (SelectedModel.Value != null)
                                         SelectedValue = Convert.ToInt32(SelectedModel.Value);
+                                }
+                            }
+                            else
+                            {
+                                InputText = SelectedModel.Value?.ToString(); ;
+                                IsEditTextVisible = true;
+                            }
+                            break;
+                        case "float":
+                            IsValueListVisible = true;
+                            if (!string.IsNullOrEmpty(SelectedModel.Range))
+                            {
+                                var result = SelectedModel.Range.Split(',', ':', '-');
+                                if (result != null)
+                                {
+                                    decimal startvalue;
+                                    decimal endValue;
+                                    decimal splitValue;
+                                    if (SelectedModel.Range.Contains(","))
+                                    {
+                                        if (result.Length > 0)
+                                        {
+                                            valuesList.AddRange(result);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch (result.Length)
+                                        {
+                                            case 1:
+                                                valuesList.Add(Convert.ToDecimal(result[0]));
+                                                break;
+                                            case 2:
+                                                startvalue = Convert.ToDecimal(result[0]);
+                                                endValue = Convert.ToDecimal(result[1]);
+                                                for (decimal i = startvalue; i <= endValue; i++)
+                                                {
+                                                    valuesList.Add(i.ToString("0.00"));
+                                                }
+                                                break;
+                                            case 3:
+                                                startvalue = Convert.ToDecimal(result[0]);
+                                                endValue = Convert.ToDecimal(result[1]);
+                                                splitValue = Convert.ToDecimal(result[2]);
+                                                var res = Math.Round(endValue / splitValue);
+                                                decimal value = (decimal)(startvalue + res);
+                                                valuesList.Add(startvalue.ToString("0.00"));
+                                                for (decimal i = 1; i < splitValue; i++)
+                                                {
+                                                    valuesList.Add((value * i).ToString("0.00"));
+                                                }
+
+                                                break;
+                                        }
+                                    }
+                                    LstValues.AddRange(valuesList);
+                                    if (SelectedModel.Value != null)
+                                        SelectedValue = Convert.ToDecimal(SelectedModel.Value);
                                 }
                             }
                             break;
@@ -379,10 +436,9 @@ namespace mTIM.ViewModels
         {
             headerStrings = new List<string>();
             updateHeaderTexts();
-            IsDocumentListVisible = false;
-            IsValueListVisible = false;
-            //SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
-            ListBackgroundColor = Color.White;
+            IsDocumentListVisible = IsValueListVisible = IsEditTextVisible = false;
+             //SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
+             ListBackgroundColor = Color.White;
             IsOpenMenuOptions = false;
             IsShowBackButton = false;
             SelectedItemList.Clear();
