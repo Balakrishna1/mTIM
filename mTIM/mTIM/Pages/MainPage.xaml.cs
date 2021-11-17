@@ -67,6 +67,27 @@ namespace mTIM
             lstValues.ItemSelected += LstValues_ItemSelected;
             lstDocuments.ItemSelected -= LstDocuments_ItemSelected;
             lstDocuments.ItemSelected += LstDocuments_ItemSelected;
+            //lstValues.ItemTapped += LstValues_ItemTapped;
+            //lstDocuments.ItemTapped += LstDocuments_ItemTapped;
+        }
+
+        private void LstDocuments_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            if (e.ItemIndex < 0)
+            {
+                return;
+            }
+            lstDocuments.SelectedItem = null;
+            ViewModel.SelectedDocument(e.ItemIndex);
+        }
+
+        private void LstValues_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            if (e.ItemIndex < 0)
+            {
+                return;
+            }
+            ViewModel.SelectedValueIndex(e.ItemIndex);
         }
 
         private void LstValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -110,12 +131,18 @@ namespace mTIM
 
         private void updateInfo()
         {
+#if DEBUG
+            GlobalConstants.AppBaseURL = "http://mtimtest.precast-software.com:7778";
+#else
+            GlobalConstants.AppBaseURL = string.Empty;
+#endif
             if (!FileHelper.IsFileExists(GlobalConstants.IMEI_FILE))
             {
                 getVersionInfo();
                 getDeviceInfo();
                 SaveAppMessage();
-            }else
+            }
+            else
             {
                 string jsonIMEI = FileHelper.ReadText(GlobalConstants.IMEI_FILE);
                 Debug.WriteLine("mTIM Device JSON:" + jsonIMEI);
@@ -125,6 +152,7 @@ namespace mTIM
                     ViewModel.MessageModel = messageModel;
                     GlobalConstants.DeviceID = messageModel.DeviceId;
                     GlobalConstants.IMEINumber = messageModel.IMEI;
+                    GlobalConstants.UniqueID = messageModel.PseudoID;
                     GlobalConstants.VersionCode = messageModel.VersionCode;
                     GlobalConstants.VersionNumber = messageModel.VersionName;
                 }
@@ -147,11 +175,6 @@ namespace mTIM
             }
 
             getLocation();
-#if DEBUG
-            GlobalConstants.AppBaseURL = "http://mtimtest.precast-software.com:7778";
-#else
-            GlobalConstants.AppURL = string.Empty;
-#endif
             ViewModel.UpdateList();
         }
 
@@ -163,7 +186,7 @@ namespace mTIM
             androidMessage.Device = Location.DeviceInfo.Model;
             androidMessage.DeviceId = GlobalConstants.DeviceID;
             androidMessage.IMEI = GlobalConstants.IMEINumber;
-            androidMessage.PseudoID = "";
+            androidMessage.PseudoID = GlobalConstants.UniqueID;
             androidMessage.VersionCode = GlobalConstants.VersionCode;
             androidMessage.VersionName = GlobalConstants.VersionNumber;
             string content = JsonConvert.SerializeObject(androidMessage);
@@ -211,12 +234,13 @@ namespace mTIM
             CustomBottomSheet.InvokeView(height, width);
             if (height > width)
             {
+                //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
                 ViewModel.IsOpenBarcodeView = false;
                 GlobalConstants.IsLandscape = false;
                 stackHeader.Orientation = StackOrientation.Vertical;
                 stackHeader.HorizontalOptions = LayoutOptions.EndAndExpand;
                 stackHeader.FlowDirection = FlowDirection.LeftToRight;
-                stackMenuOptions.FlowDirection= FlowDirection.LeftToRight;
+                stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
                 stackList.Orientation = StackOrientation.Vertical;
                 listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = width;
                 listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
@@ -224,6 +248,7 @@ namespace mTIM
             }
             else
             {
+                //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
                 ViewModel.IsOpenBarcodeView = false;
                 GlobalConstants.IsLandscape = true;
                 glBuilding.IsVisible = true;
@@ -265,6 +290,8 @@ namespace mTIM
 
         protected override void OnDisappearing()
         {
+            if (cts != null && !cts.IsCancellationRequested)
+                cts.Cancel();
             ViewModel.OnDisAppearing();
             base.OnDisappearing();
         }
@@ -349,7 +376,7 @@ namespace mTIM
 
             List<PermissionStatus> permissionsResult = new List<PermissionStatus>();
 
-            foreach (var permission in permissionsStartList)
+            foreach (var permission in permissionsNeededList)
             {
                 PermissionStatus status;
                 switch (permission)
@@ -364,7 +391,9 @@ namespace mTIM
                         status = await CrossPermissions.Current.RequestPermissionAsync<StoragePermission>();
                         break;
                     case Permission.LocationWhenInUse:
-                        status = await CrossPermissions.Current.RequestPermissionAsync<LocationWhenInUsePermission>();
+                        //var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.LocationWhenInUse);
+                        //status = results[Permission.LocationWhenInUse];
+                        status = await CrossPermissions.Current.RequestPermissionAsync<LocationAlwaysPermission>();
                         break;
                     default:
                         status = PermissionStatus.Unknown;
@@ -404,9 +433,10 @@ namespace mTIM
                 {
                     fillLocationInfo(location);
                     Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
-                }else
+                }
+                else
                 {
-                   await GetCurrentLocation();
+                    await GetCurrentLocation();
                 }
             }
             catch (Location.FeatureNotSupportedException fnsEx)

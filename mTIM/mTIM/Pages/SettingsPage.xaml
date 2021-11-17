@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     NavigationPage.HasNavigationBar="false"
     xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="True"
     x:Class="mTIM.SettingsPage">
     <Grid BackgroundColor="White">
         <StackLayout Orientation="Vertical" HorizontalOptions="Fill" Padding="10">
@@ -30,28 +32,28 @@
                          touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                          touch:TouchEff.CommandParameter="de"
                          Orientation="Vertical" Grid.Row="0" Grid.Column="0">
-                    <Image Source="language_de" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Image Source="language_de.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="deutsch" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
                         <StackLayout x:Name="stackEN" BackgroundColor="{Binding ENLangugaeBackground}"
                          touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                          touch:TouchEff.CommandParameter="en"
                          Orientation="Vertical" Grid.Row="0" Grid.Column="1">
-                    <Image Source="language_en" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Image Source="language_en.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="english" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
                         <StackLayout  x:Name="stackZH" BackgroundColor="{Binding ZHLangugaeBackground}"
                          touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                          touch:TouchEff.CommandParameter="zh-Hant"
                          Orientation="Vertical" Grid.Row="1" Grid.Column="0">
-                    <Image Source="language_zh" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Image Source="language_zh.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="中文" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
                         <StackLayout  x:Name="stackRU" BackgroundColor="{Binding RULangugaeBackground}"
                          touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                          touch:TouchEff.CommandParameter="ru"
                          Orientation="Vertical" Grid.Row="1" Grid.Column="1">
-                    <Image Source="language_ru" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Image Source="language_ru.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="русский" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
             </Grid>

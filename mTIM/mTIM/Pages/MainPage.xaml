@@ -4,6 +4,8 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:mTIM"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="True"
              mc:Ignorable="d"
              x:Class="mTIM.MainPage">
     <Grid>
@@ -11,7 +13,7 @@
         <TapGestureRecognizer Tapped="TapGestureRecognizer" NumberOfTapsRequired="1" />
     </Grid.GestureRecognizers>
     <StackLayout Orientation="Vertical">
-        <Frame x:Name="frameHeader" BackgroundColor="#E8E8E8" Padding="8" CornerRadius="0">
+        <Frame x:Name="frameHeader" HasShadow="False" BackgroundColor="#E8E8E8" Padding="8" CornerRadius="0">
             <StackLayout Orientation="Horizontal">
             <StackLayout Orientation="Vertical">
              <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
@@ -34,19 +36,19 @@
         </Frame>
         <StackLayout x:Name="stackList" Orientation="Vertical">
             <AbsoluteLayout x:Name="absListView">
-                <ListView  x:Name="listView" HasUnevenRows="True" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"/>
-                <ListView x:Name="lstValues" ItemsSource="{Binding LstValues}" SelectedItem="{Binding SelectedValue}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" BackgroundColor="White" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
-                    <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                            <Label Text="{Binding .}" Padding="0,20,0,20" FontSize="Medium" TextColor="Black" FontAttributes="Bold"  VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+                <ListView  x:Name="listView" IsVisible="{Binding IsTaskListVisible}" HasUnevenRows="True" SelectionMode="Single" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"/>
+                <ListView x:Name="lstValues" ItemsSource="{Binding LstValues}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout  BackgroundColor="{Binding BackgroundColor}" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                <Label Text="{Binding Data}" Padding="0,20,0,20" FontSize="Medium" TextColor="Black" FontAttributes="Bold"  VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
                 </ListView>
-                <ListView x:Name="lstDocuments" ItemsSource="{Binding LstFiles}" SelectionMode="Single" IsVisible="{Binding IsDocumentListVisible}" BackgroundColor="White" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                <ListView x:Name="lstDocuments" ItemsSource="{Binding LstFiles}" SelectionMode="Single" IsVisible="{Binding IsDocumentListVisible}" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -58,12 +60,12 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 </ListView>
-                <StackLayout x:Name="stackStringType" Orientation="Vertical" IsVisible="{Binding IsEditTextVisible}" BackgroundColor="White" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <StackLayout x:Name="stackStringType" Orientation="Vertical" IsVisible="{Binding IsEditTextVisible}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="0,-8,0,0">
                     <StackLayout  BackgroundColor="LightGray" Orientation="Vertical" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                         <Editor TextTransform="None" Text="{Binding InputText}" MaxLength="500" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" TextColor="Black" BackgroundColor="LightGray" HeightRequest="150"/>
                         <StackLayout Orientation="Horizontal" VerticalOptions="End" HorizontalOptions="CenterAndExpand">
-                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Cancel" HorizontalOptions="Start" VerticalOptions="End" Command="{Binding CancelButtonCommand}" Margin="0,0,30,0" />
-                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Save" HorizontalOptions="End" VerticalOptions="End" Command="{Binding OkButtonCommand}" Margin="30,0,0,0" />
+                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Cancel" HorizontalOptions="Start" VerticalOptions="End" Command="{Binding CancelButtonCommand}" Padding="10" Margin="0,0,30,0" />
+                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Save" HorizontalOptions="End" VerticalOptions="End" Command="{Binding OkButtonCommand}" Padding="10" Margin="30,0,0,0" />
                         </StackLayout>
                     </StackLayout>
                </StackLayout>

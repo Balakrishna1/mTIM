@@ -4,17 +4,16 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Acr.UserDialogs;
 using HeyRed.Mime;
-using mTIM.Droid.mtimtest.precast_software.com;
-using mTIM.Droid.Services;
 using mTIM.Helpers;
 using mTIM.Interfaces;
+using mTIM.iOS.mtimtest.precast_software.com;
+using mTIM.iOS.Services;
 using mTIM.ViewModels;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
-using Xamarin.Forms;
 
 [assembly: Xamarin.Forms.Dependency(typeof(WebSevice))]
-namespace mTIM.Droid.Services
+namespace mTIM.iOS.Services
 {
     public class WebSevice : IWebService
     {
@@ -41,10 +40,10 @@ namespace mTIM.Droid.Services
         {
             if (e.Error == null && !e.Cancelled)
             {
-                if (Application.Current.Properties.ContainsKey("GetTasksListIDsFortheData"))
+                if (Xamarin.Forms.Application.Current.Properties.ContainsKey("GetTasksListIDsFortheData"))
                 {
-                    int tasksListID = (int)Application.Current.Properties["GetTasksListIDsFortheData"];
-                    if(tasksListID == e.GetTaskListIdForDayResult)
+                    int tasksListID = (int)Xamarin.Forms.Application.Current.Properties["GetTasksListIDsFortheData"];
+                    if (tasksListID == e.GetTaskListIdForDayResult)
                     {
                         if (!fromAutoSync)
                             UserDialogs.Instance.HideLoading();
@@ -53,8 +52,8 @@ namespace mTIM.Droid.Services
                 }
                 FileHelper.DeleteAppDirectory();
                 FileInfoHelper.Instance.Clear();
-                Application.Current.Properties["GetTasksListIDsFortheData"] = e.GetTaskListIdForDayResult;
-                await Application.Current.SavePropertiesAsync();
+                Xamarin.Forms.Application.Current.Properties["GetTasksListIDsFortheData"] = e.GetTaskListIdForDayResult;
+                await Xamarin.Forms.Application.Current.SavePropertiesAsync();
                 timService.GetTaskListCompleted -= TimService_GetTaskListCompleted;
                 timService.GetTaskListCompleted += TimService_GetTaskListCompleted;
                 timService.GetTaskListAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the task list.
@@ -123,7 +122,7 @@ namespace mTIM.Droid.Services
                 var path = string.Format(GlobalConstants.GraphicsBlob_FILE, 198);
                 if (!FileHelper.IsFileExists(path))
                 {
-                    if(e.Result != null && e.Result.Length >= 0)
+                    if (e.Result != null && e.Result.Length >= 0)
                     {
                         await FileHelper.WriteAllBytesAsync(path, e.Result);
                     }

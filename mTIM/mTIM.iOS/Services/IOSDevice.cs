@@ -2,8 +2,10 @@
 using System.Runtime.InteropServices;
 using Foundation;
 using mTIM.Interfaces;
+using mTIM.iOS.Services;
 using UIKit;
 
+[assembly: Xamarin.Forms.Dependency(typeof(IOSDevice))]
 namespace mTIM.iOS.Services
 {
     public class IOSDevice : IDevice
@@ -22,6 +24,11 @@ namespace mTIM.iOS.Services
 
         public string GetDeviceID()
         {
+            return string.Empty;
+        }
+
+        public string GetImeiNumeber()
+        {
             string serial = string.Empty;
             uint platformExpert = IOServiceGetMatchingService(0, IOServiceMatching("IOPlatformExpertDevice"));
             if (platformExpert != 0)
@@ -39,14 +46,9 @@ namespace mTIM.iOS.Services
             return serial;
         }
 
-        public string GetImeiNumeber()
-        {
-            return string.Empty;
-        }
-
         public string GetUniqueID()
         {
-          return  UIDevice.CurrentDevice.IdentifierForVendor.ToString();
+            return UIDevice.CurrentDevice.IdentifierForVendor.ToString();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using mTIM.Models;
+﻿using System.Diagnostics;
+using mTIM.Models;
 
 namespace mTIM.Helpers
 {
@@ -33,6 +34,25 @@ namespace mTIM.Helpers
 #else 
             return UniqueID;
 #endif
+        }
+
+
+
+        /// <summary>
+        /// This is used to get the baseURL.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAppURL()
+        {
+            var baseUrl = GlobalConstants.AppBaseURL;
+            if (baseUrl.Length > 0)
+            {
+                if (!baseUrl.EndsWith('/'))
+                    baseUrl = baseUrl + '/';
+                baseUrl = baseUrl + "External/" + GlobalConstants.VERSION + "/External.svc";
+            }
+            Debug.WriteLine("App URL:" + baseUrl);
+            return baseUrl;
         }
     }
 }

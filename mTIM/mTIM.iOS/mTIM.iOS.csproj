@@ -28,6 +28,8 @@
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchExtraArgs>--interpreter</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -37,6 +39,7 @@
     <WarningLevel>4</WarningLevel>
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
+    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,6 +88,7 @@
     <Compile Include="Web References\mtimtest.precast_software.com\Reference.cs">
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Services\WebSevice.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -125,9 +129,6 @@
       <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon20.png">
-      <Visible>false</Visible>
-    </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\logo.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="Assets.xcassets\icon_menu.imageset\Contents.json">
@@ -193,21 +194,18 @@
     <ImageAsset Include="Assets.xcassets\icon_minus.imageset\icon_minus.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\logo.imageset\logo-1.png" />
     <ImageAsset Include="Assets.xcassets\icon_back.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\icon_gray_info.png" />
-    <ImageAsset Include="Assets.xcassets\icon_back.imageset\icon_back-1.png" />
     <ImageAsset Include="Assets.xcassets\icon_document.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_document.imageset\icon_document.png" />
-    <ImageAsset Include="Assets.xcassets\icon_checked.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\icon_checked.imageset\icon_checked.png" />
     <ImageAsset Include="Assets.xcassets\icon_unchecked.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_unchecked.imageset\icon_unchecked.png" />
-    <ImageAsset Include="Assets.xcassets\icons8_document.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\icons8_document.imageset\icons8_document.png" />
     <ImageAsset Include="Assets.xcassets\icon_eye.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_eye.imageset\icon_eye.png" />
+    <ImageAsset Include="Assets.xcassets\icon_back.imageset\icon_back.png" />
+    <ImageAsset Include="Assets.xcassets\splash_logo.imageset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\splash_logo.imageset\splash_logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -232,6 +230,9 @@
     </PackageReference>
     <PackageReference Include="Acr.UserDialogs">
       <Version>7.1.0.514</Version>
+    </PackageReference>
+    <PackageReference Include="MimeTypesMap">
+      <Version>1.0.8</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
@@ -265,6 +266,8 @@
     <Folder Include="Assets.xcassets\icon_unchecked.imageset\" />
     <Folder Include="Assets.xcassets\icons8_document.imageset\" />
     <Folder Include="Assets.xcassets\icon_eye.imageset\" />
+    <Folder Include="Assets.xcassets\icon_checked.imageset\" />
+    <Folder Include="Assets.xcassets\splash_logo.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References" />
@@ -335,5 +338,72 @@
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>
       <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\icon_eye.png" />
+    <BundleResource Include="Resources\icons8_document.png" />
+    <BundleResource Include="Resources\icon_unchecked.png" />
+    <BundleResource Include="Resources\icon_checked.png" />
+    <BundleResource Include="Resources\icon_document.png" />
+    <BundleResource Include="Resources\splash_logo.png" />
+    <BundleResource Include="Resources\language_de.jpg" />
+    <BundleResource Include="Resources\icon_black_close.png" />
+    <BundleResource Include="Resources\icon_info.png" />
+    <BundleResource Include="Resources\icon_plus.png" />
+    <BundleResource Include="Resources\icon_forword.png" />
+    <BundleResource Include="Resources\splash_screen.xml" />
+    <BundleResource Include="Resources\logo.png" />
+    <BundleResource Include="Resources\icon_minus.png" />
+    <BundleResource Include="Resources\icon_barcode.png" />
+    <BundleResource Include="Resources\icon_menu.png" />
+    <BundleResource Include="Resources\icon_setting.png" />
+    <BundleResource Include="Resources\language_zh.jpg" />
+    <BundleResource Include="Resources\icon_refresh.png" />
+    <BundleResource Include="Resources\icon_gray_info.png" />
+    <BundleResource Include="Resources\language_en.jpg" />
+    <BundleResource Include="Resources\icon_download.png" />
+    <BundleResource Include="Resources\icon_back.png" />
+    <BundleResource Include="Resources\icon_close.png" />
+    <BundleResource Include="Resources\language_ru.jpg" />
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@ namespace mTIM.ViewModels
     public class MainViewModel : BaseViewModel
     {
         public ObservableCollectionRanged<TimTaskModel> SelectedItemList { get; set; }
-        public ObservableCollectionRanged<object> LstValues { get; set; } = new ObservableCollectionRanged<object>();
+        public ObservableCollectionRanged<Value> LstValues { get; set; } = new ObservableCollectionRanged<Value>();
         public ObservableCollectionRanged<FileInfo> LstFiles { get; set; } = new ObservableCollectionRanged<FileInfo>();
 
         public AndroidMessageModel MessageModel { get; set; } = new AndroidMessageModel();
@@ -72,6 +72,13 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isOpenMenuOptions, value);
         }
 
+        private bool isTaskListVisible;
+        public bool IsTaskListVisible
+        {
+            get => isTaskListVisible;
+            set => SetAndRaisePropertyChanged(ref isTaskListVisible, value);
+        }
+
         private bool isValueListVisible;
         public bool IsValueListVisible
         {
@@ -93,8 +100,8 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isEditTextVisible, value);
         }
 
-        private object selectedValue;
-        public object SelectedValue
+        private Value selectedValue = new Value();
+        public Value SelectedValue
         {
             get => selectedValue;
             set => SetAndRaisePropertyChanged(ref selectedValue, value);
@@ -138,6 +145,7 @@ namespace mTIM.ViewModels
             if (values?.Count > 0)
             {
                 IsDocumentListVisible = true;
+                updateTaskListVisibility();
                 LstFiles.AddRange(values);
             }
         }
@@ -159,6 +167,7 @@ namespace mTIM.ViewModels
             if(IsValueListVisible || IsDocumentListVisible || IsEditTextVisible)
             {
                 IsDocumentListVisible = IsValueListVisible = IsEditTextVisible = false;
+                updateTaskListVisibility();
                 return;
             }
             if (previousId >= 0)
@@ -183,7 +192,7 @@ namespace mTIM.ViewModels
         private void openValues(TimTaskModel model)
         {
             LstValues?.Clear();
-            List<object> valuesList = new List<object>();
+            List<Value> valuesList = new List<Value>();
             SelectedModel = model;
             if (SelectedModel != null)
             {
@@ -195,6 +204,7 @@ namespace mTIM.ViewModels
                             if (!string.IsNullOrEmpty(SelectedModel.Range))
                             {
                                 IsValueListVisible = true;
+                                updateTaskListVisibility();
                                 var result = SelectedModel.Range.Split(',', ':', '-');
                                 if (result != null)
                                 {
@@ -205,7 +215,10 @@ namespace mTIM.ViewModels
                                     {
                                         if (result.Length > 0)
                                         {
-                                            valuesList.AddRange(result);
+                                            foreach (var value in result)
+                                            {
+                                                valuesList.Add(new Value() { Data = value });
+                                            }
                                         }
                                     }
                                     else
@@ -213,14 +226,14 @@ namespace mTIM.ViewModels
                                         switch (result.Length)
                                         {
                                             case 1:
-                                                valuesList.Add(Convert.ToInt32(result[0]));
+                                                valuesList.Add(new Value() { Data = result[0] });
                                                 break;
                                             case 2:
                                                 startvalue = Convert.ToInt32(result[0]);
                                                 endValue = Convert.ToInt32(result[1]);
                                                 for (decimal i = startvalue; i <= endValue; i++)
                                                 {
-                                                    valuesList.Add(i);
+                                                    valuesList.Add(new Value() { Data = i });
                                                 }
                                                 break;
                                             case 3:
@@ -229,28 +242,36 @@ namespace mTIM.ViewModels
                                                 splitValue = Convert.ToInt32(result[2]);
                                                 var res = Math.Round(endValue / splitValue);
                                                 int value = (int)(startvalue + res);
-                                                valuesList.Add(startvalue);
+                                                valuesList.Add(new Value() { Data = startvalue });
                                                 for (int i = 1; i < splitValue; i++)
                                                 {
-                                                    valuesList.Add(value * i);
+                                                    valuesList.Add(new Value() { Data = value * i });
                                                 }
 
                                                 break;
                                         }
                                     }
-                                    LstValues.AddRange(valuesList);
                                     if (SelectedModel.Value != null)
-                                        SelectedValue = Convert.ToInt32(SelectedModel.Value);
+                                    {
+                                       var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
+                                        if(item!= null)
+                                        {
+                                            item.BackgroundColor = Color.LightGray;
+                                        }
+                                    }
+                                    LstValues.AddRange(valuesList);
                                 }
                             }
                             else
                             {
                                 InputText = SelectedModel.Value?.ToString(); ;
                                 IsEditTextVisible = true;
+                                updateTaskListVisibility();
                             }
                             break;
                         case "float":
                             IsValueListVisible = true;
+                            updateTaskListVisibility();
                             if (!string.IsNullOrEmpty(SelectedModel.Range))
                             {
                                 var result = SelectedModel.Range.Split(',', ':', '-');
@@ -263,7 +284,10 @@ namespace mTIM.ViewModels
                                     {
                                         if (result.Length > 0)
                                         {
-                                            valuesList.AddRange(result);
+                                            foreach (var value in result)
+                                            {
+                                                valuesList.Add(new Value() { Data = Convert.ToDecimal(value).ToString("0.00") });
+                                            }
                                         }
                                     }
                                     else
@@ -271,14 +295,14 @@ namespace mTIM.ViewModels
                                         switch (result.Length)
                                         {
                                             case 1:
-                                                valuesList.Add(Convert.ToDecimal(result[0]));
+                                                valuesList.Add(new Value() { Data = Convert.ToDecimal(result[0]).ToString("0.00") });
                                                 break;
                                             case 2:
                                                 startvalue = Convert.ToDecimal(result[0]);
                                                 endValue = Convert.ToDecimal(result[1]);
                                                 for (decimal i = startvalue; i <= endValue; i++)
                                                 {
-                                                    valuesList.Add(i.ToString("0.00"));
+                                                    valuesList.Add(new Value() { Data = i.ToString("0.00") });
                                                 }
                                                 break;
                                             case 3:
@@ -287,18 +311,25 @@ namespace mTIM.ViewModels
                                                 splitValue = Convert.ToDecimal(result[2]);
                                                 var res = Math.Round(endValue / splitValue);
                                                 decimal value = (decimal)(startvalue + res);
-                                                valuesList.Add(startvalue.ToString("0.00"));
+                                                valuesList.Add(new Value() { Data = startvalue.ToString("0.00") });
                                                 for (decimal i = 1; i < splitValue; i++)
                                                 {
-                                                    valuesList.Add((value * i).ToString("0.00"));
+                                                    valuesList.Add(new Value() { Data = (value * i).ToString("0.00") });
                                                 }
 
                                                 break;
                                         }
                                     }
-                                    LstValues.AddRange(valuesList);
+
                                     if (SelectedModel.Value != null)
-                                        SelectedValue = Convert.ToDecimal(SelectedModel.Value);
+                                    {
+                                        var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
+                                        if (item != null)
+                                        {
+                                            item.BackgroundColor = Color.LightGray;
+                                        }
+                                    }
+                                    LstValues.AddRange(valuesList);
                                 }
                             }
                             break;
@@ -312,6 +343,7 @@ namespace mTIM.ViewModels
                         case "string":
                             InputText = SelectedModel.Value?.ToString(); ;
                             IsEditTextVisible = true;
+                            updateTaskListVisibility();
                             break;
                         default:
                             break;
@@ -322,10 +354,24 @@ namespace mTIM.ViewModels
 
         public void SelectedValueIndex(int position)
         {
+            SelectedValue = null;
             IsValueListVisible = false;
-            SelectedModel.Value = LstValues[position];
+            SelectedModel.Value = LstValues[position].Data;
             SelectedItemList.Update();
+            updateTaskListVisibility();
             SaveTaskList();
+        }
+
+        private void updateTaskListVisibility()
+        {
+            if (IsValueListVisible || IsDocumentListVisible || IsEditTextVisible)
+            {
+                IsTaskListVisible = false;
+            }
+            else
+            {
+                IsTaskListVisible = true;
+            }
         }
 
         private void updateHeaderTexts()
@@ -377,15 +423,15 @@ namespace mTIM.ViewModels
             IsOpenBarcodeView = true;
             IsScanning = true;
             //#if __ANDROID__
-            //            	            // Initialize the scanner first so it can track the current context
-            //            	            MobileBarcodeScanner.Initialize (Application);
+            //         // Initialize the scanner first so it can track the current context
+            //            MobileBarcodeScanner.Initialize (Application);
             //#endif
-            //var scanner = new ZXing.Mobile.MobileBarcodeScanner();
+            //            var scanner = new ZXing.Mobile.MobileBarcodeScanner();
 
-            //var result = await scanner.Scan();
+            //            var result = await scanner.Scan();
 
-            //HandleResult(result);
-            //await  Navigation.PushModalAsync(new NavigationPage(new BarcodeContentPage()));
+            //            HandleResult(result);
+            //            await Navigation.PushModalAsync(new NavigationPage(new BarcodeContentPage()));
         }
 
         public ICommand CloseBarcodeCommand => new Command(CloseBarcodeCommandExecute);
@@ -437,8 +483,9 @@ namespace mTIM.ViewModels
             headerStrings = new List<string>();
             updateHeaderTexts();
             IsDocumentListVisible = IsValueListVisible = IsEditTextVisible = false;
-             //SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
-             ListBackgroundColor = Color.White;
+            updateTaskListVisibility();
+            //SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
+            ListBackgroundColor = Color.White;
             IsOpenMenuOptions = false;
             IsShowBackButton = false;
             SelectedItemList.Clear();
@@ -482,6 +529,7 @@ namespace mTIM.ViewModels
         private void CancelButtonCommandExecute()
         {
             IsEditTextVisible = false;
+            updateTaskListVisibility();
         }
 
         public ICommand OkButtonCommand => new Command(OkButtonCommandExecute);
@@ -490,6 +538,13 @@ namespace mTIM.ViewModels
             SelectedModel.Value = InputText;
             SelectedItemList.Update();
             IsEditTextVisible = false;
+            updateTaskListVisibility();
         }
+    }
+
+    public class Value
+    {
+        public object Data { get; set; }
+        public Color BackgroundColor { get; set; } = Color.Transparent;
     }
 }

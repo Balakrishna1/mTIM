@@ -54,6 +54,12 @@ namespace mTIM.ViewModels
             StatusSyncTime = GlobalConstants.StatusSyncTime;
         }
 
+        public override void OnAppearing()
+        {
+            TimerHelper.Instance.StartTimer();
+            base.OnAppearing();
+        }
+
         public ICommand SelectedLanguageItemCommand => new Command(SelectedLanguageItemExecute);
 
         private void SelectedLanguageItemExecute(object parameter)

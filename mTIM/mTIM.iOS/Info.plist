@@ -37,12 +37,16 @@
 	<key>UIMainStoryboardFile</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1</string>
+	<string>1.76</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Please allow access to the camera to scan barcodes.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow the Location permission while opening the app.</string>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allow the Location permission while opening the app.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Allow the Location permission while opening the app.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allow the Location permission while opening the app.</string>
 </dict>
 </plist>

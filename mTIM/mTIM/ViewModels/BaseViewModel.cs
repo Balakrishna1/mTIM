@@ -167,7 +167,7 @@ namespace mTIM.ViewModels
         
         public override void OnDisAppearing()
         {
-            TimerHelper.Instance.Dispose();
+            //TimerHelper.Instance.Dispose();
             base.OnDisAppearing();
         }
 
@@ -177,19 +177,6 @@ namespace mTIM.ViewModels
             {
                 await Application.Current.MainPage.DisplayAlert(LabelInfo, message, "Ok");
             });
-        }
-
-        /// <summary>
-        /// This is used to get the baseURL.
-        /// </summary>
-        /// <returns></returns>
-        public string GetAppURL()
-        {
-            var baseUrl = GlobalConstants.AppBaseURL;
-            if (baseUrl.Length > 0 && !baseUrl.EndsWith('/'))
-                baseUrl = baseUrl + '/';
-            baseUrl = baseUrl + "External/" + GlobalConstants.VERSION + "/";
-            return baseUrl;
         }
 
         public virtual void OnSyncCommand(bool isFromAuto = true)
