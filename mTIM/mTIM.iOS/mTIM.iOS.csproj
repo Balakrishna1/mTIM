@@ -197,15 +197,7 @@
     <ImageAsset Include="Assets.xcassets\icon_back.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\icon_gray_info.png" />
-    <ImageAsset Include="Assets.xcassets\icon_document.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\icon_document.imageset\icon_document.png" />
-    <ImageAsset Include="Assets.xcassets\icon_unchecked.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\icon_unchecked.imageset\icon_unchecked.png" />
-    <ImageAsset Include="Assets.xcassets\icon_eye.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\icon_eye.imageset\icon_eye.png" />
     <ImageAsset Include="Assets.xcassets\icon_back.imageset\icon_back.png" />
-    <ImageAsset Include="Assets.xcassets\splash_logo.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\splash_logo.imageset\splash_logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -378,6 +370,16 @@
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>
       <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\icon_eye.png" />
@@ -405,5 +407,6 @@
     <BundleResource Include="Resources\icon_back.png" />
     <BundleResource Include="Resources\icon_close.png" />
     <BundleResource Include="Resources\language_ru.jpg" />
+    <BundleResource Include="Resources\icon_edit.png" />
   </ItemGroup>
 </Project>

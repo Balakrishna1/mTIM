@@ -1,4 +1,5 @@
 ﻿using System;
+using mTIM.Enums;
 using mTIM.Helpers;
 using Xamarin.Forms;
 
@@ -11,7 +12,7 @@ namespace mTIM
             InitializeComponent();
         }
 
-        public static Action<int> ActionArrowClicked;
+        public static Action<int> ActionRightIconClicked;
         public static Action<int> ActionValueClicked;
 
         public static readonly BindableProperty IdProperty =
@@ -19,7 +20,7 @@ namespace mTIM
         public static readonly BindableProperty NameProperty =
             BindableProperty.Create("Name", typeof(string), typeof(ElementViewCell), "Name");
         public static readonly BindableProperty TypeProperty =
-            BindableProperty.Create("Type", typeof(object), typeof(ElementViewCell), "Type");
+            BindableProperty.Create("Type", typeof(DataType), typeof(ElementViewCell), DataType.None);
         public static readonly BindableProperty ColorProperty =
             BindableProperty.Create("Color", typeof(string), typeof(ElementViewCell), "Color");
         public static readonly BindableProperty LevelProperty =
@@ -41,9 +42,9 @@ namespace mTIM
             set { SetValue(NameProperty, value); }
         }
 
-        public object Type
+        public DataType Type
         {
-            get { return (object)GetValue(TypeProperty); }
+            get { return (DataType)GetValue(TypeProperty); }
             set { SetValue(TypeProperty, value); }
         }
 
@@ -84,39 +85,54 @@ namespace mTIM
             }
             else
             {
-                if (Type != null)
+                switch (Type)
                 {
-                    switch (Type)
-                    {
-                        case "int":
-                        case "string":
-                        case "float":
-                            imgInfoButton.IsVisible = false;
-                            lblValue.Text = Value;
-                            stackValue.IsVisible = true;
-                            break;
-                        case "bool":
-                            imgInfoButton.IsVisible = false;
-                            chbValue.Source = ImageSource.FromFile(Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
-                            stackCheckBox.IsVisible = true;
-                            break;
-                        case "Doc":
-                            imgInfoButton.IsVisible = false;
-                            lblDocValue.Text = FileInfoHelper.Instance.GetCount(ID).ToString();
-                            stackDocument.IsVisible = true;
-                            break;
-                        default:
-                            rootView.BackgroundColor = Xamarin.Forms.Color.GhostWhite;
-                            imgInfoButton.IsVisible = true;
-                            absContent.IsVisible = false;
-                            imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
-                            break;
-                    }
-                }
-                else
-                {
-                    absContent.IsVisible = false;
-                    imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
+                    case DataType.Int:
+                    case DataType.String:
+                    case DataType.Float:
+                        stackInfo.IsVisible = false;
+                        lblValue.Text = Value;
+                        stackValue.IsVisible = true;
+                        break;
+                    case DataType.Bool:
+                        stackInfo.IsVisible = false;
+                        chbValue.Source = ImageSource.FromFile(Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
+                        stackCheckBox.IsVisible = true;
+                        break;
+                    case DataType.Doc:
+                        stackInfo.IsVisible = false;
+                        lblDocValue.Text = FileInfoHelper.Instance.GetCount(ID).ToString();
+                        stackDocument.IsVisible = true;
+                        break;
+                    case DataType.Prjladen:
+                    case DataType.Prjladen2:
+                        stackInfo.IsVisible = true;
+                        absContent.IsVisible = false;
+                        imgInfoButton.IsEnabled = true;
+                        imgInfoButton.Source = ImageSource.FromFile("icon_download.png");
+                        imgInfoButton.Clicked -= ImgInfoButton_Clicked;
+                        imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                        break;
+                    case DataType.Aktion:
+                    case DataType.Aktion2:
+                        stackInfo.IsVisible = true;
+                        absContent.IsVisible = false;
+                        lblTime.Text = Value;
+                        imgInfoButton.IsEnabled = true;
+                        imgInfoButton.Source = ImageSource.FromFile("icon_edit.png");
+                        imgInfoButton.Clicked -= ImgInfoButton_Clicked;
+                        imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                        break;
+                    case DataType.None:
+                    case DataType.Referenz:
+                    case DataType.Count:
+                    default:
+                        rootView.BackgroundColor = Xamarin.Forms.Color.GhostWhite;
+                        stackInfo.IsVisible = true;
+                        absContent.IsVisible = false;
+                        imgInfoButton.IsEnabled = false;
+                        imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
+                        break;
                 }
             }
         }
@@ -128,7 +144,7 @@ namespace mTIM
 
         private void ImgInfoButton_Clicked(object sender, EventArgs e)
         {
-            ActionArrowClicked?.Invoke(ID);
+            ActionRightIconClicked?.Invoke(ID);
         }
 
         void OnCheckBoxTapped(object sender, EventArgs e)

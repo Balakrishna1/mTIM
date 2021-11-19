@@ -1,4 +1,5 @@
 ﻿using System;
+using mTIM.Enums;
 using Newtonsoft.Json;
 
 namespace mTIM.Models
@@ -30,7 +31,7 @@ namespace mTIM.Models
         public bool SortNrSpecified { get; set; }
         public bool SplitGraphic { get; set; }
         public bool SplitGraphicSpecified { get; set; }
-        public object Type { get; set; }
+        public DataType Type { get; set; }
         public object Value { get; set; }
 
         [JsonIgnore]

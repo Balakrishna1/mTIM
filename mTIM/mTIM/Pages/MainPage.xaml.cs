@@ -23,6 +23,7 @@ namespace mTIM
         protected UrhoApp App => glBuilding.App;
         protected WorldInputHandler inputs;
         MainViewModel ViewModel;
+        public const int ListWidthInLandscape = 255;
         public MainPage()
         {
             InitializeComponent();
@@ -38,8 +39,8 @@ namespace mTIM
             customCell.SetBinding(ElementViewCell.LevelProperty, "Level");
             customCell.SetBinding(ElementViewCell.ValueProperty, "Value");
             customCell.SetBinding(ElementViewCell.HasChaildsProperty, "HasChailds");
-            ElementViewCell.ActionArrowClicked -= ArrowClicked;
-            ElementViewCell.ActionArrowClicked += ArrowClicked;
+            ElementViewCell.ActionRightIconClicked -= RightIconClicked;
+            ElementViewCell.ActionRightIconClicked += RightIconClicked;
             ElementViewCell.ActionValueClicked -= ValueClicked;
             ElementViewCell.ActionValueClicked += ValueClicked;
             listView.SelectionMode = ListViewSelectionMode.Single;
@@ -115,7 +116,7 @@ namespace mTIM
             ViewModel.SelectedValueIndex(e.SelectedItemIndex);
         }
 
-        private void ArrowClicked(int id)
+        private void RightIconClicked(int id)
         {
             var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
             if (item != null)
@@ -257,9 +258,9 @@ namespace mTIM
                 stackHeader.FlowDirection = FlowDirection.RightToLeft;
                 stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
                 stackList.Orientation = StackOrientation.Horizontal;
-                listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = 250;
+                listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = ListWidthInLandscape;
                 listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
-                glBuilding.WidthRequest = width - 250;
+                glBuilding.WidthRequest = width - ListWidthInLandscape;
                 glBuilding.HeightRequest = height - frameHeader.Height;
                 loadUrhoView();
             }

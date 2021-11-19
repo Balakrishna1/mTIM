@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+using mTIM.Enums;
 using mTIM.Helpers;
 using mTIM.Models;
 using Newtonsoft.Json;
@@ -100,20 +102,13 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isEditTextVisible, value);
         }
 
-        private Value selectedValue = new Value();
-        public Value SelectedValue
-        {
-            get => selectedValue;
-            set => SetAndRaisePropertyChanged(ref selectedValue, value);
-        }
-
         List<string> headerStrings = new List<string>();
         private int previousId;
         public void SelectedItemIndex(int position)
         {
             if (position >= 0)
             {
-                ListBackgroundColor = GlobalConstants.IsLandscape? Color.White: Color.DimGray;
+                ListBackgroundColor = GlobalConstants.IsLandscape ? Color.White : Color.DimGray;
                 var selectedItem = SelectedItemList[position];
                 if (selectedItem != null && selectedItem.HasChailds)
                 {
@@ -123,7 +118,11 @@ namespace mTIM.ViewModels
                     headerStrings.Add(selectedItem.Name);
                     updateHeaderTexts();
                     SelectedItemList.Clear();
-                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedItem.Level+1) && x.Parent.Equals(selectedItem.Id)));
+                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedItem.Level + 1) && x.Parent.Equals(selectedItem.Id)));
+                }
+                else
+                {
+                    RightIconCommand(selectedItem);
                 }
             }
         }
@@ -196,165 +195,148 @@ namespace mTIM.ViewModels
             SelectedModel = model;
             if (SelectedModel != null)
             {
-                if (SelectedModel.Type != null)
+                switch (SelectedModel.Type)
                 {
-                    switch (SelectedModel.Type)
-                    {
-                        case "int":
-                            if (!string.IsNullOrEmpty(SelectedModel.Range))
-                            {
-                                IsValueListVisible = true;
-                                updateTaskListVisibility();
-                                var result = SelectedModel.Range.Split(',', ':', '-');
-                                if (result != null)
-                                {
-                                    decimal startvalue;
-                                    decimal endValue;
-                                    int splitValue;
-                                    if (SelectedModel.Range.Contains(","))
-                                    {
-                                        if (result.Length > 0)
-                                        {
-                                            foreach (var value in result)
-                                            {
-                                                valuesList.Add(new Value() { Data = value });
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        switch (result.Length)
-                                        {
-                                            case 1:
-                                                valuesList.Add(new Value() { Data = result[0] });
-                                                break;
-                                            case 2:
-                                                startvalue = Convert.ToInt32(result[0]);
-                                                endValue = Convert.ToInt32(result[1]);
-                                                for (decimal i = startvalue; i <= endValue; i++)
-                                                {
-                                                    valuesList.Add(new Value() { Data = i });
-                                                }
-                                                break;
-                                            case 3:
-                                                startvalue = Convert.ToDecimal(result[0]);
-                                                endValue = Convert.ToDecimal(result[1]);
-                                                splitValue = Convert.ToInt32(result[2]);
-                                                var res = Math.Round(endValue / splitValue);
-                                                int value = (int)(startvalue + res);
-                                                valuesList.Add(new Value() { Data = startvalue });
-                                                for (int i = 1; i < splitValue; i++)
-                                                {
-                                                    valuesList.Add(new Value() { Data = value * i });
-                                                }
-
-                                                break;
-                                        }
-                                    }
-                                    if (SelectedModel.Value != null)
-                                    {
-                                       var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
-                                        if(item!= null)
-                                        {
-                                            item.BackgroundColor = Color.LightGray;
-                                        }
-                                    }
-                                    LstValues.AddRange(valuesList);
-                                }
-                            }
-                            else
-                            {
-                                InputText = SelectedModel.Value?.ToString(); ;
-                                IsEditTextVisible = true;
-                                updateTaskListVisibility();
-                            }
-                            break;
-                        case "float":
+                    case DataType.Int:
+                        if (!string.IsNullOrEmpty(SelectedModel.Range))
+                        {
                             IsValueListVisible = true;
                             updateTaskListVisibility();
-                            if (!string.IsNullOrEmpty(SelectedModel.Range))
+                            string v = SelectedModel.Range;
+                            int step = 1;
+                            int indexStep = v.IndexOf(':');
+                            if (indexStep == -1)
+                                indexStep = v.IndexOf('|');
+                            if (indexStep != -1)
                             {
-                                var result = SelectedModel.Range.Split(',', ':', '-');
-                                if (result != null)
+                                string stepString = v.Substring(indexStep + 1);
+                                v = v.Substring(0, indexStep);
+                                int.TryParse(stepString, out step);
+                            }
+                            Debug.WriteLine(step <= 0 ? "Step has to be greater than 0!" : "");
+                            int indexTo = v.IndexOf('-');
+                            if (indexTo != -1)
+                            {
+                                string fromString = v.Substring(0, indexTo);
+                                string toString = v.Substring(indexTo + 1);
+                                int valueFrom = 0;
+                                int.TryParse(fromString, out valueFrom);
+
+                                int valueTo = valueFrom;
+                                int.TryParse(toString, out valueTo);
+                                Debug.WriteLine(valueFrom > valueTo ? "To value is smaller than from value" : "");
+
+                                for (int i = valueFrom; i <= valueTo; i += step)
+                                    valuesList.Add(new Value() { Data = i });
+                            }
+                            if (SelectedModel.Range.Contains(","))
+                            {
+                                var result = SelectedModel.Range.Split(',');
+                                if (result.Length > 0)
                                 {
-                                    decimal startvalue;
-                                    decimal endValue;
-                                    decimal splitValue;
-                                    if (SelectedModel.Range.Contains(","))
+                                    foreach (var value in result)
                                     {
-                                        if (result.Length > 0)
-                                        {
-                                            foreach (var value in result)
-                                            {
-                                                valuesList.Add(new Value() { Data = Convert.ToDecimal(value).ToString("0.00") });
-                                            }
-                                        }
+                                        valuesList.Add(new Value() { Data = value });
                                     }
-                                    else
-                                    {
-                                        switch (result.Length)
-                                        {
-                                            case 1:
-                                                valuesList.Add(new Value() { Data = Convert.ToDecimal(result[0]).ToString("0.00") });
-                                                break;
-                                            case 2:
-                                                startvalue = Convert.ToDecimal(result[0]);
-                                                endValue = Convert.ToDecimal(result[1]);
-                                                for (decimal i = startvalue; i <= endValue; i++)
-                                                {
-                                                    valuesList.Add(new Value() { Data = i.ToString("0.00") });
-                                                }
-                                                break;
-                                            case 3:
-                                                startvalue = Convert.ToDecimal(result[0]);
-                                                endValue = Convert.ToDecimal(result[1]);
-                                                splitValue = Convert.ToDecimal(result[2]);
-                                                var res = Math.Round(endValue / splitValue);
-                                                decimal value = (decimal)(startvalue + res);
-                                                valuesList.Add(new Value() { Data = startvalue.ToString("0.00") });
-                                                for (decimal i = 1; i < splitValue; i++)
-                                                {
-                                                    valuesList.Add(new Value() { Data = (value * i).ToString("0.00") });
-                                                }
-
-                                                break;
-                                        }
-                                    }
-
-                                    if (SelectedModel.Value != null)
-                                    {
-                                        var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
-                                        if (item != null)
-                                        {
-                                            item.BackgroundColor = Color.LightGray;
-                                        }
-                                    }
-                                    LstValues.AddRange(valuesList);
                                 }
                             }
-                            break;
-                        case "bool":
-                            SelectedModel.Value = !Convert.ToBoolean(SelectedModel.Value);
-                            SelectedItemList.Update();
-                            break;
-                        case "Doc":
-                            SelectedDocumentItem(SelectedModel.Id);
-                            break;
-                        case "string":
+                            if (SelectedModel.Value != null)
+                            {
+                                var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
+                                if (item != null)
+                                {
+                                    item.BackgroundColor = Color.LightGray;
+                                }
+                            }
+                            LstValues.AddRange(valuesList);
+                        }
+                        else
+                        {
                             InputText = SelectedModel.Value?.ToString(); ;
                             IsEditTextVisible = true;
                             updateTaskListVisibility();
-                            break;
-                        default:
-                            break;
-                    }
+                        }
+                        break;
+                    case DataType.Float:
+                        if (!string.IsNullOrEmpty(SelectedModel.Range))
+                        {
+                            IsValueListVisible = true;
+                            updateTaskListVisibility();
+                            string v = SelectedModel.Range;
+                            float step = 1;
+                            int indexStep = v.IndexOf(':');
+                            if (indexStep == -1)
+                                indexStep = v.IndexOf('|');
+                            if (indexStep != -1)
+                            {
+                                string stepString = v.Substring(indexStep + 1);
+                                v = v.Substring(0, indexStep);
+                                float.TryParse(stepString, out step);
+                            }
+                            Debug.WriteLine(step <= 0 ? "Step has to be greater than 0!" : "");
+                            int indexTo = v.IndexOf('-');
+                            if (indexTo != -1)
+                            {
+                                string fromString = v.Substring(0, indexTo);
+                                string toString = v.Substring(indexTo + 1);
+                                float valueFrom = 0;
+                                float.TryParse(fromString, out valueFrom);
+
+                                float valueTo = valueFrom;
+                                float.TryParse(toString, out valueTo);
+                                Debug.WriteLine(valueFrom > valueTo ? "To value is smaller than from value" : "");
+
+                                for (float i = valueFrom; i <= valueTo; i += step)
+                                    valuesList.Add(new Value() { Data = Convert.ToDecimal(i).ToString("0.00") });
+                            }
+                            if (SelectedModel.Range.Contains(","))
+                            {
+                                var result = SelectedModel.Range.Split(',');
+                                if (result.Length > 0)
+                                {
+                                    foreach (var value in result)
+                                    {
+                                        valuesList.Add(new Value() { Data = Convert.ToDecimal(value).ToString("0.00") });
+                                    }
+                                }
+                            }
+                            if (SelectedModel.Value != null)
+                            {
+                                var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
+                                if (item != null)
+                                {
+                                    item.BackgroundColor = Color.LightGray;
+                                }
+                            }
+                            LstValues.AddRange(valuesList);
+                        }
+                        else
+                        {
+                            InputText = SelectedModel.Value?.ToString(); ;
+                            IsEditTextVisible = true;
+                            updateTaskListVisibility();
+                        }
+                        break;
+                    case DataType.Bool:
+                        SelectedModel.Value = !Convert.ToBoolean(SelectedModel.Value);
+                        SelectedItemList.Update();
+                        break;
+                    case DataType.Doc:
+                        SelectedDocumentItem(SelectedModel.Id);
+                        break;
+                    case DataType.String:
+                        InputText = SelectedModel.Value?.ToString(); ;
+                        IsEditTextVisible = true;
+                        updateTaskListVisibility();
+                        break;
+                    default:
+                        break;
                 }
             }
         }
 
         public void SelectedValueIndex(int position)
         {
-            SelectedValue = null;
             IsValueListVisible = false;
             SelectedModel.Value = LstValues[position].Data;
             SelectedItemList.Update();
@@ -502,6 +484,7 @@ namespace mTIM.ViewModels
             else
             {
                 string json = await FileHelper.ReadTextAsync(GlobalConstants.TASKLIST_FILE);
+                Debug.WriteLine("Task List: " + json);
                 var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
                 TotalListList.Clear();
                 if (list != null)
@@ -523,6 +506,27 @@ namespace mTIM.ViewModels
         private void MenuNewBuildItemCommandExecute()
         {
             IsOpenMenuOptions = false;
+        }
+        
+        private async void RightIconCommand(TimTaskModel item)
+        {
+            if (item != null)
+            {
+                switch(item.Type)
+                {
+                    case DataType.Prjladen:
+                    case DataType.Prjladen2:
+                        await Application.Current.MainPage.DisplayAlert("Load task list?", item.Value.ToString(), "Ok", "Cancel");
+                        break;
+                    case DataType.Aktion:
+                    case DataType.Aktion2:
+                        item.Value= DateTime.Now.ToString("HH:mm:ss");
+                        SelectedItemList?.Update();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         public ICommand CancelButtonCommand => new Command(CancelButtonCommandExecute);

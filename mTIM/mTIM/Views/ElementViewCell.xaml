@@ -15,17 +15,20 @@
 		    </Grid.RowDefinitions>
 		    <Grid.ColumnDefinitions>
 			    <ColumnDefinition Width="*"></ColumnDefinition>
-			    <ColumnDefinition Width="40"></ColumnDefinition>
+			    <ColumnDefinition Width="125"></ColumnDefinition>
 		    </Grid.ColumnDefinitions>
           <Label x:Name="lblName" TextColor="Black" Padding="10,0,10,0" HorizontalOptions="StartAndExpand"  VerticalOptions="Center" Grid.Row="0" Grid.Column="0"  Text="sample text" FontSize="Medium"/>
-		  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" Source="icon_info" Grid.Row="0" Grid.Column="1" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="30" HeightRequest="30"  Margin="0,0,15,0"/>
-		  <StackLayout x:Name="absContent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Grid.Row="1">
+		  <StackLayout x:Name="stackInfo" Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+			  <Label x:Name="lblTime" VerticalOptions="Center" TextColor="Black" HorizontalOptions="EndAndExpand" FontSize="Small" Margin="0,0,15,0"/>
+			  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" Source="icon_info" HorizontalOptions="EndAndExpand" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="30" HeightRequest="30"  Margin="0,0,15,0"/>
+		  </StackLayout>
+		  <StackLayout x:Name="absContent" HorizontalOptions="EndAndExpand" VerticalOptions="FillAndExpand" Padding="0,0,15,0" Grid.Row="1" Grid.Column="1">
 			  <StackLayout x:Name="stackValue" Margin="0,0,0,10" BackgroundColor="LightGray" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
 				<StackLayout.GestureRecognizers>
 					<TapGestureRecognizer Tapped="OnTapped"/>
 				</StackLayout.GestureRecognizers>
 				<Label x:Name="lblValue" HeightRequest="30" MaxLines="1" WidthRequest="80" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
-				<Image Source="icon_document" VerticalOptions="Center" HorizontalOptions="End"/>
+				<Image Source="icon_document" VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="0,0,10,0"/>
 			  </StackLayout>
 			  <StackLayout x:Name="stackCheckBox" Margin="0,0,0,10" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
 				  <StackLayout.GestureRecognizers>
