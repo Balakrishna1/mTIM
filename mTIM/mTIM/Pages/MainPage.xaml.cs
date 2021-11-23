@@ -29,7 +29,6 @@ namespace mTIM
             InitializeComponent();
             ViewModel = new MainViewModel(Navigation);
             BindingContext = ViewModel;
-            BarcodeView.IsVisible = false;
             BarcodeView.SetBindingViewModel(ViewModel);
             var customCell = new DataTemplate(typeof(ElementViewCell));
             customCell.SetBinding(ElementViewCell.IdProperty, "Id");
@@ -43,6 +42,8 @@ namespace mTIM
             ElementViewCell.ActionRightIconClicked += RightIconClicked;
             ElementViewCell.ActionValueClicked -= ValueClicked;
             ElementViewCell.ActionValueClicked += ValueClicked;
+            ElementViewCell.ActionItemClicked -= ItemClicked;
+            ElementViewCell.ActionItemClicked += ItemClicked;
             listView.SelectionMode = ListViewSelectionMode.Single;
             listView.ItemTemplate = customCell;
             listView.ItemsSource = ViewModel.SelectedItemList;
@@ -62,33 +63,13 @@ namespace mTIM
                     updateInfo();
                 }
             });
-            listView.ItemSelected -= ListView_ItemSelected;
-            listView.ItemSelected += ListView_ItemSelected;
-            lstValues.ItemSelected -= LstValues_ItemSelected;
-            lstValues.ItemSelected += LstValues_ItemSelected;
-            lstDocuments.ItemSelected -= LstDocuments_ItemSelected;
-            lstDocuments.ItemSelected += LstDocuments_ItemSelected;
-            //lstValues.ItemTapped += LstValues_ItemTapped;
-            //lstDocuments.ItemTapped += LstDocuments_ItemTapped;
         }
 
-        private void LstDocuments_ItemTapped(object sender, ItemTappedEventArgs e)
+        private void ItemClicked(int id)
         {
-            if (e.ItemIndex < 0)
-            {
-                return;
-            }
-            lstDocuments.SelectedItem = null;
-            ViewModel.SelectedDocument(e.ItemIndex);
-        }
-
-        private void LstValues_ItemTapped(object sender, ItemTappedEventArgs e)
-        {
-            if (e.ItemIndex < 0)
-            {
-                return;
-            }
-            ViewModel.SelectedValueIndex(e.ItemIndex);
+            var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            if (item != null)
+                ViewModel.SelectedItemIndex(ViewModel.SelectedItemList.IndexOf(item));
         }
 
         private void LstValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -96,24 +77,18 @@ namespace mTIM
             lstValues.SelectedItem = null;
         }
 
-        private void LstDocuments_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        void OnDocumetTapped(object sender, EventArgs e)
         {
-            if (e.SelectedItemIndex < 0)
-            {
-                return;
-            }
-            lstDocuments.SelectedItem = null;
-            ViewModel.SelectedDocument(e.SelectedItemIndex);
+            TappedEventArgs itemArgs = e as TappedEventArgs;
+            var selectedItem = itemArgs.Parameter as FileInfo;
+            ViewModel.SelectedDocument(selectedItem);
         }
 
-
-        private void LstValues_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        void OnValueTapped(object sender, EventArgs e)
         {
-            if (e.SelectedItemIndex < 0)
-            {
-                return;
-            }
-            ViewModel.SelectedValueIndex(e.SelectedItemIndex);
+            TappedEventArgs itemArgs = e as TappedEventArgs;
+            var selectedItem = itemArgs.Parameter as Value;
+            ViewModel.SelectedValue(selectedItem);
         }
 
         private void RightIconClicked(int id)
@@ -200,19 +175,6 @@ namespace mTIM
             listView.SelectedItem = null;
         }
 
-        private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            if (!GlobalConstants.IsLandscape)
-            {
-                if (e.SelectedItemIndex < 0)
-                {
-                    return;
-                }
-                ViewModel.SelectedItemIndex(e.SelectedItemIndex);
-            }
-            loadTexturedMesh();
-        }
-
         private double width = 0;
         private double height = 0;
         protected override void OnSizeAllocated(double width, double height)
@@ -224,10 +186,10 @@ namespace mTIM
                 this.height = height;
                 //reconfigure layout
             }
-            if (!BarcodeView.IsInitiated)
-            {
-                BarcodeView.Init(height, width);
-            }
+            BarcodeView.Init(height, width);
+            BarcodeView.IsVisible = true;
+            ViewModel.IsScanning = false;
+            ViewModel.IsOpenBarcodeView = false;
             if (!CustomBottomSheet.IsInitiated)
             {
                 CustomBottomSheet.Init(height, width);
@@ -236,7 +198,6 @@ namespace mTIM
             if (height > width)
             {
                 //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
-                ViewModel.IsOpenBarcodeView = false;
                 GlobalConstants.IsLandscape = false;
                 stackHeader.Orientation = StackOrientation.Vertical;
                 stackHeader.HorizontalOptions = LayoutOptions.EndAndExpand;
@@ -250,7 +211,6 @@ namespace mTIM
             else
             {
                 //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
-                ViewModel.IsOpenBarcodeView = false;
                 GlobalConstants.IsLandscape = true;
                 glBuilding.IsVisible = true;
                 stackHeader.Orientation = StackOrientation.Horizontal;
@@ -262,7 +222,7 @@ namespace mTIM
                 listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
                 glBuilding.WidthRequest = width - ListWidthInLandscape;
                 glBuilding.HeightRequest = height - frameHeader.Height;
-                loadUrhoView();
+                //loadUrhoView();
             }
         }
 
@@ -275,13 +235,6 @@ namespace mTIM
                 glBuilding.HeightRequest = height - frameHeader.Height;
             }
         }
-
-        protected override void OnBindingContextChanged()
-        {
-            base.OnBindingContextChanged();
-        }
-
-
 
         protected override void OnAppearing()
         {

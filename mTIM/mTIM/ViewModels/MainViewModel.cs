@@ -132,7 +132,7 @@ namespace mTIM.ViewModels
             openValues(model);
         }
 
-        public void SelectedDocumentItem(int id)
+        private void SelectedDocumentItem(int id)
         {
             openDocumentValues(id);
         }
@@ -149,18 +149,10 @@ namespace mTIM.ViewModels
             }
         }
 
-        public void SelectedDocument(int position)
-        {
-            var file = LstFiles[position];
-            if(file!= null)
-            {
-                Webservice.ViewModel = this;
-                Webservice.OpenPdfFile(Math.Abs(file.FileID), file.FileIDSpecified);
-            }
-        }
-
+        /// <summary>
+        /// This is used to navigate back to the previsous sate.
+        /// </summary>
         public ICommand BackButtonCommand => new Command(BackButtonCommandExecute);
-
         private void BackButtonCommandExecute()
         {
             if(IsValueListVisible || IsDocumentListVisible || IsEditTextVisible)
@@ -187,6 +179,9 @@ namespace mTIM.ViewModels
             //RefreshData();
         }
 
+        /// <summary>
+        /// This is used to show the respective data based on selection.
+        /// </summary>
         TimTaskModel SelectedModel = new TimTaskModel();
         private void openValues(TimTaskModel model)
         {
@@ -308,7 +303,7 @@ namespace mTIM.ViewModels
                                     item.BackgroundColor = Color.LightGray;
                                 }
                             }
-                            LstValues.AddRange(valuesList);
+                             LstValues.AddRange(valuesList);
                         }
                         else
                         {
@@ -335,13 +330,32 @@ namespace mTIM.ViewModels
             }
         }
 
-        public void SelectedValueIndex(int position)
+        /// <summary>
+        /// This is used to update the selected value in main list.
+        /// </summary>
+        public void SelectedValue(Value item)
         {
             IsValueListVisible = false;
-            SelectedModel.Value = LstValues[position].Data;
-            SelectedItemList.Update();
+            if (item != null)
+            {
+                SelectedModel.Value = item.Data;
+                SelectedItemList.Update();
+            }
             updateTaskListVisibility();
             SaveTaskList();
+        }
+
+
+        /// <summary>
+        /// This is used to show the selected document.
+        /// </summary>
+        public void SelectedDocument(FileInfo file)
+        {
+            if (file != null)
+            {
+                Webservice.ViewModel = this;
+                Webservice.OpenPdfFile(Math.Abs(file.FileID), file.FileIDSpecified);
+            }
         }
 
         private void updateTaskListVisibility()
@@ -516,7 +530,7 @@ namespace mTIM.ViewModels
                 {
                     case DataType.Prjladen:
                     case DataType.Prjladen2:
-                        await Application.Current.MainPage.DisplayAlert("Load task list?", item.Value.ToString(), "Ok", "Cancel");
+                        await Application.Current.MainPage.DisplayAlert("Load task list?", item.Value?.ToString(), "Ok", "Cancel");
                         break;
                     case DataType.Aktion:
                     case DataType.Aktion2:

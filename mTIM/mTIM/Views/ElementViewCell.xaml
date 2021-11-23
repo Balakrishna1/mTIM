@@ -5,6 +5,9 @@
              x:Class="mTIM.ElementViewCell">
   <ViewCell.View>
 	  <StackLayout x:Name="rootView">
+	  <StackLayout.GestureRecognizers>
+		 <TapGestureRecognizer Tapped="OnItemTapped" NumberOfTapsRequired="1"/>
+	  </StackLayout.GestureRecognizers>
       <Grid>
 		  <!--<Grid.GestureRecognizers>
 			<TapGestureRecognizer Tapped="OnItemTapped"/>

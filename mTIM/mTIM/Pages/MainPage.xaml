@@ -4,6 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:mTIM"
+             xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              ios:Page.UseSafeArea="True"
              mc:Ignorable="d"
@@ -41,7 +42,14 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout  BackgroundColor="{Binding BackgroundColor}" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                            <StackLayout x:Name="rootValueCell" BackgroundColor="{Binding BackgroundColor}" Orientation="Horizontal" HorizontalOptions="FillAndExpand"        
+                                touch:TouchEff.PressedBackgroundColor="LightGray"
+                                touch:TouchEff.PressedAnimationDuration="100"
+                                touch:TouchEff.RegularAnimationDuration="100"
+                                touch:TouchEff.RippleCount="2">
+				                <StackLayout.GestureRecognizers>
+					                <TapGestureRecognizer Tapped="OnValueTapped" CommandParameter="{Binding .}" NumberOfTapsRequired="1"/>
+				                </StackLayout.GestureRecognizers>
                                 <Label Text="{Binding Data}" Padding="0,20,0,20" FontSize="Medium" TextColor="Black" FontAttributes="Bold"  VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
                             </StackLayout>
                         </ViewCell>
@@ -52,9 +60,17 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                            <StackLayout x:Name="rootDocumentCell" Orientation="Horizontal" HorizontalOptions="FillAndExpand" 
+			                    touch:TouchEff.RegularBackgroundColor="White"
+                                touch:TouchEff.PressedBackgroundColor="LightGray"
+                                touch:TouchEff.PressedAnimationDuration="100"
+                                touch:TouchEff.RegularAnimationDuration="100"
+                                touch:TouchEff.RippleCount="2">
+				                <StackLayout.GestureRecognizers>
+					                <TapGestureRecognizer Tapped="OnDocumetTapped" CommandParameter="{Binding .}" NumberOfTapsRequired="1"/>
+				                </StackLayout.GestureRecognizers>
                                 <Label Text="{Binding Comment}" Padding="20,20,0,20" FontSize="Medium" TextColor="Black" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
-                                <Image Source="icon_eye" HeightRequest="35" WidthRequest="35" Margin="0,0,16,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
+                                <Image Source="icon_eye" Aspect="AspectFit" HeightRequest="35" WidthRequest="35" Margin="0,0,16,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>

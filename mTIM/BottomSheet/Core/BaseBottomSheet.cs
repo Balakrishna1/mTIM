@@ -192,6 +192,10 @@ namespace BottomSheet.Core
 
         public void Init(double parentHeight, double parentWidh)
         {
+            if (IsInitiated && ParentHeight == parentHeight)
+            {
+                return;
+            }
             ParentHeight = parentHeight;
             ParentWidh = parentWidh;
 
