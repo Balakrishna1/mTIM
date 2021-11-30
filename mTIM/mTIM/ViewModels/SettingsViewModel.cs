@@ -20,9 +20,9 @@ namespace mTIM.ViewModels
             get => entryAppURL;
             set
             {
-                if(GlobalConstants.AppBaseURL != entryAppURL)
+                if(GlobalConstants.AppBaseURL != value)
                 {
-                    GlobalConstants.AppBaseURL = entryAppURL;
+                    GlobalConstants.AppBaseURL = value;
                     SaveSettings();
                 }
                 SetAndRaisePropertyChanged(ref entryAppURL, value);

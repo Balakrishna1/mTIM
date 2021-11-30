@@ -7,7 +7,7 @@ namespace mTIM.Helpers
     {
         public static string SelectedLanguage { get; set; } = string.Empty;
         public static int StatusSyncTime { get; set; }
-        public static string AppBaseURL { get; set; }
+        public static string AppBaseURL { get; set; } = string.Empty;
         public static Location LocationDetails { get; set; }
         public static string VersionNumber { get; set; }
         public static string VersionCode { get; set; }

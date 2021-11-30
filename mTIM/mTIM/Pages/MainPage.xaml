@@ -27,7 +27,7 @@
                 <ImageButton Source="logo" Padding="5" IsEnabled="False"  BackgroundColor="#E8E8E8" Aspect="AspectFit" HeightRequest="40" WidthRequest="140" HorizontalOptions="EndAndExpand"/>
                 <StackLayout x:Name="stackMenuOptions" BackgroundColor="#E8E8E8" Orientation="Horizontal" HorizontalOptions="EndAndExpand">
                     <RelativeLayout x:Name="btnMessage" IsVisible="{Binding IsNotificationVisible}" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"
-                        touch:TouchEff.PressedBackgroundColor="LightGray"
+                        touch:TouchEff.PressedBackgroundColor="#E8E8E8"
                         touch:TouchEff.PressedAnimationDuration="100"
                         touch:TouchEff.RegularAnimationDuration="100"
                         touch:TouchEff.RippleCount="2"
@@ -35,17 +35,16 @@
                         <Image Source="icon_message" IsVisible="true" Aspect="Fill"/>
                         <Label Text="{Binding NotificationCount}" TextColor="White" FontAttributes="Bold" FontSize="Default" WidthRequest="40" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" Padding="0,5,0,0"/>
                      </RelativeLayout>
+                    <!--<Grid x:Name="btnMessage" IsVisible="{Binding IsNotificationVisible}" HeightRequest="40" WidthRequest="40">
+                        <ImageButton Grid.Row="0" Command="{Binding MessageClickCommand}" BackgroundColor="#E8E8E8" Source="icon_message" Aspect="AspectFill"/>
+                        <Label Grid.Row="0" IsEnabled="False" Text="{Binding NotificationCount}" TextColor="White" HeightRequest="10" WidthRequest="10" FontAttributes="Bold" FontSize="Default" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" Padding="0,5,0,0" />
+                    </Grid>-->
                     <ImageButton x:Name="btnBarcode" BackgroundColor="#E8E8E8" Source="icon_barcode" Padding="3" HeightRequest="40" WidthRequest="40" Aspect="AspectFill" VerticalOptions="Center"
                     Command="{Binding BarcodeClickCommand}"/>
-                   <Grid x:Name="btnMenu" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"
-                        touch:TouchEff.PressedBackgroundColor="LightGray"
-                        touch:TouchEff.PressedAnimationDuration="100"
-                        touch:TouchEff.RegularAnimationDuration="100"
-                        touch:TouchEff.RippleCount="2"
-                        touch:TouchEff.Command="{Binding MenuClickCommand}">
-                        <Image Grid.Row="0" BackgroundColor="#E8E8E8" Source="icon_menu" Margin="5,0,5,0" Aspect="AspectFill"/>
-                        <Image x:Name="imgBadge" Grid.Row="0" IsVisible="{Binding IsRefreshBadgeVisible}" Source="badge" HeightRequest="20" WidthRequest="20" VerticalOptions="Start" HorizontalOptions="End"/>
-                    </Grid>
+                   <Grid x:Name="btnMenu" HeightRequest="40" WidthRequest="40" VerticalOptions="Center">
+                        <ImageButton Grid.Row="0" Command="{Binding MenuClickCommand}" BackgroundColor="#E8E8E8" Source="icon_menu" Margin="5,0,5,0" Aspect="AspectFill"/>
+                        <Image Grid.Row="0" x:Name="imgBadge" IsEnabled="False" IsVisible="{Binding IsRefreshBadgeVisible}" Source="badge" HeightRequest="20" WidthRequest="20" VerticalOptions="Start" HorizontalOptions="End"/>
+                   </Grid>
                 </StackLayout>
              </StackLayout>
         </StackLayout>
@@ -58,7 +57,7 @@
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout x:Name="rootValueCell" BackgroundColor="{Binding BackgroundColor}" Orientation="Horizontal" HorizontalOptions="FillAndExpand"        
-                                touch:TouchEff.PressedBackgroundColor="LightGray"
+                                touch:TouchEff.PressedBackgroundColor="#E8E8E8"
                                 touch:TouchEff.PressedAnimationDuration="100"
                                 touch:TouchEff.RegularAnimationDuration="100"
                                 touch:TouchEff.RippleCount="2">
@@ -77,7 +76,7 @@
                         <ViewCell>
                             <StackLayout x:Name="rootDocumentCell" Orientation="Horizontal" HorizontalOptions="FillAndExpand" 
 			                    touch:TouchEff.RegularBackgroundColor="White"
-                                touch:TouchEff.PressedBackgroundColor="LightGray"
+                                touch:TouchEff.PressedBackgroundColor="#E8E8E8"
                                 touch:TouchEff.PressedAnimationDuration="100"
                                 touch:TouchEff.RegularAnimationDuration="100"
                                 touch:TouchEff.RippleCount="2">

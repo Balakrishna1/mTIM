@@ -13,12 +13,13 @@ using Newtonsoft.Json;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
-[assembly: Xamarin.Forms.Dependency(typeof(WebSevice))]
+[assembly: Dependency(typeof(WebSevice))]
 namespace mTIM.Droid.Services
 {
     public class WebSevice : IWebService
     {
-        MobileTimService timService = new MobileTimService();
+
+        MobileTimService timService = GlobalConstants.GetAppURL() == string.Empty ? new MobileTimService() : new MobileTimService(GlobalConstants.GetAppURL());
         public BaseViewModel ViewModel { get; set; }
         public Action<bool> ActionRefreshCallBack { get; set; }
 
@@ -30,84 +31,106 @@ namespace mTIM.Droid.Services
         /// <param name="isFromAutoSync"></param>
         public void GetTasksListIDsFortheData(bool isFromAutoSync = false)
         {
-            fromAutoSync = isFromAutoSync;
-            if (!fromAutoSync)
-                UserDialogs.Instance.ShowLoading("Loading list.", MaskType.Gradient);
-            Debug.WriteLine(string.Format("Method Executed: GetTasksListIDsFortheData"));
-            timService.GetTaskListIdForDayCompleted -= TimService_GetTaskListIdForDayCompleted;
-            timService.GetTaskListIdForDayCompleted += TimService_GetTaskListIdForDayCompleted;
-            timService.GetTaskListIdForDayAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, DateTime.Now.Year, true, DateTime.Now.Month, true, DateTime.Now.Day, true);
+            try
+            {
+                timService = new MobileTimService(GlobalConstants.GetAppURL());
+                fromAutoSync = isFromAutoSync;
+                if (!fromAutoSync)
+                    UserDialogs.Instance.ShowLoading("Loading list.", MaskType.Gradient);
+                Debug.WriteLine(string.Format("Method Executed: GetTasksListIDsFortheData"));
+                timService.GetTaskListIdForDayCompleted -= TimService_GetTaskListIdForDayCompleted;
+                timService.GetTaskListIdForDayCompleted += TimService_GetTaskListIdForDayCompleted;
+                timService.GetTaskListIdForDayAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, DateTime.Now.Year, true, DateTime.Now.Month, true, DateTime.Now.Day, true);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("Error in GetTasksListIDsFortheData: {0}", ex?.Message));
+            }
         }
 
         private async void TimService_GetTaskListIdForDayCompleted(object sender, GetTaskListIdForDayCompletedEventArgs e)
         {
-            if (e.Error == null && !e.Cancelled)
+            try
             {
-                if (Application.Current.Properties.ContainsKey("GetTaskListIdForDayResult"))
+                if (e.Error == null && !e.Cancelled)
                 {
-                    int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
-                    if (tasksListID == e.GetTaskListIdForDayResult)
+                    if (Application.Current.Properties.ContainsKey("GetTaskListIdForDayResult"))
                     {
-                        if (!fromAutoSync)
-                            UserDialogs.Instance.HideLoading();
-                        return;
-                    }
-                    else
-                    {
-                        if (fromAutoSync)
+                        int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
+                        if (tasksListID == e.GetTaskListIdForDayResult)
                         {
-                            ActionRefreshCallBack?.Invoke(true);
+                            if (!fromAutoSync)
+                                UserDialogs.Instance.HideLoading();
                             return;
                         }
+                        else
+                        {
+                            if (fromAutoSync)
+                            {
+                                ActionRefreshCallBack?.Invoke(true);
+                                return;
+                            }
+                        }
+                    }
+                    ActionRefreshCallBack?.Invoke(false);
+                    FileHelper.DeleteAppDirectory();
+                    FileInfoHelper.Instance.Clear();
+                    Application.Current.Properties["GetTaskListIdForDayResult"] = e.GetTaskListIdForDayResult;
+                    await Application.Current.SavePropertiesAsync();
+                    timService.GetTaskListCompleted -= TimService_GetTaskListCompleted;
+                    timService.GetTaskListCompleted += TimService_GetTaskListCompleted;
+                    timService.GetTaskListAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the task list.
+                    timService.GetGraphicsBlobProtobufGZippedCompleted -= TimService_GetGraphicsBlobProtobufGZippedCompleted;
+                    timService.GetGraphicsBlobProtobufGZippedCompleted += TimService_GetGraphicsBlobProtobufGZippedCompleted;
+                    timService.GetGraphicsBlobProtobufGZippedAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the 3D drawing.
+                    timService.GetFilesInformationCompleted -= TimService_GetFilesInformationCompleted;
+                    timService.GetFilesInformationCompleted += TimService_GetFilesInformationCompleted;
+                    timService.GetFilesInformationAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the files.
+                }
+                else if (e.Error != null)
+                {
+                    if (!fromAutoSync)
+                    {
+                        UserDialogs.Instance.HideLoading();
+                        ViewModel.DisplayErrorMessage(e.Error.Message);
                     }
                 }
-                ActionRefreshCallBack?.Invoke(false);
-                FileHelper.DeleteAppDirectory();
-                FileInfoHelper.Instance.Clear();
-                Application.Current.Properties["GetTaskListIdForDayResult"] = e.GetTaskListIdForDayResult;
-                await Application.Current.SavePropertiesAsync();
-                timService.GetTaskListCompleted -= TimService_GetTaskListCompleted;
-                timService.GetTaskListCompleted += TimService_GetTaskListCompleted;
-                timService.GetTaskListAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the task list.
-                timService.GetGraphicsBlobProtobufGZippedCompleted -= TimService_GetGraphicsBlobProtobufGZippedCompleted;
-                timService.GetGraphicsBlobProtobufGZippedCompleted += TimService_GetGraphicsBlobProtobufGZippedCompleted;
-                timService.GetGraphicsBlobProtobufGZippedAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the 3D drawing.
-                timService.GetFilesInformationCompleted -= TimService_GetFilesInformationCompleted;
-                timService.GetFilesInformationCompleted += TimService_GetFilesInformationCompleted;
-                timService.GetFilesInformationAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the files.
             }
-            else if (e.Error != null)
+            catch (Exception ex)
             {
-                if (!fromAutoSync)
-                {
-                    UserDialogs.Instance.HideLoading();
-                    ViewModel.DisplayErrorMessage(e.Error.Message);
-                }
+                Debug.WriteLine(string.Format("Error in TimService_GetTaskListIdForDayCompleted: {0}", ex?.Message));
             }
         }
 
         private List<Task> DownloadList;
         private async void TimService_GetFilesInformationCompleted(object sender, GetFilesInformationCompletedEventArgs e)
         {
-            if (e.Error == null && !e.Cancelled)
+            try
             {
-                if (e.Result != null && e.Result.Length > 0)
+                if (e.Error == null && !e.Cancelled)
                 {
-                    var json = JsonConvert.SerializeObject(e.Result);
-                    await FileHelper.WriteTextAsync(GlobalConstants.FILES_INFO, json);
-                    FileInfoHelper.Instance.SaveFileInfo(json);
-                    Debug.WriteLine(String.Format("File information: {0}", json));
-                    DownloadList = new List<Task>();
-                    UserDialogs.Instance.ShowLoading("Downloading files.", MaskType.Gradient);
-                    foreach (var item in e.Result)
+                    if (e.Result != null && e.Result.Length > 0)
                     {
-                        if (item != null && item.Value.Length > 0)
+                        var json = JsonConvert.SerializeObject(e.Result);
+                        await FileHelper.WriteTextAsync(GlobalConstants.FILES_INFO, json);
+                        FileInfoHelper.Instance.SaveFileInfo(json);
+                        Debug.WriteLine(String.Format("File information: {0}", json));
+                        DownloadList = new List<Task>();
+                        UserDialogs.Instance.ShowLoading("Downloading files.", MaskType.Gradient);
+                        foreach (var item in e.Result)
                         {
-                            foreach (var value in item.Value)
+                            if (item != null && item.Value.Length > 0)
                             {
-                                DownloadList.Add(Task.Run(() => DownloadFile(Math.Abs(value.FileID), value.FileIDSpecified)));
+                                foreach (var value in item.Value)
+                                {
+                                    DownloadList.Add(Task.Run(() => DownloadFile(Math.Abs(value.FileID), value.FileIDSpecified)));
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        UserDialogs.Instance.HideLoading();
                     }
                 }
                 else
@@ -115,9 +138,9 @@ namespace mTIM.Droid.Services
                     UserDialogs.Instance.HideLoading();
                 }
             }
-            else
+            catch (Exception ex)
             {
-                UserDialogs.Instance.HideLoading();
+                Debug.WriteLine(string.Format("Error in TimService_GetFilesInformationCompleted: {0}", ex?.Message));
             }
         }
 
@@ -128,24 +151,31 @@ namespace mTIM.Droid.Services
         /// <param name="e"></param>
         private async void TimService_GetGraphicsBlobProtobufGZippedCompleted(object sender, GetGraphicsBlobProtobufGZippedCompletedEventArgs e)
         {
-            //UserDialogs.Instance.HideLoading();
-            if (e.Error == null && !e.Cancelled)
+            try
             {
-                var path = string.Format(GlobalConstants.GraphicsBlob_FILE, 198);
-                if (!FileHelper.IsFileExists(path))
+                //UserDialogs.Instance.HideLoading();
+                if (e.Error == null && !e.Cancelled)
                 {
-                    if(e.Result != null && e.Result.Length >= 0)
+                    var path = string.Format(GlobalConstants.GraphicsBlob_FILE, 198);
+                    if (!FileHelper.IsFileExists(path))
                     {
-                        await FileHelper.WriteAllBytesAsync(path, e.Result);
+                        if (e.Result != null && e.Result.Length >= 0)
+                        {
+                            await FileHelper.WriteAllBytesAsync(path, e.Result);
+                        }
                     }
+                    ViewModel.ImageSource = e.Result;
+                    //await FileHelper.ReadAllBytesAsync(path);
+                    Debug.WriteLine(e.Result);
                 }
-                ViewModel.ImageSource = e.Result;
-                //await FileHelper.ReadAllBytesAsync(path);
-                Debug.WriteLine(e.Result);
+                else if (e.Error != null && !fromAutoSync)
+                {
+                    ViewModel.DisplayErrorMessage(e.Error.Message);
+                }
             }
-            else if (e.Error != null && !fromAutoSync)
+            catch (Exception ex)
             {
-                ViewModel.DisplayErrorMessage(e.Error.Message);
+                Debug.WriteLine(string.Format("Error in TimService_GetGraphicsBlobProtobufGZippedCompleted: {0}", ex?.Message));
             }
         }
 
@@ -191,32 +221,40 @@ namespace mTIM.Droid.Services
 
         public async void DownloadAndOpenFile(int fileId, bool fileIdSpecified)
         {
-            UserDialogs.Instance.ShowLoading("Downloading file.", MaskType.Gradient);
-            MobileTimService service = new MobileTimService();
-            service.GetFileCompleted += async delegate (object sender, GetFileCompletedEventArgs e)
+            try
             {
-                if (e.Error == null && !e.Cancelled)
+                UserDialogs.Instance.ShowLoading("Downloading file.", MaskType.Gradient);
+                var service = new MobileTimService(GlobalConstants.GetAppURL());
+                service.GetFileCompleted += async delegate (object sender, GetFileCompletedEventArgs e)
                 {
-                    if (e.Result.m_Item2.Length > 0)
+                    if (e.Error == null && !e.Cancelled)
                     {
-                        string fileName = String.Format("{0}{1}", fileId, e.Result.m_Item1);
-                        Debug.WriteLine("File saving: " + fileName);
-                        Debug.WriteLine("File saving with this extension: " + e.Result.m_Item1);
-                        FileInfoHelper.Instance.AddExtesion(fileId, e.Result.m_Item1);
-                        await FileHelper.WriteAllBytesAsync(fileName, e.Result.m_Item2);
-                        var json = JsonConvert.SerializeObject(FileInfoHelper.Instance.GetExtensionList());
-                        FileHelper.WriteTextAsync(GlobalConstants.FileExtesons, json);
-                        var mime = MimeTypesMap.GetMimeType(fileName);
-                        Debug.WriteLine(mime);
-                        await Launcher.OpenAsync(new OpenFileRequest
+                        if (e.Result.m_Item2.Length > 0)
                         {
-                            File = new ReadOnlyFile(FileHelper.GetFilePath(fileName), mime)
-                        });
-                        UserDialogs.Instance.HideLoading();
+                            string fileName = String.Format("{0}{1}", fileId, e.Result.m_Item1);
+                            Debug.WriteLine("File saving: " + fileName);
+                            Debug.WriteLine("File saving with this extension: " + e.Result.m_Item1);
+                            FileInfoHelper.Instance.AddExtesion(fileId, e.Result.m_Item1);
+                            await FileHelper.WriteAllBytesAsync(fileName, e.Result.m_Item2);
+                            var json = JsonConvert.SerializeObject(FileInfoHelper.Instance.GetExtensionList());
+                            FileHelper.WriteTextAsync(GlobalConstants.FileExtesons, json);
+                            var mime = MimeTypesMap.GetMimeType(fileName);
+                            Debug.WriteLine(mime);
+                            await Launcher.OpenAsync(new OpenFileRequest
+                            {
+                                File = new ReadOnlyFile(FileHelper.GetFilePath(fileName), mime)
+                            });
+                            UserDialogs.Instance.HideLoading();
+                        }
                     }
-                }
-            };
-            service.GetFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);
+                };
+                service.GetFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("Error in DownloadAndOpenFile: {0}", ex?.Message));
+            }
         }
 
         /// <summary>
@@ -227,9 +265,17 @@ namespace mTIM.Droid.Services
         /// <returns></returns>
         public void DownloadFile(int fileId, bool fileIdSpecified)
         {
-            MobileTimService service = new MobileTimService();
-            FileCompletedEvent(service, fileId);
-            service.GetFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);
+            try
+            {
+                MobileTimService service = new MobileTimService(GlobalConstants.GetAppURL());
+                FileCompletedEvent(service, fileId);
+                service.GetFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("Error in DownloadFile: {0}", ex?.Message));
+            }
         }
 
 
@@ -264,21 +310,36 @@ namespace mTIM.Droid.Services
 
         public void SyncTaskList(string taskListJson, bool isFromAutoSync = false)
         {
-            var list = JsonConvert.DeserializeObject<TaskResult[]>(taskListJson);
-            if (list != null && list.Length > 0)
+            try
             {
-                timService.PostResponsesAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, list);
+                var list = JsonConvert.DeserializeObject<TaskResult[]>(taskListJson);
+                if (list != null && list.Length > 0)
+                {
+                    timService.PostResponsesAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, list);
+                }
+                GetTasksListIDsFortheData(isFromAutoSync);
             }
-            GetTasksListIDsFortheData(isFromAutoSync);
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("Error in SyncTaskList: {0}", ex?.Message));
+            }
         }
 
         Action<string> ActionAppUpdate;
         public void QueryAppUpdate(Action<string> actionAppUpdate)
         {
-            ActionAppUpdate = actionAppUpdate;
-            timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
-            timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
-            timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
+            try
+            {
+                timService = new MobileTimService(GlobalConstants.GetAppURL());
+                ActionAppUpdate = actionAppUpdate;
+                timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
+                timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
+                timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("Error in QueryAppUpdate: {0}", ex?.Message));
+            }
         }
 
         private void TimService_QueryAppUpdateCompleted(object sender, QueryAppUpdateCompletedEventArgs e)

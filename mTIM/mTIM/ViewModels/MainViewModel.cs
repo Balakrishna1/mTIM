@@ -519,6 +519,7 @@ namespace mTIM.ViewModels
         public ICommand MenuRefreshItemCommand => new Command(MenuRefreshItemCommandExecute);
         private void MenuRefreshItemCommandExecute()
         {
+            IsOpenMenuOptions = false;
             OnSyncCommand(false);
         }
 
@@ -582,7 +583,7 @@ namespace mTIM.ViewModels
 
         public override void OnSyncCommand(bool isFromAuto = true)
         {
-            RefreshData();
+            //RefreshData();
             base.OnSyncCommand(isFromAuto);
         }
 
