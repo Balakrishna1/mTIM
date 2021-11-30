@@ -118,6 +118,13 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref ruLangugaeBackground, value);
         }
 
+        private Color appUpdateTextColor = Color.Black;
+        public Color AppUpdateTextColor
+        {
+            get => appUpdateTextColor;
+            set => SetAndRaisePropertyChanged(ref appUpdateTextColor, value);
+        }
+
         public void UpdateLanguage(string sortName)
         {
             SelectedLanguage = sortName;

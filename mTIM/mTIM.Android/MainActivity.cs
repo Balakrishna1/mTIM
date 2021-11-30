@@ -1,17 +1,16 @@
-﻿using System;
-
+﻿
+using Acr.UserDialogs;
 using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
 using Android.OS;
+using Android.Runtime;
 using Plugin.Permissions;
 using TouchEffect.Android;
-using Acr.UserDialogs;
 
 namespace mTIM.Droid
 {
     [Activity(Label = "mTIM", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    public class MainActivity : MvxAppCompatActivityBase
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {

@@ -56,7 +56,7 @@ namespace mTIM
             {
                 if (!await GetPermissions())
                 {
-                    //TODO:Need to write application kill process
+                    ViewModel.Device.CloseApplication();
                 }
                 else
                 {
@@ -107,6 +107,7 @@ namespace mTIM
 
         private void updateInfo()
         {
+            ScaleTo1x(imgBadge);
 #if DEBUG
             GlobalConstants.AppBaseURL = "http://mtimtest.precast-software.com:7778";
 #else
@@ -195,6 +196,11 @@ namespace mTIM
                 CustomBottomSheet.Init(height, width);
             }
             CustomBottomSheet.InvokeView(height, width);
+            if(!AppUpdateBottomSheet.IsInitiated)
+            {
+                AppUpdateBottomSheet.Init(height, width);
+            }
+            AppUpdateBottomSheet.InvokeView(height, width);
             if (height > width)
             {
                 //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
@@ -480,6 +486,7 @@ namespace mTIM
         private void TapGestureRecognizer(object sender, EventArgs e)
         {
             ViewModel.IsOpenMenuOptions = false;
+            ViewModel.IsOpenUpdateOptions = false;
             ViewModel.IsOpenBarcodeView = false;
         }
 
@@ -495,6 +502,15 @@ namespace mTIM
                     return false;
                 });
             }
+        }
+
+        public void ScaleTo1x(Image image)
+        {
+            var a = new Xamarin.Forms.Animation();
+            a.Add(0, 0.5, new Xamarin.Forms.Animation(v => image.Scale = v, 0.7, 1.2, Easing.CubicInOut));
+            a.Add(0.5, 1, new Xamarin.Forms.Animation(v => image.Scale = v, 1.2, 0.7, Easing.CubicIn));
+            a.Commit(this, "animation", length: 1000,
+                finished: (v, c) => image.Scale = 0.7, repeat: () => true);
         }
     }
 }

@@ -22,8 +22,11 @@
                             touch:TouchEff.RippleCount="2"
                             touch:TouchEff.Command="{Binding MenuRefreshItemCommand}"
                             Orientation="Horizontal" VerticalOptions="Center" HeightRequest="65">
-                                <ImageButton Source="icon_refresh" Aspect="AspectFit" BackgroundColor="Transparent" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"/>
-                                <Label Text="{Binding LabelRefresh}" Margin="10"  TextColor="Black" FontSize="Large" VerticalOptions="Center"/>
+                            <Grid  HeightRequest="40" WidthRequest="40" VerticalOptions="Center">
+                                <Image Grid.Row="0" BackgroundColor="Transparent" Source="icon_refresh" Aspect="AspectFit"/>
+                                <Image Grid.Row="0" x:Name="iconBadge" IsVisible="{Binding IsRefreshBadgeVisible}" Source="badge" HeightRequest="20" WidthRequest="20" VerticalOptions="Start" HorizontalOptions="End"/>
+                            </Grid>
+                            <Label Text="{Binding LabelRefresh}" Margin="10"  TextColor="Black" FontSize="Large" VerticalOptions="Center"/>
                         </StackLayout>
                         <StackLayout x:Name="option2" Padding="10,0,10,0" Margin="0,-5,0,0"
                             touch:TouchEff.RegularBackgroundColor="White"
@@ -58,7 +61,7 @@
                             touch:TouchEff.Command="{Binding MenuNewBuildItemCommand}"
                             Orientation="Horizontal" VerticalOptions="Center" HeightRequest="65">
                                 <ImageButton Source="icon_download" Aspect="AspectFit" BackgroundColor="Transparent" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"/>
-                                <Label Text="{Binding LabelAppUpdates}" Margin="10"  TextColor="Black" FontSize="Large" VerticalOptions="Center"/>
+                                <Label TextColor="{Binding AppUpdateTextColor}" Text="{Binding LabelAppUpdates}" Margin="10" FontSize="Large" VerticalOptions="Center"/>
                         </StackLayout>
                     </StackLayout>
                 </StackLayout>

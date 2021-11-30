@@ -78,12 +78,10 @@ namespace mTIM.ViewModels
                 case "in":
                     SyncMinites++;
                     SyncTime = SyncMinites * 60;
-                    IsDecrementIocnVisible = true;
                     break;
                 case "dc":
                     SyncMinites--;
                     SyncTime = SyncMinites * 60;
-                    IsIncrementIocnVisible = true;
                     break;
             }
             SaveSettings();

@@ -5,7 +5,9 @@ using System.Linq;
 using System.Windows.Input;
 using mTIM.Enums;
 using mTIM.Helpers;
+using mTIM.Interfaces;
 using mTIM.Models;
+using mTIM.Resources;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
@@ -18,9 +20,13 @@ namespace mTIM.ViewModels
         public ObservableCollectionRanged<FileInfo> LstFiles { get; set; } = new ObservableCollectionRanged<FileInfo>();
 
         public AndroidMessageModel MessageModel { get; set; } = new AndroidMessageModel();
+        public AppVersionUpdateInfo VersionInfo { get; set; } = new AppVersionUpdateInfo();
+        public IDevice Device;
+        public const string installAppFormat = "Install Update{0}";
         public MainViewModel(INavigation navigation)
         {
             this.Navigation = navigation;
+            Device = DependencyService.Get<IDevice>();
             SelectedItemList = new ObservableCollectionRanged<TimTaskModel>();
             FileInfoHelper.Instance.LoadFileList();
             FileInfoHelper.Instance.LoadExtensions();
@@ -74,6 +80,13 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isOpenMenuOptions, value);
         }
 
+        private bool isOpenUpdateOptions;
+        public bool IsOpenUpdateOptions
+        {
+            get => isOpenUpdateOptions;
+            set => SetAndRaisePropertyChanged(ref isOpenUpdateOptions, value);
+        }
+
         private bool isTaskListVisible;
         public bool IsTaskListVisible
         {
@@ -88,6 +101,13 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isValueListVisible, value);
         }
 
+        private string notificationCount = "0";
+        public string NotificationCount
+        {
+            get => notificationCount;
+            set => SetAndRaisePropertyChanged(ref notificationCount, value);
+        }
+
         private bool isDocumentListVisible;
         public bool IsDocumentListVisible
         {
@@ -100,6 +120,20 @@ namespace mTIM.ViewModels
         {
             get => isEditTextVisible;
             set => SetAndRaisePropertyChanged(ref isEditTextVisible, value);
+        }
+
+        private bool isNotificationVisible = false;
+        public bool IsNotificationVisible
+        {
+            get => isNotificationVisible;
+            set => SetAndRaisePropertyChanged(ref isNotificationVisible, value);
+        }
+
+        private string updateVersionText = "";
+        public string UpdateVersionText
+        {
+            get => updateVersionText;
+            set => SetAndRaisePropertyChanged(ref updateVersionText, value);
         }
 
         List<string> headerStrings = new List<string>();
@@ -430,6 +464,20 @@ namespace mTIM.ViewModels
             //            await Navigation.PushModalAsync(new NavigationPage(new BarcodeContentPage()));
         }
 
+        public ICommand MessageClickCommand => new Command(MessageClickCommandExecute);
+        private void MessageClickCommandExecute()
+        {
+            IsOpenUpdateOptions = true;
+            UpdateVersionText = string.Format(installAppFormat, VersionInfo?.Version);
+        }
+
+        public ICommand MenuUpdateAppCommand => new Command(MenuUpdateAppCommandExecute);
+        private void MenuUpdateAppCommandExecute()
+        {
+            IsOpenUpdateOptions = false;
+            Device.DownloadAndInstallAPK(VersionInfo);
+        }
+
         public ICommand CloseBarcodeCommand => new Command(CloseBarcodeCommandExecute);
         private void CloseBarcodeCommandExecute()
         {
@@ -447,7 +495,7 @@ namespace mTIM.ViewModels
                 msg = "Barcode: " + result.Text + " (" + result.BarcodeFormat + ")";
             }
 
-            Device.BeginInvokeOnMainThread(async () =>
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(async () =>
             {
                 await Application.Current.MainPage.DisplayAlert("", msg, "Ok");
             });
@@ -483,6 +531,7 @@ namespace mTIM.ViewModels
             //SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
             ListBackgroundColor = Color.White;
             IsOpenMenuOptions = false;
+            IsOpenUpdateOptions = false;
             IsShowBackButton = false;
             SelectedItemList.Clear();
             SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(1) && x.Parent.Equals(0)));
@@ -490,23 +539,44 @@ namespace mTIM.ViewModels
 
         public async void UpdateList()
         {
-            if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
+            try
             {
-                Webservice.ViewModel = this;
-                Webservice.GetTasksListIDsFortheData();
-            }
-            else
-            {
-                string json = await FileHelper.ReadTextAsync(GlobalConstants.TASKLIST_FILE);
-                Debug.WriteLine("Task List: " + json);
-                var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
-                TotalListList.Clear();
-                if (list != null)
+                SearchForNewApp();
+                if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
                 {
-                    UpdateChaildValues(list);
-                    TotalListList.AddRange(list);
-                    RefreshData();
+                    Webservice.ViewModel = this;
+                    Webservice.GetTasksListIDsFortheData();
                 }
+                else
+                {
+                    OnSyncCommand(true);
+                    string json = await FileHelper.ReadTextAsync(GlobalConstants.TASKLIST_FILE);
+                    Debug.WriteLine("Task List: " + json);
+                    var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
+                    TotalListList.Clear();
+                    if (list != null)
+                    {
+                        UpdateChaildValues(list);
+                        TotalListList.AddRange(list);
+                        RefreshData();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        private void AppData(string json)
+        {
+            if(!string.IsNullOrEmpty(json))
+            {
+                VersionInfo = JsonConvert.DeserializeObject<AppVersionUpdateInfo>(json);
+                IsNotificationVisible = true;
+                NotificationCount = "1";
+                LabelAppUpdates = AppResources.AppUpdates;
+                AppUpdateTextColor = Color.Black;
             }
         }
 
@@ -519,7 +589,15 @@ namespace mTIM.ViewModels
         public ICommand MenuNewBuildItemCommand => new Command(MenuNewBuildItemCommandExecute);
         private void MenuNewBuildItemCommandExecute()
         {
-            IsOpenMenuOptions = false;
+            SearchForNewApp();
+        }
+
+        private void SearchForNewApp()
+        {
+            IsNotificationVisible = false;
+            LabelAppUpdates = "Checking new version";
+            AppUpdateTextColor = Color.LightGray;
+            Webservice.QueryAppUpdate(AppData);
         }
         
         private async void RightIconCommand(TimTaskModel item)

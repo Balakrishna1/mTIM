@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Foundation;
 using mTIM.Interfaces;
 using mTIM.iOS.Services;
+using mTIM.Models;
 using UIKit;
 
 [assembly: Xamarin.Forms.Dependency(typeof(IOSDevice))]
@@ -49,6 +51,16 @@ namespace mTIM.iOS.Services
         public string GetUniqueID()
         {
             return UIDevice.CurrentDevice.IdentifierForVendor.ToString();
+        }
+
+        public void DownloadAndInstallAPK(AppVersionUpdateInfo versionInfo)
+        {
+           
+        }
+
+        public void CloseApplication()
+        {
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
 }

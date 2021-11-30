@@ -14,11 +14,11 @@
             <panacake:PancakeView>
                 <Grid BackgroundColor="Black">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="45"></RowDefinition>
                         <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="60"></RowDefinition>
+                        <RowDefinition Height="20"></RowDefinition>
                     </Grid.RowDefinitions>
-                        <ImageButton Grid.Row="0" x:Name="btnClose" HorizontalOptions="End" HeightRequest="40" WidthRequest="40" Source="icon_close" Aspect="AspectFit" BackgroundColor="Transparent" Margin="0,20,20,0"/><!--Command="{Binding CloseBarcodeCommand}"-->
+                        <ImageButton Grid.Row="0" x:Name="btnClose" HorizontalOptions="End" HeightRequest="35" WidthRequest="35" Source="icon_close" Aspect="AspectFill" BackgroundColor="Transparent"  Margin="0,20,15,0"/><!--Command="{Binding CloseBarcodeCommand}"-->
                         <zxing:ZXingScannerView Grid.Row="1" x:Name="_scanView" OnScanResult="Handle_OnScanResult" IsScanning="{Binding IsScanning}" Margin="0,30,0,60"/>
                 </Grid>
             </panacake:PancakeView>

@@ -20,6 +20,8 @@ namespace mTIM.Droid.Services
     {
         MobileTimService timService = new MobileTimService();
         public BaseViewModel ViewModel { get; set; }
+        public Action<bool> ActionRefreshCallBack { get; set; }
+
         private bool fromAutoSync;
 
         /// <summary>
@@ -41,19 +43,28 @@ namespace mTIM.Droid.Services
         {
             if (e.Error == null && !e.Cancelled)
             {
-                if (Application.Current.Properties.ContainsKey("GetTasksListIDsFortheData"))
+                if (Application.Current.Properties.ContainsKey("GetTaskListIdForDayResult"))
                 {
-                    int tasksListID = (int)Application.Current.Properties["GetTasksListIDsFortheData"];
-                    if(tasksListID == e.GetTaskListIdForDayResult)
+                    int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
+                    if (tasksListID == e.GetTaskListIdForDayResult)
                     {
                         if (!fromAutoSync)
                             UserDialogs.Instance.HideLoading();
                         return;
                     }
+                    else
+                    {
+                        if (fromAutoSync)
+                        {
+                            ActionRefreshCallBack?.Invoke(true);
+                            return;
+                        }
+                    }
                 }
+                ActionRefreshCallBack?.Invoke(false);
                 FileHelper.DeleteAppDirectory();
                 FileInfoHelper.Instance.Clear();
-                Application.Current.Properties["GetTasksListIDsFortheData"] = e.GetTaskListIdForDayResult;
+                Application.Current.Properties["GetTaskListIdForDayResult"] = e.GetTaskListIdForDayResult;
                 await Application.Current.SavePropertiesAsync();
                 timService.GetTaskListCompleted -= TimService_GetTaskListCompleted;
                 timService.GetTaskListCompleted += TimService_GetTaskListCompleted;
@@ -244,15 +255,39 @@ namespace mTIM.Droid.Services
                         }
                     }
                 }
+                else
+                {
+                    UserDialogs.Instance.HideLoading();
+                }
             };
         }
 
-        public void SyncTaskList(string taskListJson)
+        public void SyncTaskList(string taskListJson, bool isFromAutoSync = false)
         {
             var list = JsonConvert.DeserializeObject<TaskResult[]>(taskListJson);
             if (list != null && list.Length > 0)
             {
                 timService.PostResponsesAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, list);
+            }
+            GetTasksListIDsFortheData(isFromAutoSync);
+        }
+
+        Action<string> ActionAppUpdate;
+        public void QueryAppUpdate(Action<string> actionAppUpdate)
+        {
+            ActionAppUpdate = actionAppUpdate;
+            timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
+            timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
+            timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
+        }
+
+        private void TimService_QueryAppUpdateCompleted(object sender, QueryAppUpdateCompletedEventArgs e)
+        {
+            if (e.Error == null && !e.Cancelled)
+            {
+                string json = JsonConvert.SerializeObject(e.Result);
+                Debug.WriteLine("App Data: " + json);
+                ActionAppUpdate?.Invoke(json);
             }
         }
     }

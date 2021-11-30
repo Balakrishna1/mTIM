@@ -380,6 +380,21 @@
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>
       <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\icon_eye.png" />
@@ -393,7 +408,6 @@
     <BundleResource Include="Resources\icon_info.png" />
     <BundleResource Include="Resources\icon_plus.png" />
     <BundleResource Include="Resources\icon_forword.png" />
-    <BundleResource Include="Resources\splash_screen.xml" />
     <BundleResource Include="Resources\logo.png" />
     <BundleResource Include="Resources\icon_minus.png" />
     <BundleResource Include="Resources\icon_barcode.png" />
@@ -408,5 +422,7 @@
     <BundleResource Include="Resources\icon_close.png" />
     <BundleResource Include="Resources\language_ru.jpg" />
     <BundleResource Include="Resources\icon_edit.png" />
+    <BundleResource Include="Resources\icon_message.png" />
+    <BundleResource Include="Resources\badge.png" />
   </ItemGroup>
 </Project>

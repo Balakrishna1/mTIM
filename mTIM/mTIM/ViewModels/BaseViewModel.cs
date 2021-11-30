@@ -59,16 +59,17 @@ namespace mTIM.ViewModels
             {
                 GlobalConstants.SyncMinutes = value;
                 updateTimer();
-                if (value == 10)
-                {
-                    IsIncrementIocnVisible = false;
-                }
-                else if (value == 1)
-                {
-                    IsDecrementIocnVisible = false;
-                }
+                IsIncrementIocnVisible = value ==10 ? false : true;
+                IsDecrementIocnVisible = value == 1 ? false : true;
                 SetAndRaisePropertyChanged(ref syncMinites, value);
             }
+        }
+
+        private bool isRefreshBadgeVisible = false;
+        public bool IsRefreshBadgeVisible
+        {
+            get => isRefreshBadgeVisible;
+            set => SetAndRaisePropertyChanged(ref isRefreshBadgeVisible, value);
         }
 
         private void updateTimer()
@@ -76,6 +77,7 @@ namespace mTIM.ViewModels
             StringSyncTime = string.Format(syncTimeFormat, SyncTime);
             TimerHelper.Instance.Dispose();
             TimerHelper.Instance.Create(CallBack);
+            TimerHelper.Instance.StartTimer();
         }
 
         private int syncTime = 0;
@@ -92,6 +94,8 @@ namespace mTIM.ViewModels
         public BaseViewModel()
         {
             Webservice = DependencyService.Get<IWebService>();
+            Webservice.ActionRefreshCallBack -= ShowBadge;
+            Webservice.ActionRefreshCallBack += ShowBadge;
             SyncMinites = GlobalConstants.SyncMinutes > 0 ? GlobalConstants.SyncMinutes : GlobalConstants.DefaultSyncMinites;
             if (GlobalConstants.StatusSyncTime > 0)
             {
@@ -102,6 +106,11 @@ namespace mTIM.ViewModels
                 SyncTime = SyncMinites * 60;
             }
             StringSyncTime = string.Format(syncTimeFormat, SyncTime);
+        }
+
+        public void ShowBadge(bool flag)
+        {
+            IsRefreshBadgeVisible = flag;
         }
 
         public void CallBack(object state)
@@ -182,8 +191,7 @@ namespace mTIM.ViewModels
         public virtual void OnSyncCommand(bool isFromAuto = true)
         {
             SaveTaskList();
-            Webservice.ViewModel = this;
-            Webservice.GetTasksListIDsFortheData(isFromAuto);
+            Webservice.SyncTaskList(JsonConvert.SerializeObject(TotalListList), isFromAuto);
         }
 
         public void SaveTaskList()

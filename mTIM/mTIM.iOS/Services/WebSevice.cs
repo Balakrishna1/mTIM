@@ -19,6 +19,7 @@ namespace mTIM.iOS.Services
     {
         MobileTimService timService = new MobileTimService();
         public BaseViewModel ViewModel { get; set; }
+        public Action<bool> ActionRefreshCallBack { get; set; }
         private bool fromAutoSync;
 
         /// <summary>
@@ -49,7 +50,16 @@ namespace mTIM.iOS.Services
                             UserDialogs.Instance.HideLoading();
                         return;
                     }
+                    else
+                    {
+                        if (fromAutoSync)
+                        {
+                            ActionRefreshCallBack?.Invoke(true);
+                            return;
+                        }
+                    }
                 }
+                ActionRefreshCallBack?.Invoke(false);
                 FileHelper.DeleteAppDirectory();
                 FileInfoHelper.Instance.Clear();
                 Xamarin.Forms.Application.Current.Properties["GetTasksListIDsFortheData"] = e.GetTaskListIdForDayResult;
@@ -246,13 +256,30 @@ namespace mTIM.iOS.Services
             };
         }
 
-        public void SyncTaskList(string taskListJson)
+        public void SyncTaskList(string taskListJson, bool isFromAutoSync = false)
         {
             var list = JsonConvert.DeserializeObject<TaskResult[]>(taskListJson);
             if (list != null && list.Length > 0)
             {
                 timService.PostResponsesAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, list);
             }
+            GetTasksListIDsFortheData(isFromAutoSync);
+        }
+
+        Action<string> ActionAppUpdate;
+        public void QueryAppUpdate(Action<string> actionAppUpdate)
+        {
+            ActionAppUpdate = actionAppUpdate;
+            timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
+            timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
+            timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
+        }
+
+        private void TimService_QueryAppUpdateCompleted(object sender, QueryAppUpdateCompletedEventArgs e)
+        {
+            string json = JsonConvert.SerializeObject(e.Result);
+            Debug.WriteLine("App Data: " + json);
+            ActionAppUpdate?.Invoke(json);
         }
     }
 }

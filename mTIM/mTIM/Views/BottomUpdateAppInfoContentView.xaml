@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<bottomSheet:BaseBottomSheet xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:bottomSheet="clr-namespace:BottomSheet.Core;assembly=BottomSheetXF"
+             xmlns:panacake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+             xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
+             x:Class="mTIM.BottomUpdateAppInfoContentView">
+    <bottomSheet:BaseBottomSheet.View>
+        <ContentView>
+            <panacake:PancakeView BackgroundColor="White">
+                <Grid>
+                    <StackLayout x:Name="stackMenuOptions1" BackgroundColor="LightGray" Orientation="Vertical">
+                        <StackLayout x:Name="option1" Padding="10,0,10,0"
+                            touch:TouchEff.RegularBackgroundColor="White"
+                            touch:TouchEff.PressedBackgroundColor="LightGray"
+                            touch:TouchEff.PressedAnimationDuration="500"
+                            touch:TouchEff.RegularAnimationDuration="500"
+                            touch:TouchEff.RippleCount="2"
+                            touch:TouchEff.Command="{Binding MenuUpdateAppCommand}"
+                            Orientation="Horizontal" VerticalOptions="Center" HeightRequest="65">
+                                <ImageButton Source="icon_download" Aspect="AspectFit" BackgroundColor="Transparent" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"/>
+                                <Label Text="{Binding UpdateVersionText}" Margin="10"  TextColor="Black" FontSize="Large" VerticalOptions="Center"/>
+                        </StackLayout>
+                        <StackLayout x:Name="option2" IsVisible="false" Padding="10,0,10,0" Margin="0,-5,0,0"
+                            touch:TouchEff.RegularBackgroundColor="White"
+                            touch:TouchEff.PressedBackgroundColor="LightGray"
+                            touch:TouchEff.PressedAnimationDuration="500"
+                            touch:TouchEff.RegularAnimationDuration="500"
+                            touch:TouchEff.RippleCount="2"
+                            Orientation="Horizontal" VerticalOptions="Center" HeightRequest="65">
+                                <ImageButton Source="icon_info" Aspect="AspectFit" BackgroundColor="Transparent" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"/>
+                                <Label Text="{Binding LabelInfo}" Margin="10" TextColor="Black" FontSize="Large" VerticalOptions="Center"/>
+                        </StackLayout>
+                   </StackLayout>
+              </Grid>
+            </panacake:PancakeView>
+        </ContentView>
+    </bottomSheet:BaseBottomSheet.View>
+</bottomSheet:BaseBottomSheet>
