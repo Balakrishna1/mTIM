@@ -37,7 +37,7 @@
 	<key>UIMainStoryboardFile</key>
 	<string>LaunchScreen</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.76</string>
+	<string>1.74</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Please allow access to the camera to scan barcodes.</string>
 	<key>UIStatusBarStyle</key>

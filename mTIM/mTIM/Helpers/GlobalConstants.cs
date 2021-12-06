@@ -51,6 +51,10 @@ namespace mTIM.Helpers
                     baseUrl = baseUrl + '/';
                 baseUrl = baseUrl + "External/" + GlobalConstants.VERSION + "/External.svc";
             }
+            //else
+            //{
+            //    baseUrl = "http://";
+            //}
             Debug.WriteLine("App URL:" + baseUrl);
             return baseUrl;
         }

@@ -19,7 +19,7 @@ namespace mTIM.Droid.Services
     public class WebSevice : IWebService
     {
 
-        MobileTimService timService = GlobalConstants.GetAppURL() == string.Empty ? new MobileTimService() : new MobileTimService(GlobalConstants.GetAppURL());
+        MobileTimService timService { get; set; }
         public BaseViewModel ViewModel { get; set; }
         public Action<bool> ActionRefreshCallBack { get; set; }
 

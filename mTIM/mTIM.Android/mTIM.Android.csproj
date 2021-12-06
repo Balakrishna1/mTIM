@@ -49,6 +49,9 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Label="MultilingualAppToolkit">
     <MultilingualAppToolkitVersion>4.0</MultilingualAppToolkitVersion>
@@ -335,16 +338,6 @@
     <WebReferences Include="Web References" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
     <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>

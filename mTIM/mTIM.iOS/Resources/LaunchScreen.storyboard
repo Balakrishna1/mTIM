@@ -23,23 +23,12 @@
                                 <rect key="frame" x="151" y="374" width="73" height="74"/>
                                 <rect key="contentStretch" x="0.0" y="0.0" width="0.0" height="0.0"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="mTIM" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jOv-as-oWQ">
-                                <rect key="frame" x="151" y="456" width="73" height="63"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="27"/>
-                                <color key="textColor" red="0.90025911626127575" green="0.45216791157039266" blue="0.053060951418995327" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                                <size key="shadowOffset" width="0.0" height="0.0"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="23" secondAttribute="trailing" constant="135" id="2cF-zS-Y6h"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="jOv-as-oWQ" secondAttribute="trailing" constant="135" id="4SN-w0-QoS"/>
-                            <constraint firstItem="jOv-as-oWQ" firstAttribute="top" secondItem="23" secondAttribute="bottom" constant="8" id="4Uq-VU-Qtj"/>
                             <constraint firstItem="23" firstAttribute="leading" secondItem="yd7-JS-zBw" secondAttribute="leadingMargin" constant="135" id="64j-yL-yCa"/>
-                            <constraint firstItem="9ZL-r4-8FZ" firstAttribute="top" secondItem="jOv-as-oWQ" secondAttribute="bottom" constant="259" id="OTr-al-f1b"/>
-                            <constraint firstItem="jOv-as-oWQ" firstAttribute="leading" secondItem="yd7-JS-zBw" secondAttribute="leadingMargin" constant="135" id="PZI-Oy-qGI"/>
                             <constraint firstItem="23" firstAttribute="top" secondItem="Y8P-hJ-Z43" secondAttribute="bottom" constant="330" id="aMJ-4J-Fnj"/>
                             <constraint firstItem="9ZL-r4-8FZ" firstAttribute="top" secondItem="23" secondAttribute="bottom" constant="330" id="iVi-9L-Qe4"/>
                         </constraints>

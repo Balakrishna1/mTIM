@@ -26,19 +26,33 @@
              <StackLayout x:Name="stackHeader" Orientation="Vertical">
                 <ImageButton Source="logo" Padding="5" IsEnabled="False"  BackgroundColor="#E8E8E8" Aspect="AspectFit" HeightRequest="40" WidthRequest="140" HorizontalOptions="EndAndExpand"/>
                 <StackLayout x:Name="stackMenuOptions" BackgroundColor="#E8E8E8" Orientation="Horizontal" HorizontalOptions="EndAndExpand">
-                    <RelativeLayout x:Name="btnMessage" IsVisible="{Binding IsNotificationVisible}" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"
-                        touch:TouchEff.PressedBackgroundColor="#E8E8E8"
-                        touch:TouchEff.PressedAnimationDuration="100"
-                        touch:TouchEff.RegularAnimationDuration="100"
-                        touch:TouchEff.RippleCount="2"
-                        touch:TouchEff.Command="{Binding MessageClickCommand}">
-                        <Image Source="icon_message" IsVisible="true" Aspect="Fill"/>
-                        <Label Text="{Binding NotificationCount}" TextColor="White" FontAttributes="Bold" FontSize="Default" WidthRequest="40" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" Padding="0,5,0,0"/>
-                     </RelativeLayout>
-                    <!--<Grid x:Name="btnMessage" IsVisible="{Binding IsNotificationVisible}" HeightRequest="40" WidthRequest="40">
-                        <ImageButton Grid.Row="0" Command="{Binding MessageClickCommand}" BackgroundColor="#E8E8E8" Source="icon_message" Aspect="AspectFill"/>
-                        <Label Grid.Row="0" IsEnabled="False" Text="{Binding NotificationCount}" TextColor="White" HeightRequest="10" WidthRequest="10" FontAttributes="Bold" FontSize="Default" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" Padding="0,5,0,0" />
-                    </Grid>-->
+                    <Grid>
+                        <Grid.IsVisible>
+                        <OnPlatform x:TypeArguments="x:Boolean"
+                                        iOS="false"
+                                        Android="true"/>
+                        </Grid.IsVisible>
+                        <RelativeLayout x:Name="btnMessage" IsVisible="{Binding IsNotificationVisible}" HeightRequest="40" WidthRequest="40" VerticalOptions="Center"
+                            touch:TouchEff.PressedBackgroundColor="#E8E8E8"
+                            touch:TouchEff.PressedAnimationDuration="100"
+                            touch:TouchEff.RegularAnimationDuration="100"
+                            touch:TouchEff.RippleCount="2"
+                            touch:TouchEff.Command="{Binding MessageClickCommand}">
+                            <Image Source="icon_message" IsVisible="true" Aspect="Fill"/>
+                            <Label Text="{Binding NotificationCount}" TextColor="White" FontAttributes="Bold" FontSize="Default" WidthRequest="40" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" Padding="0,5,0,0"/>
+                         </RelativeLayout>
+                     </Grid>
+                    <Grid>
+                        <Grid.IsVisible>
+                        <OnPlatform x:TypeArguments="x:Boolean"
+                                        iOS="true"
+                                        Android="False"/>
+                        </Grid.IsVisible>
+                        <Grid x:Name="gridMessage" IsVisible="{Binding IsNotificationVisible}" HeightRequest="40" WidthRequest="40">
+                            <ImageButton Grid.Row="0" Command="{Binding MessageClickCommand}" BackgroundColor="#E8E8E8" Source="icon_message" Aspect="AspectFill"/>
+                            <Label Grid.Row="0" IsEnabled="False" Text="{Binding NotificationCount}" TextColor="White" HeightRequest="10" WidthRequest="10" FontAttributes="Bold" FontSize="Default" VerticalTextAlignment="Start" HorizontalTextAlignment="Center" Padding="0,5,0,0" />
+                        </Grid>
+                    </Grid>
                     <ImageButton x:Name="btnBarcode" BackgroundColor="#E8E8E8" Source="icon_barcode" Padding="3" HeightRequest="40" WidthRequest="40" Aspect="AspectFill" VerticalOptions="Center"
                     Command="{Binding BarcodeClickCommand}"/>
                    <Grid x:Name="btnMenu" HeightRequest="40" WidthRequest="40" VerticalOptions="Center">

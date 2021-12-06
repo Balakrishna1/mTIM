@@ -22,7 +22,7 @@ namespace mTIM.ViewModels
             {
                 if(GlobalConstants.AppBaseURL != value)
                 {
-                    GlobalConstants.AppBaseURL = value;
+                    GlobalConstants.AppBaseURL = value.Trim();
                     SaveSettings();
                 }
                 SetAndRaisePropertyChanged(ref entryAppURL, value);

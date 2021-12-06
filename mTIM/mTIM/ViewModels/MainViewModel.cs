@@ -583,7 +583,7 @@ namespace mTIM.ViewModels
 
         public override void OnSyncCommand(bool isFromAuto = true)
         {
-            //RefreshData();
+            SearchForNewApp();
             base.OnSyncCommand(isFromAuto);
         }
 
