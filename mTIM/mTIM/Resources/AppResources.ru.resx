@@ -12,8 +12,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Settings" xml:space="preserve">
-    <value>параметры</value>
+  <data name="AppUpdates" xml:space="preserve">
+    <value>Искать обновления</value>
+  </data>
+  <data name="CheckNewVersion" xml:space="preserve">
+    <value>Проверка новой версии</value>
   </data>
   <data name="HintURL" xml:space="preserve">
     <value>Укажите URL-адрес</value>
@@ -21,10 +24,28 @@
   <data name="Info" xml:space="preserve">
     <value>Информация</value>
   </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>параметры</value>
+  </data>
+  <data name="SyncTime" xml:space="preserve">
+    <value>Интервал синхронизации статуса</value>
+  </data>
   <data name="Url" xml:space="preserve">
     <value>URL-адрес</value>
   </data>
-  <data name="Refresh" xml:space="preserve">
-    <value>Обновить</value>
+  <data name="InstallUpdate" xml:space="preserve">
+    <value>Установить обновление {0}</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="LoadTaskList" xml:space="preserve">
+    <value>Загрузить список задач?</value>
   </data>
 </root>

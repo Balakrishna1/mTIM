@@ -468,7 +468,7 @@ namespace mTIM.ViewModels
         private void MessageClickCommandExecute()
         {
             IsOpenUpdateOptions = true;
-            UpdateVersionText = string.Format(installAppFormat, VersionInfo?.Version);
+            UpdateVersionText = string.Format(AppResources.InstallUpdate, VersionInfo?.Version);
         }
 
         public ICommand MenuUpdateAppCommand => new Command(MenuUpdateAppCommandExecute);
@@ -497,7 +497,7 @@ namespace mTIM.ViewModels
 
             Xamarin.Forms.Device.BeginInvokeOnMainThread(async () =>
             {
-                await Application.Current.MainPage.DisplayAlert("", msg, "Ok");
+                await Application.Current.MainPage.DisplayAlert("", msg, AppResources.Ok);
             });
         }
 
@@ -513,7 +513,7 @@ namespace mTIM.ViewModels
         {
             IsOpenMenuOptions = false;
             var locationstring = string.Format($"{GlobalConstants.LocationDetails?.Longitude} | {GlobalConstants.LocationDetails?.Latitude}");
-            await Application.Current.MainPage.DisplayAlert(LabelInfo, string.Format($"IMEI: {GlobalConstants.IMEINumber}\nDeviceID: {GlobalConstants.IMEINumber}\nUniqueID: {GlobalConstants.UniqueID}\nURL: {GlobalConstants.AppBaseURL}\nVersion: {GlobalConstants.VersionNumber}\nLocation: {locationstring}"), "Ok");
+            await Application.Current.MainPage.DisplayAlert(LabelInfo, string.Format($"IMEI: {GlobalConstants.IMEINumber}\nDeviceID: {GlobalConstants.IMEINumber}\nUniqueID: {GlobalConstants.UniqueID}\nURL: {GlobalConstants.AppBaseURL}\nVersion: {GlobalConstants.VersionNumber}\nLocation: {locationstring}"), AppResources.Ok);
         }
 
         public ICommand MenuRefreshItemCommand => new Command(MenuRefreshItemCommandExecute);
@@ -596,7 +596,7 @@ namespace mTIM.ViewModels
         private void SearchForNewApp()
         {
             IsNotificationVisible = false;
-            LabelAppUpdates = "Checking new version";
+            LabelAppUpdates = AppResources.CheckNewVersion; // "Checking new version";
             AppUpdateTextColor = Color.LightGray;
             Webservice.QueryAppUpdate(AppData);
         }
@@ -609,7 +609,7 @@ namespace mTIM.ViewModels
                 {
                     case DataType.Prjladen:
                     case DataType.Prjladen2:
-                        await Application.Current.MainPage.DisplayAlert("Load task list?", item.Value?.ToString(), "Ok", "Cancel");
+                        await Application.Current.MainPage.DisplayAlert(AppResources.LoadTaskList, item.Value?.ToString(), AppResources.Ok, AppResources.Cancel);
                         break;
                     case DataType.Aktion:
                     case DataType.Aktion2:

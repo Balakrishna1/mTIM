@@ -123,6 +123,8 @@ namespace mTIM.Droid.Services
                             {
                                 foreach (var value in item.Value)
                                 {
+                                    if (DownloadList.Count > 50)
+                                        return;
                                     DownloadList.Add(Task.Run(() => DownloadFile(Math.Abs(value.FileID), value.FileIDSpecified)));
                                 }
                             }
@@ -346,9 +348,12 @@ namespace mTIM.Droid.Services
         {
             if (e.Error == null && !e.Cancelled)
             {
-                string json = JsonConvert.SerializeObject(e.Result);
-                Debug.WriteLine("App Data: " + json);
-                ActionAppUpdate?.Invoke(json);
+                if (e.Result != null)
+                {
+                    string json = JsonConvert.SerializeObject(e.Result);
+                    Debug.WriteLine("App Data: " + json);
+                    ActionAppUpdate?.Invoke(json);
+                }
             }
         }
     }

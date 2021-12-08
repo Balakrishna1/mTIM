@@ -59,8 +59,8 @@
             </Grid>
                 <StackLayout Orientation="Vertical">
                     <StackLayout Orientation="Horizontal">
-                        <Label Text="{Binding LabelSyncTime}" TextColor="Black" FontSize="Large"/>
-                        <Label Text="{Binding StringSyncTime}" TextColor="Black" FontSize="Large"/>
+                        <Label Text="{Binding LabelSyncTime}" TextColor="Black" FontSize="Medium"/>
+                            <Label Text="{Binding StringSyncTime}" TextColor="Black" FontSize="Medium"/>
                     </StackLayout>
                     <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" HeightRequest="50">
                         <ImageButton Source="icon_minus" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"

@@ -15,13 +15,19 @@ namespace mTIM.Helpers
             }
         }
 
-        public static void DeleteAppDirectory()
+        public static async void DeleteAppDirectory()
         {
+            string jsonSettings = string.Empty;
+            if (FileHelper.IsFileExists(GlobalConstants.SETTINGS_FILE))
+            {
+                jsonSettings = FileHelper.ReadText(GlobalConstants.SETTINGS_FILE);
+            }
             DirectoryInfo directory = new DirectoryInfo(FileSystem.AppDataDirectory);
             foreach (DirectoryInfo dir in directory.GetDirectories())
             {
                 dir.Delete(true);
             }
+            await FileHelper.WriteTextAsync(GlobalConstants.SETTINGS_FILE, jsonSettings);
         }
 
         public static string GetFilePath(string fileName)

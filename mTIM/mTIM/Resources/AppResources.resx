@@ -120,11 +120,26 @@
   <data name="AppUpdates" xml:space="preserve">
     <value>Search for updates</value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CheckNewVersion" xml:space="preserve">
+    <value>Checking new version</value>
+  </data>
   <data name="HintURL" xml:space="preserve">
     <value>Enter URL</value>
   </data>
   <data name="Info" xml:space="preserve">
     <value>Info</value>
+  </data>
+  <data name="InstallUpdate" xml:space="preserve">
+    <value>Install Update {0}</value>
+  </data>
+  <data name="LoadTaskList" xml:space="preserve">
+    <value>Load task list?</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>Ok</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Refresh</value>

@@ -6,6 +6,7 @@ using System.Windows.Input;
 using mTIM.Helpers;
 using mTIM.Interfaces;
 using mTIM.Models;
+using mTIM.Resources;
 using Newtonsoft.Json;
 using Xamarin.Forms;
 
@@ -59,7 +60,7 @@ namespace mTIM.ViewModels
             {
                 GlobalConstants.SyncMinutes = value;
                 updateTimer();
-                IsIncrementIocnVisible = value ==10 ? false : true;
+                IsIncrementIocnVisible = value == 10 ? false : true;
                 IsDecrementIocnVisible = value == 1 ? false : true;
                 SetAndRaisePropertyChanged(ref syncMinites, value);
             }
@@ -173,7 +174,7 @@ namespace mTIM.ViewModels
             TimerHelper.Instance.Create(CallBack);
             base.OnAppearing();
         }
-        
+
         public override void OnDisAppearing()
         {
             //TimerHelper.Instance.Dispose();
@@ -184,13 +185,14 @@ namespace mTIM.ViewModels
         {
             Device.BeginInvokeOnMainThread(async () =>
             {
-                await Application.Current.MainPage.DisplayAlert(LabelInfo, message, "Ok");
+                await Application.Current.MainPage.DisplayAlert(LabelInfo, message, AppResources.Ok);
             });
         }
 
         public virtual void OnSyncCommand(bool isFromAuto = true)
         {
             SaveTaskList();
+            Webservice.ViewModel = this;
             Webservice.SyncTaskList(JsonConvert.SerializeObject(TotalListList), isFromAuto);
         }
 

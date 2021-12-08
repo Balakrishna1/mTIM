@@ -2,17 +2,17 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="zh-Hant" original="MTIM/RESOURCES/APPRESOURCES.RESX" tool-id="MultilingualAppToolkit" product-name="n/a" product-version="n/a" build-num="n/a">
     <header>
-      <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="4.0.6918.0" tool-company="Microsoft" />
+      <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="4.0.6921.0" tool-company="Microsoft" />
     </header>
     <body>
       <group id="MTIM/RESOURCES/APPRESOURCES.RESX" datatype="resx">
-        <trans-unit id="Settings" translate="yes" xml:space="preserve">
-          <source>Settings</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">設定</target>
-        </trans-unit>
         <trans-unit id="AppUpdates" translate="yes" xml:space="preserve">
           <source>Search for updates</source>
-          <target state="new">Search for updates</target>
+          <target state="translated">搜索更新</target>
+        </trans-unit>
+        <trans-unit id="CheckNewVersion" translate="yes" xml:space="preserve">
+          <source>Checking new version</source>
+          <target state="translated">檢查新版本</target>
         </trans-unit>
         <trans-unit id="HintURL" translate="yes" xml:space="preserve">
           <source>Enter URL</source>
@@ -22,17 +22,37 @@
           <source>Info</source>
           <target state="needs-review-translation" state-qualifier="tm-suggestion">資訊</target>
         </trans-unit>
+        <trans-unit id="Refresh" translate="yes" xml:space="preserve">
+          <source>Refresh</source>
+          <target state="needs-review-translation" state-qualifier="tm-suggestion">重新整理</target>
+        </trans-unit>
+        <trans-unit id="Settings" translate="yes" xml:space="preserve">
+          <source>Settings</source>
+          <target state="needs-review-translation" state-qualifier="tm-suggestion">設定</target>
+        </trans-unit>
         <trans-unit id="SyncTime" translate="yes" xml:space="preserve">
-          <source>Status sync time</source>
-          <target state="new">Status sync time</target>
+          <source>Status sync interval</source>
+          <target state="translated">狀態同步間隔</target>
         </trans-unit>
         <trans-unit id="Url" translate="yes" xml:space="preserve">
           <source>Url</source>
           <target state="needs-review-translation" state-qualifier="tm-suggestion">URL</target>
         </trans-unit>
-        <trans-unit id="Refresh" translate="yes" xml:space="preserve">
-          <source>Refresh</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">重新整理</target>
+        <trans-unit id="InstallUpdate" translate="yes" xml:space="preserve">
+          <source>Install Update {0}</source>
+          <target state="translated">安裝更新 {0}</target>
+        </trans-unit>
+        <trans-unit id="Cancel" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="needs-review-translation" state-qualifier="tm-suggestion">取消</target>
+        </trans-unit>
+        <trans-unit id="Ok" translate="yes" xml:space="preserve">
+          <source>Ok</source>
+          <target state="needs-review-translation" state-qualifier="tm-suggestion">確定</target>
+        </trans-unit>
+        <trans-unit id="LoadTaskList" translate="yes" xml:space="preserve">
+          <source>Load task list?</source>
+          <target state="translated">狀態同步間隔?</target>
         </trans-unit>
       </group>
     </body>

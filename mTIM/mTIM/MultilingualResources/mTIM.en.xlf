@@ -23,8 +23,8 @@
           <target state="new">Settings</target>
         </trans-unit>
         <trans-unit id="SyncTime" translate="yes" xml:space="preserve">
-          <source>Status sync time</source>
-          <target state="new">Status sync time</target>
+          <source>Status sync interval</source>
+          <target state="new">Status sync interval</target>
         </trans-unit>
         <trans-unit id="Url" translate="yes" xml:space="preserve">
           <source>Url</source>
@@ -33,6 +33,26 @@
         <trans-unit id="Refresh" translate="yes" xml:space="preserve">
           <source>Refresh</source>
           <target state="new">Refresh</target>
+        </trans-unit>
+        <trans-unit id="CheckNewVersion" translate="yes" xml:space="preserve">
+          <source>Checking new version</source>
+          <target state="new">Checking new version</target>
+        </trans-unit>
+        <trans-unit id="InstallUpdate" translate="yes" xml:space="preserve">
+          <source>Install Update {0}</source>
+          <target state="new">Install Update {0}</target>
+        </trans-unit>
+        <trans-unit id="Cancel" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="new">Cancel</target>
+        </trans-unit>
+        <trans-unit id="Ok" translate="yes" xml:space="preserve">
+          <source>Ok</source>
+          <target state="new">Ok</target>
+        </trans-unit>
+        <trans-unit id="LoadTaskList" translate="yes" xml:space="preserve">
+          <source>Load task list?</source>
+          <target state="new">Load task list?</target>
         </trans-unit>
       </group>
     </body>
