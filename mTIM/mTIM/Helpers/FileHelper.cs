@@ -27,7 +27,8 @@ namespace mTIM.Helpers
             {
                 dir.Delete(true);
             }
-            await FileHelper.WriteTextAsync(GlobalConstants.SETTINGS_FILE, jsonSettings);
+            if (!string.IsNullOrEmpty(jsonSettings))
+                await FileHelper.WriteTextAsync(GlobalConstants.SETTINGS_FILE, jsonSettings);
         }
 
         public static string GetFilePath(string fileName)
