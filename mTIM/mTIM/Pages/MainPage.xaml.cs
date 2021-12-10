@@ -24,12 +24,16 @@ namespace mTIM
         protected WorldInputHandler inputs;
         MainViewModel ViewModel;
         public const int ListWidthInLandscape = 255;
+        private double projectFontSize = 0;
+        private double projectSubtextFontSize = 0;
         public MainPage()
         {
             InitializeComponent();
             ViewModel = new MainViewModel(Navigation);
             BindingContext = ViewModel;
             BarcodeView.SetBindingViewModel(ViewModel);
+            projectFontSize = lblTittle.FontSize;
+            projectSubtextFontSize = lblSubtext.FontSize;
             var customCell = new DataTemplate(typeof(ElementViewCell));
             customCell.SetBinding(ElementViewCell.IdProperty, "Id");
             customCell.SetBinding(ElementViewCell.NameProperty, "Name");
@@ -511,6 +515,32 @@ namespace mTIM
             a.Add(0.5, 1, new Xamarin.Forms.Animation(v => image.Scale = v, 1.2, 0.7, Easing.CubicIn));
             a.Commit(this, "animation", length: 1000,
                 finished: (v, c) => image.Scale = 0.7, repeat: () => true);
+        }
+
+        void Label_SizeChanged(System.Object sender, System.EventArgs e)
+        {
+            var lbl = sender as Label;
+            if (lbl != null && lbl.Text.Length > 20)
+            {
+                lblTittle.FontSize = projectFontSize - 4;
+            }
+            else
+            {
+                lblTittle.FontSize = projectFontSize;
+            }
+        }
+
+        void LabelSubText_SizeChanged(System.Object sender, System.EventArgs e)
+        {
+            var lbl = sender as Label;
+            if (lbl != null && lbl.Text.Length > 60)
+            {
+                lblSubtext.FontSize = projectSubtextFontSize - 2;
+            }
+            else
+            {
+                lblSubtext.FontSize = projectSubtextFontSize;
+            }
         }
     }
 }

@@ -76,6 +76,11 @@ namespace mTIM
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
+            var maxLength = GlobalConstants.IsLandscape ? 12 : 40; 
+            if(Name.Length > maxLength)
+            {
+                lblName.FontSize = lblName.FontSize - 4;
+            }
             lblName.Text = Name;
             if (HasChailds)
             {
@@ -141,40 +146,30 @@ namespace mTIM
 
         async void OnTapped(object sender, EventArgs e)
         {
-            await stackValue.ScaleTo(0.9, 100);
-            ActionValueClicked?.Invoke(ID);
-            await stackValue.ScaleTo(1, 100);
+            await TouchHelper.Instance.TouchEffectsWithActionStruct<int>(stackValue, 0.9, 100, ID, ActionValueClicked);
         }
 
         private async void ImgInfoButton_Clicked(object sender, EventArgs e)
         {
-            await imgInfoButton.ScaleTo(0.9, 100);
-            ActionRightIconClicked?.Invoke(ID);
-            await imgInfoButton.ScaleTo(1, 100);
+            await TouchHelper.Instance.TouchEffectsWithActionStruct(imgInfoButton, 0.9, 100, ID, ActionRightIconClicked);
         }
 
         async void OnCheckBoxTapped(object sender, EventArgs e)
         {
-            await chbValue.ScaleTo(0.9, 100);
             chbValue.Source = ImageSource.FromFile(!Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
-            ActionValueClicked?.Invoke(ID);
-            await chbValue.ScaleTo(1, 100);
+            await TouchHelper.Instance.TouchEffectsWithActionStruct(chbValue, 0.9, 100, ID, ActionValueClicked);
         }
 
         async void OnDocumentTapped(object sender, EventArgs e)
         {
-            await stackDocument.ScaleTo(0.9, 100);
-            ActionValueClicked?.Invoke(ID);
-            await stackDocument.ScaleTo(1, 100);
+            await TouchHelper.Instance.TouchEffectsWithActionStruct(stackDocument, 0.9, 100, ID, ActionValueClicked);
         }
 
         async void OnItemTapped(object sender, EventArgs e)
         {
-            if (!GlobalConstants.IsLandscape)
+            if (!GlobalConstants.IsLandscape && HasChailds)
             {
-                await rootView.ScaleTo(0.95, 100);
-                ActionItemClicked?.Invoke(ID);
-                await rootView.ScaleTo(1, 100);
+                await TouchHelper.Instance.TouchEffectsWithActionStruct(rootView, 0.95, 100, ID, ActionItemClicked);
             }
         }
     }

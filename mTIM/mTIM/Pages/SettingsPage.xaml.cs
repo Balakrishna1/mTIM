@@ -1,4 +1,5 @@
-﻿using mTIM.ViewModels;
+﻿using mTIM.Helpers;
+using mTIM.ViewModels;
 using Xamarin.Forms;
 
 namespace mTIM
@@ -17,9 +18,7 @@ namespace mTIM
 
         private async void BtnClose_Clicked(object sender, System.EventArgs e)
         {
-            await btnClose.ScaleTo(0.7, 50);
-            ViewModel.CloseCommand.Execute(null);
-            await btnClose.ScaleTo(1, 50);
+            await TouchHelper.Instance.TouchEffectsWithCommand<object>(btnClose, 0.7, 50, ViewModel.CloseCommand);
         }
 
         protected override void OnAppearing()

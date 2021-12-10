@@ -18,10 +18,10 @@
             <StackLayout Orientation="Horizontal">
             <StackLayout Orientation="Vertical">
              <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
-                <ImageButton Source="icon_back" IsVisible="{Binding IsShowBackButton}" BackgroundColor="Transparent" HorizontalOptions="StartAndExpand" x:Name="btnBack"  Command="{Binding BackButtonCommand}" HeightRequest="30" WidthRequest="30" Aspect="AspectFit"/>
-                <Label Text="{Binding SelectedItemText}" TextColor="Black" FontSize="Body" HeightRequest="30" VerticalTextAlignment="Center" HorizontalTextAlignment="Start"/>
+                <ImageButton Source="icon_back" IsVisible="{Binding IsShowBackButton}" BackgroundColor="Transparent" HorizontalOptions="StartAndExpand" x:Name="btnBack"  Command="{Binding BackButtonCommand}" HeightRequest="30" WidthRequest="30"/>
+                <Label x:Name="lblTittle" Text="{Binding SelectedItemText}" TextColor="Black" FontSize="Body" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" SizeChanged="Label_SizeChanged"/>
              </StackLayout>
-             <Label VerticalOptions="EndAndExpand" HorizontalOptions="StartAndExpand" Text="{Binding SubText}" TextColor="Gray" FontSize="Body" />
+             <Label x:Name="lblSubtext" VerticalOptions="EndAndExpand" HorizontalOptions="StartAndExpand" Text="{Binding SubText}" TextColor="Gray" FontSize="Small" SizeChanged="LabelSubText_SizeChanged" />
              </StackLayout>
              <StackLayout x:Name="stackHeader" Orientation="Vertical">
                 <ImageButton Source="logo" Padding="5" IsEnabled="False"  BackgroundColor="#E8E8E8" Aspect="AspectFit" HeightRequest="40" WidthRequest="140" HorizontalOptions="EndAndExpand"/>

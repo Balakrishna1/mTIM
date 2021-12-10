@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using mTIM.Helpers;
 using mTIM.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -24,11 +25,13 @@ namespace mTIM
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
+            btnClose.Clicked -= BtnClose_Clicked;
             btnClose.Clicked += BtnClose_Clicked;
         }
 
         private void BtnClose_Clicked(object sender, EventArgs e)
         {
+            TouchHelper.Instance.TouchEffectsWithCommand<object>(btnClose, 0.7, 50, null);
             ViewModel.IsOpenBarcodeView = false;
             ViewModel.IsScanning = false;
         }
