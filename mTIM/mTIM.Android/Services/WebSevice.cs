@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Acr.UserDialogs;
+using Android.Util;
 using HeyRed.Mime;
 using mTIM.Droid.mtimtest.precast_software.com;
 using mTIM.Droid.Services;
 using mTIM.Helpers;
 using mTIM.Interfaces;
+using mTIM.Models;
+using mTIM.Models.D;
 using mTIM.ViewModels;
 using Newtonsoft.Json;
 using Xamarin.Essentials;
@@ -158,21 +165,19 @@ namespace mTIM.Droid.Services
                 //UserDialogs.Instance.HideLoading();
                 if (e.Error == null && !e.Cancelled)
                 {
-                    var path = string.Format(GlobalConstants.GraphicsBlob_FILE, 198);
-                    if (!FileHelper.IsFileExists(path))
+                    if (e.Result != null && e.Result.Length >= 0)
                     {
-                        if (e.Result != null && e.Result.Length >= 0)
+                        if (!FileHelper.IsFileExists(GlobalConstants.GraphicsBlob_FILE))
                         {
-                            await FileHelper.WriteAllBytesAsync(path, e.Result);
+                            await FileHelper.WriteAllBytesAsync(GlobalConstants.GraphicsBlob_FILE, e.Result);
                         }
+                        ViewModel.ImageSource = e.Result;
+                        Debug.WriteLine(e.Result);
                     }
-                    ViewModel.ImageSource = e.Result;
-                    //await FileHelper.ReadAllBytesAsync(path);
-                    Debug.WriteLine(e.Result);
-                }
-                else if (e.Error != null && !fromAutoSync)
-                {
-                    ViewModel.DisplayErrorMessage(e.Error.Message);
+                    else if (e.Error != null && !fromAutoSync)
+                    {
+                        ViewModel.DisplayErrorMessage(e.Error.Message);
+                    }
                 }
             }
             catch (Exception ex)

@@ -232,7 +232,7 @@ namespace mTIM
                 listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
                 glBuilding.WidthRequest = width - ListWidthInLandscape;
                 glBuilding.HeightRequest = height - frameHeader.Height;
-                //loadUrhoView();
+                loadUrhoView();
             }
         }
 
@@ -249,6 +249,7 @@ namespace mTIM
         protected override void OnAppearing()
         {
             ViewModel.OnAppearing();
+            glBuilding?.StopUrhoApp();
             base.OnAppearing();
         }
 
@@ -282,7 +283,7 @@ namespace mTIM
 
                 App.RootNode.RemoveAllChildren();
                 App.RootNode.SetWorldRotation(Quaternion.Identity);
-                App.RootNode.Position = Vector3.Zero;
+                App.RootNode.Position = Urho.Vector3.Zero;
                 App.Camera.Zoom = 1f;
 
                 inputs = App.AddChild<WorldInputHandler>("inputs");

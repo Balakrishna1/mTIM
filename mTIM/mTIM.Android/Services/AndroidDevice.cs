@@ -141,7 +141,7 @@ namespace mTIM.Droid.Services
 
         private string getRandomHexString(int numchars)
         {
-            Random r = new Random();
+            System.Random r = new System.Random();
             StringBuffer sb = new StringBuffer();
             while (sb.Length() < numchars)
             {

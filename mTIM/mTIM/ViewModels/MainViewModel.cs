@@ -7,6 +7,7 @@ using mTIM.Enums;
 using mTIM.Helpers;
 using mTIM.Interfaces;
 using mTIM.Models;
+using mTIM.Models.D;
 using mTIM.Resources;
 using Newtonsoft.Json;
 using Xamarin.Forms;

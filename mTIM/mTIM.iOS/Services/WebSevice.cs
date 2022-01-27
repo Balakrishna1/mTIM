@@ -153,12 +153,11 @@ namespace mTIM.iOS.Services
                 //UserDialogs.Instance.HideLoading();
                 if (e.Error == null && !e.Cancelled)
                 {
-                    var path = string.Format(GlobalConstants.GraphicsBlob_FILE, 198);
-                    if (!FileHelper.IsFileExists(path))
+                    if (!FileHelper.IsFileExists(GlobalConstants.GraphicsBlob_FILE))
                     {
                         if (e.Result != null && e.Result.Length >= 0)
                         {
-                            await FileHelper.WriteAllBytesAsync(path, e.Result);
+                            await FileHelper.WriteAllBytesAsync(GlobalConstants.GraphicsBlob_FILE, e.Result);
                         }
                     }
                     ViewModel.ImageSource = e.Result;

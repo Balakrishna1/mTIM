@@ -68,6 +68,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="OpenTK-1.0" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2125" />
@@ -333,6 +334,7 @@
     <Folder Include="Resources\mipmap-xxhdpi\" />
     <Folder Include="Resources\mipmap-xxxhdpi\" />
     <Folder Include="Resources\xml\" />
+    <Folder Include="Assets\Data\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References" />
@@ -348,6 +350,55 @@
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>
       <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Data\HoverBike.mdl" />
+    <AndroidAsset Include="Assets\Data\Model.obj" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.Xamarin.Android.targets" Label="MultilingualAppToolkit" Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\v$(MultilingualAppToolkitVersion)\Microsoft.Multilingual.Xamarin.Android.targets')" />

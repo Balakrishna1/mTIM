@@ -43,6 +43,9 @@
     <PackageReference Include="System.IO" Version="4.3.0" />
     <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.14" />
     <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="19.3.0.47" />
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+    <PackageReference Include="protobuf-net" Version="3.0.101" />
+    <PackageReference Include="CjClutter.ObjLoader" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="MultilingualResources\mTIM.de.xlf" />
@@ -87,6 +90,13 @@
     <None Remove="Xamarin.Forms.SaveOpenPDFPackage" />
     <None Remove="MimeTypesMap" />
     <None Remove="Enums\" />
+    <None Remove="Models\3D\" />
+    <None Remove="System.IO.Compression" />
+    <None Remove="protobuf-net" />
+    <None Remove="CjClutter.ObjLoader" />
+    <None Remove="Unofficial.OpenTK" />
+    <None Remove="NUtilLibrary_TIM" />
+    <None Remove="Precast.DbCore" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />
@@ -99,6 +109,7 @@
     <Folder Include="Views\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Enums\" />
+    <Folder Include="Models\3D\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Meshes\Model.obj" />
@@ -142,5 +153,13 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NUtilLibrary_TIM">
+      <HintPath>..\..\..\..\Downloads\NUtilLibrary_TIM.dll</HintPath>
+    </Reference>
+    <Reference Include="Precast.DbCore">
+      <HintPath>..\..\Precast.DbCore.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

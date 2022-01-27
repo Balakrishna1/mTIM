@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using mTIM.Enums;
 using Newtonsoft.Json;
 
-namespace mTIM.Models
+namespace mTIM.Models.D
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class TimTaskModel
@@ -35,6 +36,10 @@ namespace mTIM.Models
         public object Value { get; set; }
 
         [JsonIgnore]
-        public bool HasChailds { get; set; } 
+        public bool HasChailds { get; set; }
+        [JsonIgnore]
+        public AABB aabb { get; set; } = new AABB();
+        [JsonIgnore]
+        public List<int> subMeshes { get; set; } = new List<int>();
     }
 }

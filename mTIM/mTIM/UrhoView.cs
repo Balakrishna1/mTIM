@@ -56,7 +56,7 @@ namespace mTIM
             {
                 //This will fail if called twice within an application
                 _urhoApp = await _urhoSurface.Show<UrhoApp>(
-                    new ApplicationOptions(assetsFolder: null)
+                    new ApplicationOptions(assetsFolder: "Data")
                     {
                         Orientation = ApplicationOptions.OrientationType.LandscapeAndPortrait,
                         TouchEmulation = true
@@ -66,7 +66,7 @@ namespace mTIM
             }
         }
 
-        private async Task StopUrhoApp()
+        public async Task StopUrhoApp()
         {
             if (_urhoApp != null)
             {

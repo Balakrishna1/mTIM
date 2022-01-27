@@ -67,7 +67,6 @@ namespace mTIM.Components
             {
                 using (var t = new ScopeTimer("Mesh.Load"))
                 {
-
                     if (data == null)
                         return false;
 
@@ -646,12 +645,12 @@ namespace mTIM.Components
                 var n = Normals[i];
                 var t = UV[i];
 
-                //Urho.Color clr = Urho.Color.Green;
-                //if (Vertices.Count == Colors.Count)
-                //{
-                //    var c = Colors[i];
-                //    clr = Urho.Color.FromByteFormat((byte)(c.R * 255), (byte)(c.G * 255), (byte)(c.B * 255), 255);
-                //}
+                Urho.Color clr = Urho.Color.Green;
+                if (Vertices.Count == Colors.Count)
+                {
+                    var c = Colors[i];
+                    clr = Urho.Color.FromByteFormat((byte)(c.R * 255), (byte)(c.G * 255), (byte)(c.B * 255), 255);
+                }
 
                 var d = new Urho.VertexBuffer.PositionNormalColorTexcoord();
 
