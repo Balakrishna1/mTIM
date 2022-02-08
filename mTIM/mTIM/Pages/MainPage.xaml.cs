@@ -217,6 +217,7 @@ namespace mTIM
                 listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = width;
                 listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
                 glBuilding.IsVisible = false;
+                isLoaded = false;
             }
             else
             {
@@ -249,7 +250,7 @@ namespace mTIM
         protected override void OnAppearing()
         {
             ViewModel.OnAppearing();
-            glBuilding?.StopUrhoApp();
+            //glBuilding?.StopUrhoApp();
             base.OnAppearing();
         }
 
@@ -500,12 +501,12 @@ namespace mTIM
         {
             if (!isLoaded)
             {
-                Device.StartTimer(TimeSpan.FromMilliseconds(300), () =>
-                {
+                //Device.StartTimer(TimeSpan.FromMilliseconds(300), () =>
+                //{
                     glBuilding.StartUrhoApp();
                     isLoaded = true;
-                    return false;
-                });
+                //    return true;
+                //});
             }
         }
 

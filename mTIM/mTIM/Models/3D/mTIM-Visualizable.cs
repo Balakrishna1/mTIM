@@ -210,11 +210,6 @@ namespace mTIM.Models.D
             return 0;
                 //_comparer.Compare(this, other);
         }
-
-        public Triangle[] GetTriangles()
-        {
-            return Triangles;
-        }
     }
 
     [ProtoContract]

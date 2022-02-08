@@ -121,7 +121,8 @@ namespace mTIM.Models.D
         const int Size = 128 * 1024;
         public AABB aabb = new AABB();
         public ChunkedArray<Vertex> vertices = new ChunkedArray<Vertex>();
-        public RobinTable<Key, T, RobinObjectAdapter<Key>> vertexTable = new RobinTable<Key,T, RobinObjectAdapter<Key>>();
+        //public RobinTable<Vertex, int, RobinObjectAdapter<Vertex>> vertexTable = new RobinTable<Vertex,int, RobinObjectAdapter<Vertex>>();
+        public Dictionary<Vertex, int> vertexTable = new Dictionary<Vertex, int>();
         public ChunkedArray<int> indices = new ChunkedArray<int>();
         public List<TimSubMesh> subMeshes = new List<TimSubMesh>();
         public int lastLineIndexCount;
@@ -129,7 +130,7 @@ namespace mTIM.Models.D
 
         public TimMeshBuilder()
         {
-            vertexTable.Resize(256 * 1024);
+            //vertexTable.Resize(256 * 1024);
             subMeshes = new List<TimSubMesh>(1024);
             lastIndexCount = 0;
             lastLineIndexCount = 0;
@@ -155,7 +156,7 @@ namespace mTIM.Models.D
 
         public void DisposeTemp()
         {
-           vertexTable.Dispose();
+           //vertexTable.Dispose();
         }
 
         public int AddVertex(Vertex vertex)
@@ -171,19 +172,17 @@ namespace mTIM.Models.D
             }
 
             int newIndex = vertices.Count();
-            vertices.Add(vertex);
-            return newIndex;
-            //Todo: Getting error need to fix it later.
-            //int index = vertexTable.FindOrAdd((Key)(object)vertex, (T)(object)newIndex);
-            //if (index == -1)
-            //{
-            //    vertices.Add(vertex);
-            //    return newIndex;
-            //}
-            //else
-            //{
-            //    return Convert.ToInt32(vertexTable.GetValueByIndex(index));
-            //}
+            int index = -1;
+            if (!vertexTable.TryGetValue(vertex, out index))
+            {
+                vertexTable.TryAdd(vertex, newIndex);
+                vertices.Add(vertex);
+                return newIndex;
+            }
+            else
+            {
+                return index;
+            }
         }
 
         public void AddTriangle(int[] triangleIndices)

@@ -116,7 +116,7 @@
             </AbsoluteLayout>
             <!--<sk:SKGLView x:Name="glBuilding" PaintSurface="glBuilding_PaintSurface" BackgroundColor="LightCoral" VerticalOptions="Fill" HorizontalOptions="Fill" IsVisible="false" />-->
             <local:UrhoView x:Name="glBuilding" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="LightCoral">
-        </local:UrhoView>
+            </local:UrhoView>
         </StackLayout>
     </StackLayout>
     <local:BottomMenuContentView

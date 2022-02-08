@@ -91,31 +91,31 @@ namespace mTIM
             _rootNode = _scene.CreateChild("rootNode");
         }
 
-
-
-        private async void AddStuff()
+        public async void AddStuff()
         {
+            _rootNode.RemoveAllChildren();
             this.AddChild<WorldInputHandler>("inputs");
+            model = this.AddChild<ObjectModel>("model");
+            var chaildmodel = this.AddChild<ObjectModel>("chaildmodel");
+
+            //await model.LoadMesh("mTIM.Meshes.Cube.obj", true);
             if (!FileHelper.IsFileExists(GlobalConstants.GraphicsBlob_FILE))
             {
                 return;
             }
-            model = this.AddChild<ObjectModel>("model");
-            //await model.LoadMesh("mTIM.Meshes.Model.obj", true);
             var compressedData = await FileHelper.ReadAllBytesAsync(GlobalConstants.GraphicsBlob_FILE);
             if (compressedData != null && compressedData.Length > 0)
             {
                 var result = GZipHelper.DeserializeResult(compressedData);
                 Debug.WriteLine(result.Geometries.Count());
-                var mesh = CreateModel(result);
-                model.LoadMesh(mesh);
+                var mesh = CreateMesh(result);
+                if (mesh != null)
+                {
+                    chaildmodel.LoadMesh(mesh, true);
+                    model.LoadMesh(mesh);
+                }
             }
             //model.LoadModel("HoverBike.mdl", null);
-            //}else
-            //{
-            //    var data = await FileHelper.ReadAllBytesAsync(GlobalConstants.GraphicsBlob_FILE);
-            //    UpdateModel(data);
-            //}
         }
 
         private T Deserialize<T>(byte[] param)
@@ -126,15 +126,8 @@ namespace mTIM
                 return (T)br.Deserialize(ms);
             }
         }
-        //public void LoadModelProtoClasses(byte[] data, int length, ref Result result)
-        //{
-        //    //var value = GZipHelper.Unzip(data);
-        //    var chrValue = Convert.ToChar(data[0]);
-        //    ProtoLoader loader = new ProtoLoader(chrValue, length) ;
-        //    result.Read(loader);
-        //}
 
-        public TimMesh CreateModel(Result result)
+        public TimMesh CreateMesh(Result result)
         {
             TimMesh mesh = null;
 
@@ -158,7 +151,7 @@ namespace mTIM
                     {
                         TimSubMesh sm = mesh.subMeshes[i];
                         TimTaskModel current = VM.TotalListList.Where(x => x.Id.Equals(sm.listId)).FirstOrDefault();
-                            //Logic.Instance().GetTaskListData().GetTaskById(sm.listId);
+                        //Logic.Instance().GetTaskListData().GetTaskById(sm.listId);
                         if (current != null)
                         {
                             current.aabb.Grow(sm.aabb);
@@ -190,14 +183,6 @@ namespace mTIM
             }
         }
 
-        public void UpdateModel(byte[] data)
-        {
-            if (model == null)
-                model = this.AddChild<ObjectModel>("model");
-
-            //model.LoadModel(data);
-        }
-
         private void AddCameraAndLight()
         {
             var cameraNode = _scene.CreateChild("cameraNode");
@@ -211,7 +196,7 @@ namespace mTIM
             _light.LightType = LightType.Point;
             _light.Range = 100;
             _light.Brightness = 1f;
-
+            
 
             cameraNode.LookAt(Vector3.Zero, Vector3.Up, TransformSpace.World);
         }
@@ -219,7 +204,7 @@ namespace mTIM
         void SetupViewport()
         {
             var renderer = Renderer;
-            renderer.DefaultZone.FogColor = Color.Gray;
+            renderer.DefaultZone.FogColor = Color.White;
             renderer.SetViewport(0, new Viewport(Context, _scene, _camera, null));
 
             UnhandledException += UrhoViewApp_UnhandledException;

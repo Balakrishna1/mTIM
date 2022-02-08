@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Urho;
@@ -59,10 +60,12 @@ namespace mTIM
                     new ApplicationOptions(assetsFolder: "Data")
                     {
                         Orientation = ApplicationOptions.OrientationType.LandscapeAndPortrait,
-                        TouchEmulation = true
+                        TouchEmulation = true,
                     });
-
                 LoadingUrhoTask.SetResult(true);
+            }else if(_urhoApp.IsInitialized)
+            {
+                _urhoApp.AddStuff();
             }
         }
 
@@ -71,10 +74,9 @@ namespace mTIM
             if (_urhoApp != null)
             {
                 await _urhoApp.Exit();
-
-                _urhoSurface = null;
                 _urhoApp = null;
                 Content = null;
+                _urhoSurface = null;
             }
         }
     }

@@ -1,21 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Urho;
 
 namespace mTIM.Models.D
 {
     public class TimMesh
     {
-        public Result proto;
-        public VertexBuffer vertexBuffer;
-        public IndexBuffer indexBuffer;
+        public Result proto { get; set; }
+        public VertexBuffer vertexBuffer { get; set; }
+        public IndexBuffer indexBuffer { get; set; }
         public List<TimSubMesh> subMeshes { get; set; }
+        public List<Vertex> vertices { get; set; } 
+        public List<Triangle> triangles { get; set; }
+        public List<int> lineIndices { get; set; }
+        public Urho.Model model { get; set; }
 
         public TimMesh()
         {
             this.proto = null;
             this.vertexBuffer = null;
             this.indexBuffer = null;
+            vertices = new List<Vertex>();
+            triangles = new List<Triangle>();
+            lineIndices = new List<int>();
+            subMeshes = new List<TimSubMesh>();
+        }
+
+        public void AddTriangle(int[] data)
+        {
+            if(triangles == null)
+            {
+                triangles = new List<Triangle>();
+            }
+            triangles.Add(new Triangle() { A = (uint)data[0], B = (uint)data[1], C = (uint)data[2] });
+        }
+
+        public void AddLine(int indexA, int indexB)
+        {
+            if (lineIndices == null)
+            {
+                lineIndices = new List<int>();
+            }
+            lineIndices.Add(indexA);
+            lineIndices.Add(indexB);
         }
 
         public static Vector3 Minus(Vector3 a, Vector3 b)
@@ -43,6 +71,103 @@ namespace mTIM.Models.D
             result.Y = a.Y * val;
             result.Z = a.Z * val;
             return result;
+        }
+
+        public VertexBuffer.PositionNormalColorTexcoord[] GetVertextData()
+        {
+            var data = new Urho.VertexBuffer.PositionNormalColorTexcoord[vertices.Count];
+
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                var vd = vertices[i];
+
+                var d = new Urho.VertexBuffer.PositionNormalColorTexcoord();
+                d.Position = vd.position;
+                d.Normal = vd.normal;
+                d.TexCoord = getuvs(vd);
+                d.Color = vd.color.ToUInt();
+                data[i] = d;
+            }
+
+            return data;
+        }
+
+        public int AddVertex(Vertex vertex)
+        {
+            int newIndex = vertices.Count();
+            //Todo: Getting error need to fix it later.
+            var data = vertices.Where(x => x.Equals(vertex)).FirstOrDefault();
+            if (data != null)
+            {
+                int index = vertices.IndexOf(data);
+
+                if (index == -1)
+                {
+                    vertices.Add(vertex);
+                    return newIndex;
+                }
+                else
+                {
+                    return index;
+                }
+            }
+            return newIndex;
+        }
+
+        private Vector2 getuvs(Vertex vd)
+        {
+            Vector2 vector = new Vector2();
+            if(vd!= null && vd.uvs?.Length > 0)
+            {
+                foreach(var uv in vd.uvs)
+                {
+                    vector.Add(uv);
+                }
+            }
+
+            return vector;
+        }
+
+        public uint[] GetIndexData()
+        {
+            var data = new uint[3 * triangles.Count];
+
+            for (int i = 0; i < triangles.Count; i++)
+            {
+                int idx = 3 * i;
+
+                data[idx + 0] = triangles[i].A;
+                data[idx + 1] = triangles[i].B;
+                data[idx + 2] = triangles[i].C;
+            }
+
+            return data;
+        }
+
+        public uint[] GetLineIndexData()
+        {
+            //uint[] indData = GetIndexData();
+            var data = new uint[lineIndices.Count];
+            for (int i = 0; i < lineIndices.Count; i++)
+            {
+                data[i] = (uint)lineIndices[i];
+            }
+
+            return data;
+        }
+
+        public uint[] Add(uint[] lst, uint[] lst1)
+        {
+            
+            var data = new uint[lst.Length + lst1.Length];
+            int idx = lst.Count();
+            for (int i = 0; i < lst1.Count(); i++)
+            {
+                data[idx] = (uint)lst1[i];
+                idx++;
+            }
+
+            return data;
         }
     }
 

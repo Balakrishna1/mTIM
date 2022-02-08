@@ -23,17 +23,11 @@ namespace mTIM.Components
 
             public bool IsNormalAligned => I1 == In1 && I2 == In2 && I3 == In3;
 
-            public Triangle(uint i1, uint iu1, uint in1, uint i2, uint iu2, uint in2, uint i3, uint iu3, uint in3)
+            public Triangle(uint i1, uint i2, uint i3)
             {
                 I1 = i1;
-                Iu1 = iu1;
-                In1 = in1;
                 I2 = i2;
-                Iu2 = iu2;
-                In2 = in2;
                 I3 = i3;
-                Iu3 = iu3;
-                In3 = in3;
             }
         }
 
@@ -200,8 +194,8 @@ namespace mTIM.Components
                     }
                     else if (line[0] == 'f')
                     {
-                        Triangle tri = null;
-
+                        Triangle tri1 = null;
+                        Triangle tri2 = null;
                         // triangleMode
                         // -1: unknown so try stuff
                         // 1: vertex and uv included
@@ -211,20 +205,18 @@ namespace mTIM.Components
                         {
                             case -1:
                                 // trying vertex and normal only
-                                ret = scan.Parse(line, "f %u//%u %u//%u %u//%u");
-                                if (ret == 6)
+                                ret = scan.Parse(line, "f %u//%u %u//%u %u//%u %u//%u");
+                                if (ret == 8)
                                 {
-                                    triangleMode = 2;
-                                    tri = new Triangle
+                                    //triangleMode = 2;
+                                    tri1 = new Triangle
                                         ((uint)scan.Results[0] - 1,
-                                        0,
-                                        (uint)scan.Results[1] - 1,
                                         (uint)scan.Results[2] - 1,
-                                        0,
-                                        (uint)scan.Results[3] - 1,
+                                        (uint)scan.Results[4] - 1);
+                                    tri2 = new Triangle
+                                        ((uint) scan.Results[0] -1,
                                         (uint)scan.Results[4] - 1,
-                                        0,
-                                        (uint)scan.Results[5] - 1);
+                                        (uint)scan.Results[6] - 1);
                                 }
                                 else
                                 {
@@ -232,35 +224,23 @@ namespace mTIM.Components
                                     ret = scan.Parse(line, "f %u/%u %u/%u %u/%u");
                                     if (ret == 6)
                                     {
-                                        triangleMode = 1;
-                                        tri = new Triangle
+                                        //triangleMode = 1;
+                                        tri1 = new Triangle
                                             ((uint)scan.Results[0] - 1,
                                             (uint)scan.Results[1] - 1,
-                                            0,
-                                            (uint)scan.Results[2] - 1,
-                                            (uint)scan.Results[3] - 1,
-                                            0,
-                                            (uint)scan.Results[4] - 1,
-                                            (uint)scan.Results[5] - 1,
-                                            0);
+                                            (uint)scan.Results[2] - 1);
                                     }
                                     else
                                     {
                                         // default to the whole thing
-                                        triangleMode = 3;
+                                        //triangleMode = 3;
                                         ret = scan.Parse(line, "f %u/%u/%u %u/%u/%u %u/%u/%u");
                                         if (ret == 9)
                                         {
-                                            tri = new Triangle
+                                            tri1 = new Triangle
                                             ((uint)scan.Results[0] - 1,
                                             (uint)scan.Results[1] - 1,
-                                            (uint)scan.Results[2] - 1,
-                                            (uint)scan.Results[3] - 1,
-                                            (uint)scan.Results[4] - 1,
-                                            (uint)scan.Results[5] - 1,
-                                            (uint)scan.Results[6] - 1,
-                                            (uint)scan.Results[7] - 1,
-                                            (uint)scan.Results[8] - 1);
+                                            (uint)scan.Results[2] - 1);
                                         }
                                     }
                                 }
@@ -269,251 +249,43 @@ namespace mTIM.Components
                                 ret = scan.Parse(line, "f %u/%u %u/%u %u/%u");
                                 if (ret == 6)
                                 {
-                                    tri = new Triangle
-                                        ((uint)scan.Results[0] - 1,
-                                        (uint)scan.Results[1] - 1,
-                                        0,
-                                        (uint)scan.Results[2] - 1,
-                                        (uint)scan.Results[3] - 1,
-                                        0,
-                                        (uint)scan.Results[4] - 1,
-                                        (uint)scan.Results[5] - 1,
-                                        0);
+                                    tri1 = new Triangle
+                                            ((uint)scan.Results[0] - 1,
+                                            (uint)scan.Results[1] - 1,
+                                            (uint)scan.Results[2] - 1);
                                 }
                                 break;
                             case 2:
                                 ret = scan.Parse(line, "f %u//%u %u//%u %u//%u");
                                 if (ret == 6)
                                 {
-                                    tri = new Triangle
-                                        ((uint)scan.Results[0] - 1,
-                                        0,
-                                        (uint)scan.Results[1] - 1,
-                                        (uint)scan.Results[2] - 1,
-                                        0,
-                                        (uint)scan.Results[3] - 1,
-                                        (uint)scan.Results[4] - 1,
-                                        0,
-                                        (uint)scan.Results[5] - 1);
+                                    tri1 = new Triangle
+                                            ((uint)scan.Results[0] - 1,
+                                            (uint)scan.Results[1] - 1,
+                                            (uint)scan.Results[2] - 1);
                                 }
                                 break;
                             case 3:
                                 ret = scan.Parse(line, "f %u/%u/%u %u/%u/%u %u/%u/%u");
                                 if (ret == 9)
                                 {
-                                    tri = new Triangle
-                                    ((uint)scan.Results[0] - 1,
-                                    (uint)scan.Results[1] - 1,
-                                    (uint)scan.Results[2] - 1,
-                                    (uint)scan.Results[3] - 1,
-                                    (uint)scan.Results[4] - 1,
-                                    (uint)scan.Results[5] - 1,
-                                    (uint)scan.Results[6] - 1,
-                                    (uint)scan.Results[7] - 1,
-                                    (uint)scan.Results[8] - 1);
+                                    tri1 = new Triangle
+                                            ((uint)scan.Results[0] - 1,
+                                            (uint)scan.Results[1] - 1,
+                                            (uint)scan.Results[2] - 1);
                                 }
                                 break;
                             default:
                                 break;
                         }
 
-                        if (tri != null)
+                        if (tri1 != null)
                         {
-                            if (!tri.IsNormalAligned)
+                            if (!tri1.IsNormalAligned)
                                 alignedIndexes = false;
 
-                            Triangles.Add(tri);
-                        }
-                    }
-                }
-            }
-
-            // I'm sure I could do this part better where I could preserve all the data and just add new vertices instead
-            if (!alignedIndexes)
-            {
-                AlignNormals();
-            }
-
-            Debug.WriteLine($"Loaded with {Vertices.Count} Vertices, {Normals.Count} Normals, {Colors.Count} Colors, {Triangles.Count} Triangles");
-
-        }
-
-        private void LoadMeshStream(MemoryStream fileStream)
-        {
-            int triangleMode = -1;
-            int ret;
-
-            var alignedIndexes = true;
-            var scan = new ScanFormatted();
-            if(fileStream == null)
-            {
-                return;
-            }
-
-            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, 4096))
-            {
-                string line;
-                while ((line = streamReader.ReadLine()) != null)
-                {
-                    if (string.IsNullOrWhiteSpace(line) || line.Length < 2)
-                        continue;
-
-                    if (line[0] == 'v')
-                    {
-                        if (line[1] == 'n')
-                        {
-                            ret = scan.Parse(line, "vn %f %f %f");
-                            if (ret > 0)
-                            {
-                                Normals.Add(new Vector3((float)scan.Results[0], (float)scan.Results[1], (float)scan.Results[2]));
-                            }
-                        }
-                        else if (line[1] == 't')
-                        {
-                            ret = scan.Parse(line, "vt %f %f");
-                            if (ret > 0)
-                            {
-                                UV.Add(new Vector2((float)scan.Results[0], (float)scan.Results[1]));
-                            }
-                        }
-                        else if (line[1] == ' ')
-                        {
-                            ret = scan.Parse(line, "v %f %f %f %f %f %f");
-                            if (ret > 0)
-                            {
-                                Vertices.Add(new Vector3((float)scan.Results[0], (float)scan.Results[1], (float)scan.Results[2]));
-                            }
-                            if (ret == 6)
-                            {
-                                Colors.Add(new Color((float)scan.Results[3], (float)scan.Results[4], (float)scan.Results[5]));
-                            }
-                        }
-                    }
-                    else if (line[0] == 'f')
-                    {
-                        Triangle tri = null;
-
-                        // triangleMode
-                        // -1: unknown so try stuff
-                        // 1: vertex and uv included
-                        // 2: vertex and normal included
-                        // 3: vertex and uv and normal included
-                        switch (triangleMode)
-                        {
-                            case -1:
-                                // trying vertex and normal only
-                                ret = scan.Parse(line, "f %u//%u %u//%u %u//%u");
-                                if (ret == 6)
-                                {
-                                    triangleMode = 2;
-                                    tri = new Triangle
-                                        ((uint)scan.Results[0] - 1,
-                                        0,
-                                        (uint)scan.Results[1] - 1,
-                                        (uint)scan.Results[2] - 1,
-                                        0,
-                                        (uint)scan.Results[3] - 1,
-                                        (uint)scan.Results[4] - 1,
-                                        0,
-                                        (uint)scan.Results[5] - 1);
-                                }
-                                else
-                                {
-                                    // trying vertex and uv only
-                                    ret = scan.Parse(line, "f %u/%u %u/%u %u/%u");
-                                    if (ret == 6)
-                                    {
-                                        triangleMode = 1;
-                                        tri = new Triangle
-                                            ((uint)scan.Results[0] - 1,
-                                            (uint)scan.Results[1] - 1,
-                                            0,
-                                            (uint)scan.Results[2] - 1,
-                                            (uint)scan.Results[3] - 1,
-                                            0,
-                                            (uint)scan.Results[4] - 1,
-                                            (uint)scan.Results[5] - 1,
-                                            0);
-                                    }
-                                    else
-                                    {
-                                        // default to the whole thing
-                                        triangleMode = 3;
-                                        ret = scan.Parse(line, "f %u/%u/%u %u/%u/%u %u/%u/%u");
-                                        if (ret == 9)
-                                        {
-                                            tri = new Triangle
-                                            ((uint)scan.Results[0] - 1,
-                                            (uint)scan.Results[1] - 1,
-                                            (uint)scan.Results[2] - 1,
-                                            (uint)scan.Results[3] - 1,
-                                            (uint)scan.Results[4] - 1,
-                                            (uint)scan.Results[5] - 1,
-                                            (uint)scan.Results[6] - 1,
-                                            (uint)scan.Results[7] - 1,
-                                            (uint)scan.Results[8] - 1);
-                                        }
-                                    }
-                                }
-                                break;
-                            case 1:
-                                ret = scan.Parse(line, "f %u/%u %u/%u %u/%u");
-                                if (ret == 6)
-                                {
-                                    tri = new Triangle
-                                        ((uint)scan.Results[0] - 1,
-                                        (uint)scan.Results[1] - 1,
-                                        0,
-                                        (uint)scan.Results[2] - 1,
-                                        (uint)scan.Results[3] - 1,
-                                        0,
-                                        (uint)scan.Results[4] - 1,
-                                        (uint)scan.Results[5] - 1,
-                                        0);
-                                }
-                                break;
-                            case 2:
-                                ret = scan.Parse(line, "f %u//%u %u//%u %u//%u");
-                                if (ret == 6)
-                                {
-                                    tri = new Triangle
-                                        ((uint)scan.Results[0] - 1,
-                                        0,
-                                        (uint)scan.Results[1] - 1,
-                                        (uint)scan.Results[2] - 1,
-                                        0,
-                                        (uint)scan.Results[3] - 1,
-                                        (uint)scan.Results[4] - 1,
-                                        0,
-                                        (uint)scan.Results[5] - 1);
-                                }
-                                break;
-                            case 3:
-                                ret = scan.Parse(line, "f %u/%u/%u %u/%u/%u %u/%u/%u");
-                                if (ret == 9)
-                                {
-                                    tri = new Triangle
-                                    ((uint)scan.Results[0] - 1,
-                                    (uint)scan.Results[1] - 1,
-                                    (uint)scan.Results[2] - 1,
-                                    (uint)scan.Results[3] - 1,
-                                    (uint)scan.Results[4] - 1,
-                                    (uint)scan.Results[5] - 1,
-                                    (uint)scan.Results[6] - 1,
-                                    (uint)scan.Results[7] - 1,
-                                    (uint)scan.Results[8] - 1);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-
-                        if (tri != null)
-                        {
-                            if (!tri.IsNormalAligned)
-                                alignedIndexes = false;
-
-                            Triangles.Add(tri);
+                            Triangles.Add(tri1);
+                            Triangles.Add(tri2);
                         }
                     }
                 }

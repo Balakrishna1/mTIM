@@ -97,6 +97,7 @@
     <None Remove="Unofficial.OpenTK" />
     <None Remove="NUtilLibrary_TIM" />
     <None Remove="Precast.DbCore" />
+    <None Remove="Meshes\Cube.obj" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />
@@ -115,6 +116,7 @@
     <EmbeddedResource Include="Meshes\Model.obj" />
     <EmbeddedResource Include="Meshes\Model2.obj" />
     <EmbeddedResource Include="Meshes\Model2.png" />
+    <EmbeddedResource Include="Meshes\Cube.obj" />
   </ItemGroup>
   <ItemGroup>
     <XliffResource Include="MultilingualResources\mTIM.de.xlf" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using mTIM.Models.D;
 using Urho;
@@ -44,29 +45,91 @@ namespace mTIM.Components
 
         }
 
-        public bool LoadMesh(TimMesh mesh)
+        public bool LoadMesh(TimMesh mesh, bool isLineList = false)
         {
             Urho.Application.InvokeOnMain(() =>
             {
                 var vb = mesh.vertexBuffer;
                 var ib = mesh.indexBuffer;
+
                 var geom = new Geometry();
+
+                var vdata = mesh.GetVertextData();
+                var idata = mesh.GetIndexData();
+                var ildata = mesh.GetLineIndexData();
+                var totalLines = mesh.Add(idata , ildata);
+
+                // Shadowed buffer needed for raycasts to work, and so that data can be automatically restored on device loss
+                vb.Shadowed = true;
+                vb.SetSize((uint)vdata.Length, ElementMask.Position | ElementMask.Normal | ElementMask.Color | ElementMask.TexCoord1, true);
+                vb.SetData(vdata.ToArray());
+
+                ib.Shadowed = true;
+                ib.SetSize((uint)idata.Length, true);
+                ib.SetData(isLineList ? ildata : idata);
 
                 geom.SetVertexBuffer(0, vb);
                 geom.IndexBuffer = ib;
-                geom.SetDrawRange(PrimitiveType.TriangleList, 0, (uint)(GetTrangls(mesh.proto).Count * 3), true);
+                geom.SetDrawRange(isLineList? PrimitiveType.LineList : PrimitiveType.TriangleList, 0 , (uint)idata.Length);
+                //geom.SetDrawRange(PrimitiveType.LineList, (uint)idata.Length, (uint)ildata.Length);
+
+                //CustomGeometry cgeom = App.RootNode.CreateComponent<CustomGeometry>();
+                //cgeom.BeginGeometry(0, PrimitiveType.LineList);
+                //var material = new Material();
+                //material.SetTechnique(0, CoreAssets.Techniques.NoTextureUnlitVCol, 1, 1);
+                //cgeom.SetMaterial(material);
+
+                //float size = 1;
+
+                ////x
+                //cgeom.DefineVertex(Vector3.Zero);
+                //cgeom.DefineColor(Color.Red);
+                //cgeom.DefineVertex(Vector3.UnitX * size);
+                //cgeom.DefineColor(Color.Red);
+                ////y
+                //cgeom.DefineVertex(Vector3.Zero);
+                //cgeom.DefineColor(Color.Green);
+                //cgeom.DefineVertex(Vector3.UnitY * size);
+                //cgeom.DefineColor(Color.Green);
+                ////z
+                //cgeom.DefineVertex(Vector3.Zero);
+                //cgeom.DefineColor(Color.Blue);
+                //cgeom.DefineVertex(Vector3.UnitZ * size);
+                //cgeom.DefineColor(Color.Blue);
+
+                //cgeom.Commit();
 
                 var model = new Model();
                 model.NumGeometries = 1;
                 model.SetGeometry(0, 0, geom);
-                model.BoundingBox = GetBoundingBox(mesh.proto);
 
-                var material = new Material();
-                //material.SetTexture(TextureUnit.Diffuse, texture);
-                material.SetTechnique(0, CoreAssets.Techniques.DiffUnlit, 0, 0);
+                BoundingBox boundingBox = new BoundingBox();
+                for (int i = 0; i < vdata.Length; i++)
+                {
+                    var position =  vdata[i].Position;
+                    vdata[i].Position = position;
+                    boundingBox.Merge(position);
+
+                    var normal = vdata[i].Normal;
+                    vdata[i].Normal = normal;
+                }
+                model.BoundingBox = boundingBox;
+
+                Material GrayLineMaterial = Material.FromColor(Color.Gray);
+                GrayLineMaterial.SetTechnique(0, CoreAssets.Techniques.NoTextureUnlit, 1, 1);
+                GrayLineMaterial.CullMode = CullMode.Cw;
+                GrayLineMaterial.LineAntiAlias = true;
+
+                Material BlackLineMaterial = Material.FromColor(Color.Black);
+                BlackLineMaterial.SetTechnique(0, CoreAssets.Techniques.DiffNormal, 0, 0);
+                BlackLineMaterial.CullMode = CullMode.Cw;
+                BlackLineMaterial.LineAntiAlias = true;
 
                 Model = model;
-                SetMaterial(material.Clone());
+                //SetMaterial(BlackLineMaterial);
+                SetMaterial(isLineList ? BlackLineMaterial : GrayLineMaterial);
+                
+                //SetMaterial(material.Clone());
                 CastShadows = true;
 
                 //scaling model node to fit in a 2x2x2 space (not taking orientation of model into account)
@@ -100,20 +163,6 @@ namespace mTIM.Components
             return new Urho.BoundingBox(
                 new Urho.Vector3(minx, miny, minz),
                 new Urho.Vector3(maxx, maxy, maxz));
-        }
-
-        public List<Triangle> GetTrangls(Result result)
-        {
-            var traingles = new List<Triangle>();
-            if(result!= null)
-            {
-                foreach(var triangle in result.Geometries)
-                {
-                    var data = (TriangulatedGeometryData)triangle;
-                    traingles.AddRange(data.GetTriangles());
-                }
-            }
-            return traingles;
         }
 
         public async Task<bool> LoadMesh(string modelPath, bool fromResource)
@@ -171,7 +220,7 @@ namespace mTIM.Components
 
                 // with alpha
                 material.SetTechnique(0, CoreAssets.Techniques.NoTextureVColAddAlpha, 1, 1);
-                material.SetShaderParameter("MatDiffColor", new Urho.Color(1f, 1f, 1f, 0.3f));
+                material.SetShaderParameter("MatDiffColor", Color.Green);
 
                 Model = model;
                 SetMaterial(material.Clone());
