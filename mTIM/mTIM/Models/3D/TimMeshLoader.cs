@@ -21,10 +21,6 @@ namespace mTIM.Models.D
         TimMesh mesh = new TimMesh();
         public TimMesh Load(Result result)
         {
-            Timer t = new Timer();
-            //t.Print("T1");
-            //t.Print("T2");
-
             if (result.Elements.Count() == 0)
             {
                 return null;
@@ -74,9 +70,9 @@ namespace mTIM.Models.D
                                 Vector3 pb = MultiplyVector(sourcePoints[Convert.ToInt32(triangle.B)], m);
                                 Vector3 pc = MultiplyVector(sourcePoints[Convert.ToInt32(triangle.C)], m);
 
-                                //pa.Y = -pa.Y;
-                                //pb.Y = -pb.Y;
-                                //pc.Y = -pc.Y;
+                                pa.Y = -pa.Y;
+                                pb.Y = -pb.Y;
+                                pc.Y = -pc.Y;
                                 var value1 = pb - pa;
                                 var value2 = pb - pc;
                                 Vector3 normalVector = new Vector3();
@@ -191,7 +187,7 @@ namespace mTIM.Models.D
             res.Z = m[8] * v.X + m[9] * v.Y + m[10] * v.Z + m[11];
             return res;
         }
-
+                 
         public VertexBuffer.PositionNormalColorTexcoord[] GetVertextData(ChunkedArray<Vertex> result)
         {
             var data = new Urho.VertexBuffer.PositionNormalColorTexcoord[0];

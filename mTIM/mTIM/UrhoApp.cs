@@ -6,12 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 using mTIM.Components;
 using mTIM.Helpers;
 using mTIM.Models.D;
 using mTIM.ViewModels;
 using Urho;
-
+using Urho.Actions;
+using Urho.Gui;
 
 namespace mTIM
 {
@@ -30,6 +32,8 @@ namespace mTIM
         private Urho.Node _rootNode;
         private Camera _camera;
         private Light _light;
+
+        public Text SelectedElement;
 
         private ObjectModel model;
 
@@ -64,11 +68,29 @@ namespace mTIM
             if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.Android)
                 AddStuff();
 
+            CreateText();
             Input.TouchBegin += Input_TouchBegin;
             Input.TouchEnd += Input_TouchEnd;
         }
 
         #region Initialisation
+
+        public void CreateText()
+        {
+            // Create Text Element
+            SelectedElement = new Text()
+            {
+                Value = "Hello World!",
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom
+            };
+            SelectedElement.SetColor(Color.Black);
+            SelectedElement.FontSize = 20;
+            //text.SetFont(font: ResourceCache.GetFont("Fonts/Anonymous Pro.ttf"), size: 30);
+            // Add to UI Root
+            UI.Root.AddChild(SelectedElement);
+        }
+
 
         private void UrhoViewApp_UnhandledException(object sender, Urho.UnhandledExceptionEventArgs e)
         {
@@ -187,7 +209,9 @@ namespace mTIM
         {
             var cameraNode = _scene.CreateChild("cameraNode");
             _camera = cameraNode.CreateComponent<Camera>();
-            _camera.OrthoSize = Graphics.Height * 0.01f/*PIXEL_SIZE*/; // Set camera ortho size (the value of PIXEL_SIZE is 0.01)
+            _camera.Orthographic = true;
+
+            _camera.OrthoSize = (float)Application.Current.Graphics.Height * Application.PixelSize;
 
             cameraNode.Position = CameraPosition;
 
@@ -203,9 +227,15 @@ namespace mTIM
 
         void SetupViewport()
         {
-            var renderer = Renderer;
-            renderer.DefaultZone.FogColor = Color.White;
-            renderer.SetViewport(0, new Viewport(Context, _scene, _camera, null));
+
+            var renderer = Application.Current.Renderer;
+            Viewport vp = new Viewport(Application.Current.Context, Scene, _camera);
+            renderer.SetViewport(0, vp);
+            vp.SetClearColor(Color.White);
+
+            //var renderer = Renderer;
+            //renderer.DefaultZone.FogColor = Color.White;
+            //renderer.SetViewport(0, new Viewport(Context, _scene, _camera, null));
 
             UnhandledException += UrhoViewApp_UnhandledException;
 #if DEBUG
@@ -220,7 +250,7 @@ namespace mTIM
             TouchedNode = null;
         }
 
-        private void Input_TouchBegin(TouchBeginEventArgs obj)
+        private async void Input_TouchBegin(TouchBeginEventArgs obj)
         {
             Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
 
@@ -231,7 +261,7 @@ namespace mTIM
 
             if (TouchedNode != null)
             {
-                Debug.WriteLine($"Input Touch");
+                Debug.WriteLine($"Input Touch : "+ TouchedNode.Name);
             }
         }
     }
