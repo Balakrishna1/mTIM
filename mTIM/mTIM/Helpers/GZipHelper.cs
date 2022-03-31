@@ -74,11 +74,8 @@ namespace mTIM.Helpers
         {
             using (var compressedStream = new MemoryStream(compressedBytes))
             using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
-            //using (var resultStream = new MemoryStream())
             {
-                //zipStream.CopyTo(resultStream);
                 return Serializer.Deserialize<mTIM.Models.D.Result>(zipStream);
-                //decompressed = resultStream.ToArray();
             }
         }
 

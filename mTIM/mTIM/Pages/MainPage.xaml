@@ -84,26 +84,38 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 </ListView>
-                <ListView x:Name="lstDocuments" ItemsSource="{Binding LstFiles}" SelectionMode="Single" IsVisible="{Binding IsDocumentListVisible}" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <StackLayout x:Name="rootDocumentCell" Orientation="Horizontal" HorizontalOptions="FillAndExpand" 
-			                    touch:TouchEff.RegularBackgroundColor="White"
-                                touch:TouchEff.PressedBackgroundColor="#E8E8E8"
-                                touch:TouchEff.PressedAnimationDuration="100"
-                                touch:TouchEff.RegularAnimationDuration="100"
-                                touch:TouchEff.RippleCount="2">
-				                <StackLayout.GestureRecognizers>
-					                <TapGestureRecognizer Tapped="OnDocumetTapped" CommandParameter="{Binding .}" NumberOfTapsRequired="1"/>
-				                </StackLayout.GestureRecognizers>
-                                <Label Text="{Binding Comment}" Padding="20,20,0,20" FontSize="Medium" TextColor="Black" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
-                                <Image Source="icon_eye" Aspect="AspectFit" HeightRequest="35" WidthRequest="35" Margin="0,0,16,0" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
-                            </StackLayout>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                </ListView>
+                <StackLayout Orientation="Vertical" x:Name="lstDocuments" IsVisible="{Binding IsDocumentListVisible}" >
+                    <StackLayout BackgroundColor="#E8E8E8" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                      <StackLayout IsVisible="{Binding IsShowGalaryIcon}" Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="FillAndExpand">
+                        <ImageButton x:Name="btnCamera" Clicked="btnCamera_Clicked" BackgroundColor="Transparent"  Source="icon_camera" Padding="5" Margin="10,10,30,10" HeightRequest="45" WidthRequest="45" Aspect="AspectFill" HorizontalOptions="CenterAndExpand" VerticalOptions="Center"/>
+                        <ImageButton x:Name="btnGalary" Clicked="btnGalary_Clicked" BackgroundColor="Transparent"  Source="icon_gallery" Padding="5" Margin="30,10,10,10" HeightRequest="45" WidthRequest="45" Aspect="AspectFill" HorizontalOptions="CenterAndExpand" VerticalOptions="Center"/>
+                      </StackLayout>
+                    </StackLayout>
+                    <ListView  ItemsSource="{Binding LstFiles}" SelectionMode="Single" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout x:Name="rootDocumentCell" Orientation="Horizontal" HorizontalOptions="FillAndExpand" Padding="16,8,16,8">
+				                        <!--<StackLayout.GestureRecognizers>
+					                        <TapGestureRecognizer Tapped="OnDocumetTapped" CommandParameter="{Binding .}" NumberOfTapsRequired="1"/>
+				                        </StackLayout.GestureRecognizers>-->
+                                        <Grid>
+		                                    <Grid.ColumnDefinitions>
+			                                    <ColumnDefinition Width="7*"></ColumnDefinition>
+			                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                <ColumnDefinition Width="0.2*"></ColumnDefinition>
+			                                    <ColumnDefinition Width="*"></ColumnDefinition>
+		                                    </Grid.ColumnDefinitions>
+                                                <Button BackgroundColor="Transparent" TextTransform="None" TextColor="{Binding TextColor}" Clicked="CommentClicked" Text="{Binding Comment}" CommandParameter="{Binding .}" FontSize="Medium" VerticalOptions="Fill" Grid.Column="0" HorizontalOptions="StartAndExpand"/>
+                                                <ImageButton BackgroundColor="Transparent" IsVisible="{Binding IsShowDeleteIcon}" Clicked="OnDeleteClicked" CommandParameter="{Binding .}" x:Name="imgDelete" Grid.Column="1"  Source="icon_delete" Aspect="AspectFit" Padding="0,0,8,0" HeightRequest="50" WidthRequest="50" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
+                                                <ImageButton BackgroundColor="Transparent" Clicked="OnEyeClicked" CommandParameter="{Binding .}" x:Name="imgEye" Grid.Column="3" Source="icon_eye" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+                                        </Grid>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
                 <StackLayout x:Name="stackStringType" Orientation="Vertical" IsVisible="{Binding IsEditTextVisible}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="0,-8,0,0">
                     <StackLayout  BackgroundColor="LightGray" Orientation="Vertical" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                         <Editor TextTransform="None" Text="{Binding InputText}" MaxLength="500" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" TextColor="Black" BackgroundColor="LightGray" HeightRequest="150"/>
@@ -131,13 +143,13 @@
         ContentPosition="Bottom"
         Movement="BottomUp"/>
         
-    <local:BarcodeContentView
+    <!--<local:BarcodeContentView
         x:Name="BarcodeView"
         IsVisible="false"
         IsOpen="{Binding IsOpenBarcodeView}"
         HorizontalOptions="FillAndExpand"
         VerticalOptions="FillAndExpand"
         ContentPosition="Bottom"
-        Movement="BottomUp"/>
+        Movement="BottomUp"/>-->
   </Grid>
 </ContentPage>

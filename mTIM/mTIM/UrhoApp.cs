@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading.Tasks;
 using mTIM.Components;
 using mTIM.Helpers;
 using mTIM.Models.D;
 using mTIM.ViewModels;
 using Urho;
-using Urho.Actions;
 using Urho.Gui;
 
 namespace mTIM
@@ -38,6 +35,9 @@ namespace mTIM
         private ObjectModel model;
 
         public Vector3 CameraPosition => new Vector3(0, 0, 6);
+
+
+        MainViewModel ViewModel = App.Current.MainPage.BindingContext as MainViewModel;
 
         public UrhoApp(ApplicationOptions options = null) : base(options)
         {
@@ -75,20 +75,56 @@ namespace mTIM
 
         #region Initialisation
 
+        Text textElement;
+        UIElement element;
+
         public void CreateText()
         {
             // Create Text Element
-            SelectedElement = new Text()
+            textElement = new Text()
             {
-                Value = "Hello World!",
+                Value = ViewModel?.SelectedItemText,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Bottom
+                VerticalAlignment = VerticalAlignment.Bottom,
+                ClipChildren = true,
+                Enabled = true
             };
-            SelectedElement.SetColor(Color.Black);
-            SelectedElement.FontSize = 20;
-            //text.SetFont(font: ResourceCache.GetFont("Fonts/Anonymous Pro.ttf"), size: 30);
+            textElement.TextEffect = TextEffect.Stroke;
+            textElement.SetColor(Color.Black);
+            textElement.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
             // Add to UI Root
-            UI.Root.AddChild(SelectedElement);
+            this.UI.Root.AddChild(textElement);
+
+            var text = new Text()
+            {
+                Value = "1",
+                Height = 50,
+                Width = 50,
+                SelectionColor = Color.Gray,
+                EffectColor = Color.Gray,
+                LayoutBorder = new IntRect(5, 5, 5, 5),
+                ClipBorder = new IntRect(5, 5, 5, 5),
+                LayoutMode = LayoutMode.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Position = new IntVector2(-60, 30),
+                ClipChildren = true,
+                Enabled = true
+            };
+            text.TextEffect = TextEffect.Stroke;
+            text.SetColor(Color.Black);
+            text.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
+            //element = new UIElement();
+            //element.AddChild(text);
+            //element.HorizontalAlignment = HorizontalAlignment.Right;
+            //element.VerticalAlignment = VerticalAlignment.Top;
+
+            //this.UI.Root.AddChild(element);
+        }
+
+        public void UpdateText(string text)
+        {
+            textElement.Value = text;
         }
 
 
@@ -103,22 +139,24 @@ namespace mTIM
             // bones. Note that debug geometry has to be separately requested each frame. Disable depth test so that we can see the
             // bones properly
             Renderer.DrawDebugGeometry(false);
+            //var debugRenderer = _scene.CreateComponent<DebugRenderer>();
+            //var physicsWorld = _scene.CreateComponent<PhysicsWorld>();
+            //if (physicsWorld != null)
+            //    physicsWorld.SetDebugRenderer(debugRenderer);
         }
 
         private void InitScene()
         {
             _scene = new Scene();
             _octree = _scene.CreateComponent<Octree>();
-            //_scene.CreateComponent<DebugRenderer>();
             _rootNode = _scene.CreateChild("rootNode");
         }
 
         public async void AddStuff()
         {
             _rootNode.RemoveAllChildren();
-            this.AddChild<WorldInputHandler>("inputs");
+             this.AddChild<WorldInputHandler>("inputs");
             model = this.AddChild<ObjectModel>("model");
-            var chaildmodel = this.AddChild<ObjectModel>("chaildmodel");
 
             //await model.LoadMesh("mTIM.Meshes.Cube.obj", true);
             if (!FileHelper.IsFileExists(GlobalConstants.GraphicsBlob_FILE))
@@ -133,7 +171,6 @@ namespace mTIM
                 var mesh = CreateMesh(result);
                 if (mesh != null)
                 {
-                    chaildmodel.LoadMesh(mesh, true);
                     model.LoadMesh(mesh);
                 }
             }
@@ -157,14 +194,13 @@ namespace mTIM
             mesh = meshLoader.Load(result);
             if (mesh != null)
             {
-                BaseViewModel VM = App.Current.MainPage.BindingContext as BaseViewModel;
-                if (VM != null)
+                if (ViewModel != null)
                 {
-                    int tc = VM.TotalListList.Count;
+                    int tc = ViewModel.TotalListList.Count;
                     //taskListData.GetTaskCount();
                     for (int i = 0; i < tc; i++)
                     {
-                        TimTaskModel td = VM.TotalListList[i];
+                        TimTaskModel td = ViewModel.TotalListList[i];
                         td.aabb = AABB.EMPTY;
                         td.subMeshes.Clear();
                     }
@@ -172,17 +208,17 @@ namespace mTIM
                     for (int i = 0; i < mesh.subMeshes.Count(); i++)
                     {
                         TimSubMesh sm = mesh.subMeshes[i];
-                        TimTaskModel current = VM.TotalListList.Where(x => x.Id.Equals(sm.listId)).FirstOrDefault();
+                        TimTaskModel current = ViewModel.TotalListList.Where(x => x.Id.Equals(sm.listId)).FirstOrDefault();
                         //Logic.Instance().GetTaskListData().GetTaskById(sm.listId);
                         if (current != null)
                         {
                             current.aabb.Grow(sm.aabb);
-                            current.subMeshes.Add(i);
+                            current.subMeshes.Add(sm);
                             //current.hasDetail[sm.simplificationLevel] = true;
                         }
                     }
 
-                    PropagateAABB(VM, VM.TotalListList?.Where(x => x.Level.Equals(0)).FirstOrDefault());
+                    PropagateAABB(ViewModel, ViewModel.TotalListList?.Where(x => x.Level.Equals(0)).FirstOrDefault());
                 }
 
                 return mesh;
@@ -250,18 +286,27 @@ namespace mTIM
             TouchedNode = null;
         }
 
-        private async void Input_TouchBegin(TouchBeginEventArgs obj)
+        private void Input_TouchBegin(TouchBeginEventArgs obj)
         {
-            Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
-
-            Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
-            var results = Octree.Raycast(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
-
-            TouchedNode = results.Select(x => x.Node).FirstOrDefault();
-
-            if (TouchedNode != null)
+            try
             {
-                Debug.WriteLine($"Input Touch : "+ TouchedNode.Name);
+                Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
+
+                Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
+                var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
+                if (result != null)
+                {
+                    TouchedNode = result.Value.Node;
+
+                    if (TouchedNode != null)
+                    {
+                        Debug.WriteLine($"Input Touch : " + TouchedNode.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Touch_Exception: { ex.Message}");
             }
         }
     }

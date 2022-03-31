@@ -12,8 +12,6 @@ namespace mTIM.ViewModels
 {
     public class SettingsViewModel : BaseViewModel
     {
-        private IWebService webservice { get; set; }
-
         private string entryAppURL;
         public string EntryAppURL
         {

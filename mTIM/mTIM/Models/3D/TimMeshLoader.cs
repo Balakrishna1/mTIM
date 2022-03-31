@@ -187,53 +187,5 @@ namespace mTIM.Models.D
             res.Z = m[8] * v.X + m[9] * v.Y + m[10] * v.Z + m[11];
             return res;
         }
-                 
-        public VertexBuffer.PositionNormalColorTexcoord[] GetVertextData(ChunkedArray<Vertex> result)
-        {
-            var data = new Urho.VertexBuffer.PositionNormalColorTexcoord[0];
-            if (result?.ChunkCount() > 0)
-            {
-                for (int i = 0; i <= result.ChunkCount() -1; i++)
-                {
-                    data = new Urho.VertexBuffer.PositionNormalColorTexcoord[data.Length + result.GetChunk(i).Count()];
-                    var lst = result.GetChunk(i);
-                    for (int j = 0; j < lst.Count() -1 ; j++)
-                    {
-                        var vd = lst[j];
-
-                        var d = new Urho.VertexBuffer.PositionNormalColorTexcoord();
-                        d.Position = vd.position;
-                        //new Urho.Vector3(v.X, v.Y, v.Z);
-                        d.Normal = vd.normal;
-                        d.TexCoord = vd.uvs[i];
-                        //new Urho.Vector3(n.X, n.Y, n.Z);
-                        d.Color = vd.color.ToUInt();
-
-                        data[i] = d;
-                    }
-                }
-            }
-            return data;
-
-        }
-
-        public uint[] GetIndexData(ChunkedArray<int> Triangles)
-        {
-            var data = new uint[0];
-            if (Triangles?.ChunkCount() > 0)
-            {
-                for (int i = 0; i <= Triangles.ChunkCount()-1; i++)
-                {
-                    data = new uint[data.Length + Triangles.GetChunk(i).Count()];
-                    var lstTri = Triangles.GetChunk(i);
-                    for (int j = 0; j < lstTri.Count()-1; j++)
-                    {
-                        var lst = lstTri[j];
-                        data[j] = (uint)lst;
-                    }
-                }
-            }
-            return data;
-        }
     }
 }

@@ -89,6 +89,7 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Services\WebSevice.cs" />
+    <Compile Include="Services\ImageCompressionService.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -228,6 +229,7 @@
       <Version>1.0.8</Version>
     </PackageReference>
   </ItemGroup>
+  <Import Project="..\mTimShared\mTimShared.projitems" Label="Shared" Condition="Exists('..\mTimShared\mTimShared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.Xamarin.iOS.targets" Label="MultilingualAppToolkit" Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\v$(MultilingualAppToolkitVersion)\Microsoft.Multilingual.Xamarin.iOS.targets')" />
   <Target Name="MATPrerequisite" BeforeTargets="PrepareForBuild" Condition="!Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.Xamarin.iOS.targets')" Label="MultilingualAppToolkit">
@@ -406,6 +408,21 @@
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>
       <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
+      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
+    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\icon_eye.png" />
@@ -435,5 +452,8 @@
     <BundleResource Include="Resources\icon_edit.png" />
     <BundleResource Include="Resources\icon_message.png" />
     <BundleResource Include="Resources\badge.png" />
+    <BundleResource Include="Resources\icon_delete.png" />
+    <BundleResource Include="Resources\icon_gallery.png" />
+    <BundleResource Include="Resources\icon_camera.png" />
   </ItemGroup>
 </Project>

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Urho;
+using Urho.SharpReality;
 
 namespace mTIM.Models.D
 {
     public class TimMesh
     {
         public Result proto { get; set; }
+        public string ElementName { get; set; }
         public VertexBuffer vertexBuffer { get; set; }
         public IndexBuffer indexBuffer { get; set; }
         public List<TimSubMesh> subMeshes { get; set; }
@@ -33,6 +35,7 @@ namespace mTIM.Models.D
             {
                 triangles = new List<Triangle>();
             }
+            Console.WriteLine(string.Format("Triangle data: {0},{1},{2}", data[0], data[1], data[2]));
             triangles.Add(new Triangle() { A = (uint)data[0], B = (uint)data[1], C = (uint)data[2] });
         }
 
@@ -84,6 +87,32 @@ namespace mTIM.Models.D
                 var d = new Urho.VertexBuffer.PositionNormalColorTexcoord();
                 d.Position = vd.position;
                 d.Normal = vd.normal;
+                //d.TexCoord = getuvs(vd);
+                d.Color = vd.color.ToUInt();
+                data[i] = d;
+            }
+
+            return data;
+        }
+
+        public int GetPositionIndex(Vector3 position)
+        {
+            var item = vertices?.Where(x => x.Equals(position)).FirstOrDefault();
+            return vertices.IndexOf(item);
+        }
+
+        public VertexBuffer.PositionNormalColorTexcoord[] GetVertextData(TimSubMesh submesh)
+        {
+            var data = new Urho.VertexBuffer.PositionNormalColorTexcoord[submesh.triangleBatch.numVertices];
+            int startIndex = submesh.triangleBatch.baseVertexIndex;
+            int endIndex = startIndex + submesh.triangleBatch.numVertices;
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                var vd = vertices[i];
+
+                var d = new Urho.VertexBuffer.PositionNormalColorTexcoord();
+                d.Position = vd.position;
+                d.Normal = vd.normal;
                 d.TexCoord = getuvs(vd);
                 d.Color = vd.color.ToUInt();
                 data[i] = d;
@@ -110,6 +139,10 @@ namespace mTIM.Models.D
                 {
                     return index;
                 }
+            }
+            else
+            {
+                vertices.Add(vertex);
             }
             return newIndex;
         }
@@ -139,6 +172,26 @@ namespace mTIM.Models.D
                 data[idx + 0] = triangles[i].A;
                 data[idx + 1] = triangles[i].B;
                 data[idx + 2] = triangles[i].C;
+            }
+
+            return data;
+        }
+
+        public uint[] GetIndexData(TimSubMesh subMesh)
+        {
+            var data = new uint[3 * subMesh.triangleBatch.primitiveCount];
+
+            int startIndex = subMesh.triangleBatch.startIndex/3;
+            int endIndex = startIndex + subMesh.triangleBatch.primitiveCount;
+            int j = 0;
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                int idx = 3 * j;
+
+                data[idx + 0] = triangles[i].A;
+                data[idx + 1] = triangles[i].B;
+                data[idx + 2] = triangles[i].C;
+                j++;
             }
 
             return data;

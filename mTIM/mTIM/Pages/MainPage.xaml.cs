@@ -23,15 +23,16 @@ namespace mTIM
         protected UrhoApp App => glBuilding.App;
         protected WorldInputHandler inputs;
         MainViewModel ViewModel;
-        public const int ListWidthInLandscape = 255;
+        public const int ListWidthInLandscape = 300;
         private double projectFontSize = 0;
         private double projectSubtextFontSize = 0;
+
         public MainPage()
         {
             InitializeComponent();
             ViewModel = new MainViewModel(Navigation);
             BindingContext = ViewModel;
-            BarcodeView.SetBindingViewModel(ViewModel);
+            //BarcodeView.SetBindingViewModel(ViewModel);
             projectFontSize = lblTittle.FontSize;
             projectSubtextFontSize = lblSubtext.FontSize;
             var customCell = new DataTemplate(typeof(ElementViewCell));
@@ -55,6 +56,8 @@ namespace mTIM
             ViewModel.LstValues.CollectionChanged += LstValues_CollectionChanged;
             frameHeader.SizeChanged -= FrameHeader_SizeChanged;
             frameHeader.SizeChanged += FrameHeader_SizeChanged;
+            ViewModel.ActionSelectedItemText -= updateTextInGameWindow;
+            ViewModel.ActionSelectedItemText += updateTextInGameWindow;
 
             Task.Run(async () =>
             {
@@ -69,6 +72,11 @@ namespace mTIM
             });
         }
 
+        private void updateTextInGameWindow(string value)
+        {
+            App?.UpdateText(value);
+        }
+
         private void ItemClicked(int id)
         {
             var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
@@ -81,11 +89,25 @@ namespace mTIM
             lstValues.SelectedItem = null;
         }
 
-        void OnDocumetTapped(object sender, EventArgs e)
+        async void CommentClicked(object sender, System.EventArgs e)
         {
-            TappedEventArgs itemArgs = e as TappedEventArgs;
-            var selectedItem = itemArgs.Parameter as FileInfo;
-            ViewModel.SelectedDocument(selectedItem);
+            object itemArgs = ((Button)sender).CommandParameter;
+            var selectedItem = itemArgs as FileInfo;
+            await TouchHelper.Instance.TouchEffectsWithCommand((Button)sender, 0.9, 100, ViewModel.OnCommentClickedCommand, selectedItem);
+        }
+
+        async void OnDeleteClicked(object sender, EventArgs e)
+        {
+            object itemArgs = ((ImageButton)sender).CommandParameter;
+            var selectedItem = itemArgs as FileInfo;
+            await TouchHelper.Instance.TouchEffectsWithCommand((ImageButton)sender, 0.9, 100, ViewModel.OnDeleteClickedCommand, selectedItem);
+        }
+
+        async void OnEyeClicked(object sender, EventArgs e)
+        {
+            object itemArgs = ((ImageButton)sender).CommandParameter;
+            var selectedItem = itemArgs as FileInfo;
+            await TouchHelper.Instance.TouchEffectsWithCommand((ImageButton)sender, 0.9, 100, ViewModel.OnViewClickedCommand, selectedItem);
         }
 
         void OnValueTapped(object sender, EventArgs e)
@@ -191,8 +213,8 @@ namespace mTIM
                 this.height = height;
                 //reconfigure layout
             }
-            BarcodeView.Init(height, width);
-            BarcodeView.IsVisible = true;
+            //BarcodeView.Init(height, width);
+            //BarcodeView.IsVisible = true;
             ViewModel.IsScanning = false;
             ViewModel.IsOpenBarcodeView = false;
             if (!CustomBottomSheet.IsInitiated)
@@ -543,6 +565,16 @@ namespace mTIM
             {
                 lblSubtext.FontSize = projectSubtextFontSize;
             }
+        }
+
+        void btnCamera_Clicked(System.Object sender, System.EventArgs e)
+        {
+           ViewModel.CapturePhotoAsync(null);
+        }
+
+        void btnGalary_Clicked(System.Object sender, System.EventArgs e)
+        {
+            ViewModel.PickPhotoAsync(null);
         }
     }
 }

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mTIM", "mTIM\mTIM.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BottomSheetXF", "BottomSheet\BottomSheetXF.csproj", "{AFF87013-4BF8-4339-9C78-E5489C519A53}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "mTimShared", "mTimShared\mTimShared.shproj", "{A447CFF9-3FE8-4826-9037-6B365117F37E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

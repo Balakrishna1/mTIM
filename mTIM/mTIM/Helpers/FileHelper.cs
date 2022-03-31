@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 
@@ -126,6 +127,13 @@ namespace mTIM.Helpers
             {
                 Directory.Delete(file);
             }
+        }
+
+        public static int GenerateAndGetOfflineID()
+        {
+            Random random = new Random();
+           return random.Next(0, 1000000);
+
         }
     }
 }

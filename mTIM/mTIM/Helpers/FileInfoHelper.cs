@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using mTIM.Models;
 using Newtonsoft.Json;
 
@@ -10,7 +12,11 @@ namespace mTIM.Helpers
     {
         Dictionary<int, string> FileExtensions = new Dictionary<int, string>();
 
-        public List<FileInfoModel> TotalFilesList = new List<FileInfoModel>();
+        public List<FileInfoModel> TotalFilesList = new List<FileInfoModel>(); 
+
+        public Action<int, int, int, bool> FileUploadCompleted;
+        public Action<int, int> CommentUpdatedCompleted;
+        public Action<int, int> DeleteCompleted;
 
         public static FileInfoHelper _instance;
         public static FileInfoHelper Instance
@@ -42,16 +48,23 @@ namespace mTIM.Helpers
 
         public async void LoadFileList()
         {
-            if(FileHelper.IsFileExists(GlobalConstants.FILES_INFO))
+            var list = await GetList();
+            TotalFilesList.Clear();
+            if (list != null)
+            {
+                TotalFilesList.AddRange(list);
+            }
+        }
+
+        private async Task<List<FileInfoModel>> GetList()
+        {
+            List<FileInfoModel> list = new List<FileInfoModel>();
+            if (FileHelper.IsFileExists(GlobalConstants.FILES_INFO))
             {
                 var json = await FileHelper.ReadTextAsync(GlobalConstants.FILES_INFO);
-                var list = JsonConvert.DeserializeObject<List<FileInfoModel>>(json);
-                TotalFilesList.Clear();
-                if (list != null)
-                {
-                    TotalFilesList.AddRange(list);
-                }
+                list = JsonConvert.DeserializeObject<List<FileInfoModel>>(json);
             }
+            return list;
         }
 
         public async void LoadExtensions()
@@ -88,9 +101,77 @@ namespace mTIM.Helpers
             var item = TotalFilesList.Where(x => x.Key.Equals(id)).FirstOrDefault();
             if (item != null)
             {
-                values = item.Values;
+                values = item.Values ?? new List<FileInfo>();
             }
-            return values;
+            else
+            {
+                FileInfoModel model = new FileInfoModel();
+                model.Key = id;
+                model.Values = new List<FileInfo>();
+                TotalFilesList.Add(model);
+            }
+            return values?.Where(x=>x.IsDeleted==false).ToList();
+        }
+
+        public async Task UpdateValueInList(int id, FileInfo value)
+        {
+            TotalFilesList.Where(x => x.Key.Equals(id)).FirstOrDefault()?.Values.Add(value);
+            await SaveFiles();
+        }
+
+        public async Task UpdateFileInfoInList(int taskId, int postId, int uploadFileId, bool uploadFileSepecified)
+        {
+            var values = TotalFilesList.Where(x => x.Key.Equals(taskId)).FirstOrDefault()?.Values;
+            var item = values.Where(x => x.FileID.Equals(postId)).FirstOrDefault();
+            if (item != null)
+            {
+                item.FileID = uploadFileId;
+                item.FileIDSpecified = uploadFileSepecified;
+                item.IsOffline = false;
+            }
+            await SaveFiles();
+        }
+
+        public async Task UpdateFileInfo(int id, int index, FileInfo item)
+        {
+            var files = TotalFilesList.Where(x => x.Key.Equals(id)).FirstOrDefault()?.Values;
+            if (files != null && files.Count > 0)
+                files[index] = item;
+            await SaveFiles();
+        }
+
+        public async Task UpdateFileComment(int taskId, int fileId, string comment)
+        {
+            var file = TotalFilesList.Where(x => x.Key.Equals(taskId)).FirstOrDefault().Values?.Where(x => x.FileID.Equals(fileId)).FirstOrDefault();
+            file.IsCommentEdited = false;
+            file.Comment = comment;
+            await SaveFiles();
+        }
+
+        public async Task DeleteValueInList(int id, FileInfo item)
+        {
+            TotalFilesList.Where(x => x.Key.Equals(id)).FirstOrDefault()?.Values.Remove(item);
+            await SaveFiles();
+        }
+
+        public async Task DeleteFileInList(int taskId, int fileId)
+        {
+            var values = TotalFilesList.Where(x => x.Key.Equals(taskId)).FirstOrDefault()?.Values;
+            values.Remove(values.SingleOrDefault(y => y.FileID.Equals(fileId)));
+            await SaveFiles();
+        }
+
+        private async Task SaveFiles()
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(TotalFilesList);
+                await FileHelper.WriteTextAsync(GlobalConstants.FILES_INFO, json);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         public void AddExtesion(int fileId, string extesion)

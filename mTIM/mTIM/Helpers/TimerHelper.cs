@@ -30,12 +30,12 @@ namespace mTIM.Helpers
 
         public void StartTimer()
         {
-            if (timer == null)
-            {
-                // Create a timer that invokes CheckStatus after one second, 
-                Debug.WriteLine("{0:h:mm:ss.fff} Creating timer.\n", DateTime.Now);
-                timer = new Timer(_callback, this, 0, dueTime);
-            }
+            //if (timer == null)
+            //{
+            //    // Create a timer that invokes CheckStatus after one second, 
+            //    Debug.WriteLine("{0:h:mm:ss.fff} Creating timer.\n", DateTime.Now);
+            //    timer = new Timer(_callback, this, 0, dueTime);
+            //}
         }
 
         public void StopTimer()

@@ -107,7 +107,8 @@ namespace mTIM
                         break;
                     case DataType.Doc:
                         stackInfo.IsVisible = false;
-                        lblDocValue.Text = FileInfoHelper.Instance.GetCount(ID).ToString();
+                        int count = FileInfoHelper.Instance.GetCount(ID);
+                        lblDocValue.Text = count <= 0 ? string.Empty : count.ToString() + (count ==1 ? "Document" : "Documemts");
                         stackDocument.IsVisible = true;
                         break;
                     case DataType.Prjladen:

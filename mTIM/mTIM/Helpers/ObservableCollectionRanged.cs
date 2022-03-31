@@ -500,6 +500,11 @@ namespace mTIM.Helpers
             }
         }
 
+        public void ReplaceItem(int index, T item)
+        {
+            ReplaceData(index, item);
+        }
+
         #endregion Public Methods
 
 
@@ -534,7 +539,11 @@ namespace mTIM.Helpers
         {
             if (Equals(this[index], item))
                 return;
+            ReplaceData(index, item);
+        }
 
+        private void ReplaceData(int index, T item)
+        {
             CheckReentrancy();
             T originalItem = this[index];
             base.SetItem(index, item);

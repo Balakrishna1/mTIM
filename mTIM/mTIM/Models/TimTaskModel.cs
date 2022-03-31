@@ -40,6 +40,6 @@ namespace mTIM.Models.D
         [JsonIgnore]
         public AABB aabb { get; set; } = new AABB();
         [JsonIgnore]
-        public List<int> subMeshes { get; set; } = new List<int>();
+        public List<TimSubMesh> subMeshes { get; set; } = new List<TimSubMesh>();
     }
 }

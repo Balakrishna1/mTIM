@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
+using HeyRed.Mime;
 using mTIM.Enums;
 using mTIM.Helpers;
 using mTIM.Interfaces;
@@ -10,6 +13,7 @@ using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.Resources;
 using Newtonsoft.Json;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace mTIM.ViewModels
@@ -24,6 +28,9 @@ namespace mTIM.ViewModels
         public AppVersionUpdateInfo VersionInfo { get; set; } = new AppVersionUpdateInfo();
         public IDevice Device;
         public const string installAppFormat = "Install Update{0}";
+
+        public Action<string> ActionSelectedItemText;
+
         public MainViewModel(INavigation navigation)
         {
             this.Navigation = navigation;
@@ -31,12 +38,213 @@ namespace mTIM.ViewModels
             SelectedItemList = new ObservableCollectionRanged<TimTaskModel>();
             FileInfoHelper.Instance.LoadFileList();
             FileInfoHelper.Instance.LoadExtensions();
+            FileInfoHelper.Instance.FileUploadCompleted += FileUploadCompleted;
+            FileInfoHelper.Instance.CommentUpdatedCompleted += EditCommentCompleted;
+            UploadOfflineFilesIntoServer();
         }
+
+        #region File related code
+        private void FileUploadCompleted(int taskId, int postId, int UploadFileId, bool UploadFileSpecified)
+        {
+            var item = LstFiles.Where(x => x.FileID.Equals(UploadFileId)).FirstOrDefault();
+            if (item != null)
+            {
+                var index = LstFiles.IndexOf(item);
+                item.FileID = UploadFileId;
+                item.FileIDSpecified = UploadFileSpecified;
+                item.IsOffline = false;
+                if (index >= 0)
+                    LstFiles.ReplaceItem(index, item);
+            }
+        }
+
+        private void EditCommentCompleted(int taskId, int fileId)
+        {
+            var item = LstFiles.Where(x => x.FileID.Equals(fileId)).FirstOrDefault();
+            if (item != null)
+            {
+                var index = LstFiles.IndexOf(item);
+                item.IsCommentEdited = false;
+                if (index >= 0)
+                    LstFiles.ReplaceItem(index, item);
+            }
+        }
+
+
+        /// <summary>
+        /// To capture picture from Camera.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public void CapturePhotoAsync(FileInfo file)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                try
+                {
+                    MediaPickerOptions option = new MediaPickerOptions();
+                    option.Title = "mTIM";
+                    var fileinfo = await MediaPicker.CapturePhotoAsync(option);
+                    var bytes = LoadPhotoAsync(fileinfo);
+                    var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
+                    await Task.Delay(500);
+
+                    PromptConfig config = new PromptConfig();
+                    config.Title = "Datei hinzufuegen?";
+                    config.InputType = InputType.Name;
+                    config.Message = "Wollen Sie die Datei hinzufuegen?";
+                    config.Placeholder = "Kommentar";
+                    config.OkText = "Ja";
+                    config.CancelText = "Nein";
+                    var result = await UserDialogs.Instance.PromptAsync(config);
+                    if (result.Ok)
+                    {
+                        int postId = FileHelper.GenerateAndGetOfflineID();
+                        int uploadFileResult;
+                        bool uploadFileResultSpecified = false;
+                        FileInfo info = new FileInfo();
+                        List<FileInfo> infos = new List<FileInfo>();
+                        info.FileID = postId;
+                        info.Comment = string.IsNullOrEmpty(result.Text) ? postId.ToString() : result.Text;
+                        info.IsOffline = true;
+                        info.OfflineFilePath = fileinfo.FullPath;
+                        info.FileIDSpecified = uploadFileResultSpecified;
+                        int taskId = SelectedModel.Id;
+                        FileInfoHelper.Instance.UpdateValueInList(taskId, info);
+                        infos = GetValues(taskId);
+                        int index = SelectedItemList.IndexOf(SelectedModel);
+                        SelectedItemList.ReplaceItem(index, SelectedModel);
+                        LstFiles.Clear();
+                        LstFiles.AddRange(infos);
+                        Task task = new Task(async () =>
+                        {
+                            if (IsNetworkConnected)
+                            {
+                                Webservice.UploadFile(true, SelectedModel.Id, postId, true, bytes, extension, "", result.Text, DateTime.Now, true, out uploadFileResult, out uploadFileResultSpecified);
+                                if (uploadFileResult > 0)
+                                {
+                                    var index = LstFiles.IndexOf(info);
+                                    info.FileID = uploadFileResult;
+                                    info.FileIDSpecified = uploadFileResultSpecified;
+                                    info.IsOffline = false;
+                                    if (index >= 0)
+                                        LstFiles.ReplaceItem(index, info);
+                                    updateSelectedItem();
+                                }
+                            }
+                        });
+                        task.Start();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            });
+        }
+
+        /// <summary>
+        /// To get the bytes from image.
+        /// </summary>
+        /// <param name="photo"></param>
+        /// <returns></returns>
+        byte[] LoadPhotoAsync(FileResult photo)
+        {
+            byte[] photoBytes = null;
+            // canceled
+            if (photo != null)
+            {
+                System.IO.FileStream stream1 = System.IO.File.OpenRead(photo.FullPath);
+
+                var b = new byte[stream1.Length];
+
+                stream1.Read(b, 0, b.Length);
+                photoBytes = ImageCompressionService.CompressImageBytes(b, 30);
+
+            }
+            return photoBytes;
+        }
+
+        /// <summary>
+        /// To select the picture from galary.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public void PickPhotoAsync(FileInfo file)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                MediaPickerOptions option = new MediaPickerOptions();
+                option.Title = "mTIM";
+                var fileinfo = await MediaPicker.PickPhotoAsync(option);
+                var bytes = LoadPhotoAsync(fileinfo);
+                var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
+                await Task.Delay(500);
+                PromptConfig config = new PromptConfig();
+                config.Title = "Datei hinzufuegen?";
+                config.InputType = InputType.Name;
+                config.Message = "Wollen Sie die Datei hinzufuegen?";
+                config.Placeholder = "Kommentar";
+                config.OkText = "Ja";
+                config.CancelText = "Nein";
+                var result = await UserDialogs.Instance.PromptAsync(config);
+                if (result.Ok)
+                {
+                    int postId = FileHelper.GenerateAndGetOfflineID();
+                    int uploadFileResult;
+                    bool uploadFileResultSpecified = true;
+
+                    FileInfo info = new FileInfo();
+                    List<FileInfo> infos = new List<FileInfo>();
+                    info.FileID = postId;
+                    info.Comment = string.IsNullOrEmpty(result.Text) ? postId.ToString() : result.Text;
+                    info.IsOffline = true;
+                    info.OfflineFilePath = fileinfo.FullPath;
+                    info.FileIDSpecified = uploadFileResultSpecified;
+                    int taskId = SelectedModel.Id;
+                    FileInfoHelper.Instance.UpdateValueInList(taskId, info);
+                    infos = GetValues(taskId);
+                    LstFiles.Clear();
+                    LstFiles.AddRange(infos);
+                    Task task = new Task(async () =>
+                    {
+                        if (IsNetworkConnected)
+                        {
+                            Webservice.UploadFile(true, SelectedModel.Id, postId, true, bytes, extension, "", result.Text, DateTime.Now, true, out uploadFileResult, out uploadFileResultSpecified);
+                            if (uploadFileResult > 0)
+                            {
+                                var index = LstFiles.IndexOf(info);
+                                info.FileID = uploadFileResult;
+                                info.FileIDSpecified = uploadFileResultSpecified;
+                                info.IsOffline = false;
+                                if (index >= 0)
+                                    LstFiles.ReplaceItem(index, info);
+                                updateSelectedItem();
+                            }
+                        }
+                    });
+                    task.Start();
+                }
+            });
+        }
+
+        private void updateSelectedItem()
+        {
+            int index = SelectedItemList.IndexOf(SelectedModel);
+            SelectedItemList.ReplaceItem(index, SelectedModel);
+        }
+
+        #endregion
 
         public override void OnAppearing()
         {
             base.OnAppearing();
             TimerHelper.Instance.StartTimer();
+        }
+
+        public override void OnDisAppearing()
+        {
+            base.OnDisAppearing();
         }
 
         private Color listBackgroundColor = Color.White;
@@ -137,6 +345,16 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref updateVersionText, value);
         }
 
+        private bool isShowGalaryIcon = false;
+        public bool IsShowGalaryIcon
+        {
+            get => isShowGalaryIcon;
+            set => SetAndRaisePropertyChanged(ref isShowGalaryIcon, value);
+        }
+
+        /// <summary>
+        /// To update the header data and list based on selection.
+        /// </summary>
         List<string> headerStrings = new List<string>();
         private int previousId;
         public void SelectedItemIndex(int position)
@@ -174,14 +392,21 @@ namespace mTIM.ViewModels
 
         private void openDocumentValues(int id)
         {
-            var values = FileInfoHelper.Instance.GetValues(id);
+            var values = GetValues(id);
             LstFiles?.Clear();
-            if (values?.Count > 0)
+            if (values?.Count >= 0)
             {
                 IsDocumentListVisible = true;
                 updateTaskListVisibility();
                 LstFiles.AddRange(values);
             }
+        }
+
+        private List<FileInfo> GetValues(int id)
+        {
+            var values = FileInfoHelper.Instance.GetValues(id);
+            values?.ForEach(x => x.IsShowDeleteIcon = IsShowGalaryIcon);
+            return values;
         }
 
         /// <summary>
@@ -352,6 +577,14 @@ namespace mTIM.ViewModels
                         SelectedItemList.Update();
                         break;
                     case DataType.Doc:
+                        IsShowGalaryIcon = false;
+                        if (!string.IsNullOrEmpty(SelectedModel.Range))
+                        {
+                            if (SelectedModel.Range.ToLower().Equals("mtim"))
+                            {
+                                IsShowGalaryIcon = true;
+                            }
+                        }
                         SelectedDocumentItem(SelectedModel.Id);
                         break;
                     case DataType.String:
@@ -384,12 +617,25 @@ namespace mTIM.ViewModels
         /// <summary>
         /// This is used to show the selected document.
         /// </summary>
-        public void SelectedDocument(FileInfo file)
+        public async void OpenDocument(FileInfo file)
         {
             if (file != null)
             {
-                Webservice.ViewModel = this;
-                Webservice.OpenPdfFile(Math.Abs(file.FileID), file.FileIDSpecified);
+                if (!string.IsNullOrEmpty(file.OfflineFilePath))
+                {
+                    var mime = MimeTypesMap.GetMimeType(file.OfflineFilePath);
+                    UserDialogs.Instance.ShowLoading(string.Empty, MaskType.Gradient);
+                    await Launcher.OpenAsync(new OpenFileRequest
+                    {
+                        File = new ReadOnlyFile(file.OfflineFilePath, mime)
+                    });
+                    UserDialogs.Instance.HideLoading();
+                }
+                else
+                {
+                    Webservice.ViewModel = this;
+                    Webservice.OpenFile(Math.Abs(file.FileID), file.FileIDSpecified);
+                }
             }
         }
 
@@ -424,6 +670,7 @@ namespace mTIM.ViewModels
                 IsShowBackButton = true;
                 SubText = string.Empty;
             }
+            ActionSelectedItemText?.Invoke(SelectedItemText);
         }
 
         private bool isScanning;
@@ -449,12 +696,12 @@ namespace mTIM.ViewModels
 
         public ICommand BarcodeClickCommand => new Command(BarcodeClickCommandExecute);
 
-        private void BarcodeClickCommandExecute()
+        private async void BarcodeClickCommandExecute()
         {
-            IsOpenBarcodeView = true;
+            //IsOpenBarcodeView = true;
             IsScanning = true;
             //#if __ANDROID__
-            //         // Initialize the scanner first so it can track the current context
+            //            // Initialize the scanner first so it can track the current context
             //            MobileBarcodeScanner.Initialize (Application);
             //#endif
             //            var scanner = new ZXing.Mobile.MobileBarcodeScanner();
@@ -462,7 +709,7 @@ namespace mTIM.ViewModels
             //            var result = await scanner.Scan();
 
             //            HandleResult(result);
-            //            await Navigation.PushModalAsync(new NavigationPage(new BarcodeContentPage()));
+            await Navigation.PushModalAsync(new NavigationPage(new BarcodeContentPage(this)), true);
         }
 
         public ICommand MessageClickCommand => new Command(MessageClickCommandExecute);
@@ -524,6 +771,9 @@ namespace mTIM.ViewModels
             OnSyncCommand(false);
         }
 
+        /// <summary>
+        /// This is used to refersh complete data and switch back to first level.
+        /// </summary>
         public override void RefreshData()
         {
             headerStrings = new List<string>();
@@ -582,6 +832,10 @@ namespace mTIM.ViewModels
             }
         }
 
+        /// <summary>
+        /// To sync the data to server after time interval completed.
+        /// </summary>
+        /// <param name="isFromAuto"></param>
         public override void OnSyncCommand(bool isFromAuto = true)
         {
             SearchForNewApp();
@@ -592,6 +846,78 @@ namespace mTIM.ViewModels
         private void MenuNewBuildItemCommandExecute()
         {
             SearchForNewApp();
+        }
+
+        public ICommand OnCommentClickedCommand => new Command(CommentClickExecute);
+        private async void CommentClickExecute(object parameter)
+        {
+            var selectedItem = parameter as FileInfo;
+            PromptConfig config = new PromptConfig();
+            config.Title = "Comment";
+            config.InputType = InputType.Name;
+            config.Message = "Please edit you comment.";
+            config.Placeholder = "Kommentar";
+            config.Text = selectedItem.Comment;
+            config.OkText = "Ok";
+            config.CancelText = "Cancel";
+            var result = await UserDialogs.Instance.PromptAsync(config);
+            if (result.Ok)
+            {
+                var index = LstFiles.IndexOf(selectedItem);
+                selectedItem.Comment = string.IsNullOrEmpty(result.Text) ? selectedItem.FileID.ToString() : result.Text;
+                if (selectedItem.IsOffline)
+                {
+                    FileInfoHelper.Instance.UpdateFileInfo(SelectedModel.Id, index, selectedItem);
+                    LstFiles.ReplaceItem(index, selectedItem);
+                }
+                else
+                {
+                    selectedItem.IsCommentEdited = true;
+                    FileInfoHelper.Instance.UpdateFileInfo(SelectedModel.Id, index, selectedItem);
+                    LstFiles.ReplaceItem(index, selectedItem);
+                    if (IsNetworkConnected && !selectedItem.IsOffline)
+                    {
+                        Webservice.ChangeFileComment(SelectedModel.Id, selectedItem.FileID, selectedItem.FileIDSpecified, selectedItem.Comment);
+                    }
+                }
+            }
+        }
+
+        public ICommand OnDeleteClickedCommand => new Command(DeleteClickExecute);
+        private void DeleteClickExecute(object parameter)
+        {
+            var selectedItem = parameter as FileInfo;
+            if (selectedItem != null && selectedItem.IsOffline)
+            {
+                FileInfoHelper.Instance.DeleteValueInList(SelectedModel.Id, selectedItem);
+                LstFiles.Remove(selectedItem);
+                updateSelectedItem();
+            }
+            else
+            {
+                if (IsNetworkConnected)
+                {
+                    Webservice.DeleteFile(SelectedModel.Id, selectedItem.FileID, selectedItem.FileIDSpecified);
+                    FileInfoHelper.Instance.DeleteValueInList(SelectedModel.Id, selectedItem);
+                }
+                else
+                {
+                    var index = LstFiles.IndexOf(selectedItem);
+                    selectedItem.IsDeleted = true;
+                    FileInfoHelper.Instance.UpdateFileInfo(SelectedModel.Id, index, selectedItem);
+                }
+                var files = GetValues(SelectedModel.Id);
+                LstFiles.Clear();
+                LstFiles.AddRange(files);
+                updateSelectedItem();
+            }
+        }
+
+        public ICommand OnViewClickedCommand => new Command(ViewClickExecute);
+        private void ViewClickExecute(object parameter)
+        {
+            var selectedItem = parameter as FileInfo;
+            OpenDocument(selectedItem);
         }
 
         private void SearchForNewApp()

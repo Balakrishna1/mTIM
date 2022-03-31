@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using mTIM.Helpers;
 using mTIM.Interfaces;
+using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.Resources;
 using Newtonsoft.Json;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace mTIM.ViewModels
@@ -16,8 +20,10 @@ namespace mTIM.ViewModels
     {
         public List<TimTaskModel> TotalListList = new List<TimTaskModel>();
         public IWebService Webservice { get; set; }
+        public IImageCompressionService ImageCompressionService;
         public byte[] ImageSource { get; set; }
         public INavigation Navigation { get; set; }
+        public bool IsNetworkConnected { get; set; }
 
         private const string syncTimeFormat = "({0}s)";
 
@@ -95,6 +101,7 @@ namespace mTIM.ViewModels
         public BaseViewModel()
         {
             Webservice = DependencyService.Get<IWebService>();
+            ImageCompressionService = DependencyService.Get<IImageCompressionService>();
             Webservice.ActionRefreshCallBack -= ShowBadge;
             Webservice.ActionRefreshCallBack += ShowBadge;
             SyncMinites = GlobalConstants.SyncMinutes > 0 ? GlobalConstants.SyncMinutes : GlobalConstants.DefaultSyncMinites;
@@ -173,12 +180,104 @@ namespace mTIM.ViewModels
             }
             TimerHelper.Instance.Create(CallBack);
             base.OnAppearing();
+            CheckNetworkConnection();
+            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
         }
 
         public override void OnDisAppearing()
         {
             //TimerHelper.Instance.Dispose();
             base.OnDisAppearing();
+            Connectivity.ConnectivityChanged -= Connectivity_ConnectivityChanged;
+        }
+
+        private void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
+        {
+            CheckNetworkConnection();
+            UploadOfflineFilesIntoServer();
+        }
+
+        private void CheckNetworkConnection()
+        {
+            var networkStatus = Connectivity.NetworkAccess;
+            if (networkStatus == NetworkAccess.Internet)
+            {
+                IsNetworkConnected = true;
+            }
+            else
+            {
+                IsNetworkConnected = false;
+            }
+        }
+
+        public void UploadOfflineFilesIntoServer()
+        {
+            if (IsNetworkConnected)
+            {
+                var list = FileInfoHelper.Instance.TotalFilesList;
+                if (list?.Count > 0)
+                {
+                    foreach (var item in list)
+                    {
+                        var offlineItems = item.Values.Where(x => x.IsOffline.Equals(true)).ToList();
+                        var editedItems = item.Values.Where(x => x.IsCommentEdited.Equals(true)).ToList();
+                        var deletedItems = item.Values.Where(x => x.IsDeleted.Equals(true)).ToList();
+                        if (offlineItems != null && offlineItems.Count > 0)
+                        {
+                            UploadOfflineFiles(item.Key, offlineItems);
+                        }
+                        if (editedItems != null && editedItems.Count > 0)
+                        {
+                            UploadOfflineCommentFiles(item.Key, editedItems);
+                        }
+                        if (deletedItems != null && deletedItems.Count > 0)
+                        {
+                            UploadOfflineDeletedFiles(item.Key, deletedItems);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UploadOfflineFiles(int taskId, List<FileInfo> items)
+        {
+            foreach (var file in items)
+            {
+                Task.Run(() => Webservice.UploadFileAsync(true, taskId, file.FileID, file.FileIDSpecified, GetBytesFromPath(file.OfflineFilePath), System.IO.Path.GetExtension(file.OfflineFilePath), null, file.Comment, DateTime.Now, true));
+            }
+        }
+
+        private void UploadOfflineCommentFiles(int taskId, List<FileInfo> items)
+        {
+            foreach (var file in items)
+            {
+                Task.Run(() => Webservice.ChangeFileComment(taskId, file.FileID, file.FileIDSpecified, file.Comment));
+            }
+        }
+
+        private void UploadOfflineDeletedFiles(int taskId, List<FileInfo> items)
+        {
+            foreach (var file in items)
+            {
+                Task.Run(() => Webservice.DeleteFile(taskId, file.FileID, file.FileIDSpecified));
+            }
+        }
+
+        private byte[] GetBytesFromPath(string photoPath)
+        {
+            byte[] photoBytes = null;
+            // canceled
+            if (!string.IsNullOrEmpty(photoPath))
+            {
+                System.IO.FileStream stream1 = System.IO.File.OpenRead(photoPath);
+
+                var b = new byte[stream1.Length];
+
+                stream1.Read(b, 0, b.Length);
+                photoBytes = ImageCompressionService.CompressImageBytes(b, 30);
+
+            }
+            return photoBytes;
         }
 
         public void DisplayErrorMessage(string message)

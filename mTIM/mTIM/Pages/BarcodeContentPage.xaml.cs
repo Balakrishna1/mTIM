@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using mTIM.ViewModels;
 using Xamarin.Forms;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
@@ -9,8 +10,10 @@ namespace mTIM
 {
     public partial class BarcodeContentPage : ZXingScannerPage
     {
-        public BarcodeContentPage()
+        MainViewModel _viewModel;
+        public BarcodeContentPage(MainViewModel viewModel)
         {
+            _viewModel = viewModel;
             InitializeComponent();
         }
 
@@ -23,8 +26,8 @@ namespace mTIM
         {
             Device.BeginInvokeOnMainThread(async () =>
             {
-                await Application.Current.MainPage.DisplayAlert("Scanned result", result.Text, "OK");
                 await this.Navigation.PopModalAsync();
+                _viewModel.HandleResult(result);
             });
         }
     }

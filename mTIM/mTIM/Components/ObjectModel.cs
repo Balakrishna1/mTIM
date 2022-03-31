@@ -64,7 +64,7 @@ namespace mTIM.Components
                 vb.SetData(vdata.ToArray());
 
                 ib.Shadowed = true;
-                ib.SetSize((uint)(idata.Length + ildata.Length), true);
+                ib.SetSize((uint)(idata.Length), true);
                 ib.SetData(idata);
 
                 geom.SetVertexBuffer(0, vb);
@@ -88,9 +88,10 @@ namespace mTIM.Components
                 }
                 model.BoundingBox = boundingBox;
 
-                Material GrayLineMaterial = Material.FromColor(Color.FromHex("#565656"));
-                GrayLineMaterial.SetTechnique(0, CoreAssets.Techniques.NoTextureUnlit, 1, 1);
+                Material GrayLineMaterial = Material.FromColor(Color.Gray);
+                GrayLineMaterial.SetTechnique(1, CoreAssets.Techniques.NoTextureUnlitAlpha, 10, 1);
                 GrayLineMaterial.CullMode = CullMode.Cw;
+                GrayLineMaterial.FillMode = FillMode.Wireframe;
                 GrayLineMaterial.LineAntiAlias = true;
 
                 Material BlackLineMaterial = Material.FromColor(Color.Black);
