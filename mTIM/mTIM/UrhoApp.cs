@@ -34,7 +34,7 @@ namespace mTIM
 
         private ObjectModel model;
 
-        public Vector3 CameraPosition => new Vector3(0, 0, 6);
+        public Vector3 CameraPosition => new Vector3(1, 1, 5);
 
 
         MainViewModel ViewModel = App.Current.MainPage.BindingContext as MainViewModel;
@@ -155,7 +155,7 @@ namespace mTIM
         public async void AddStuff()
         {
             _rootNode.RemoveAllChildren();
-             this.AddChild<WorldInputHandler>("inputs");
+            this.AddChild<WorldInputHandler>("inputs");
             model = this.AddChild<ObjectModel>("model");
 
             //await model.LoadMesh("mTIM.Meshes.Cube.obj", true);
@@ -208,12 +208,13 @@ namespace mTIM
                     for (int i = 0; i < mesh.subMeshes.Count(); i++)
                     {
                         TimSubMesh sm = mesh.subMeshes[i];
-                        TimTaskModel current = ViewModel.TotalListList.Where(x => x.Id.Equals(sm.listId)).FirstOrDefault();
+                        TimTaskModel current = ViewModel.TotalListList.Where(x => x.ExternId.Equals(sm.listId)).FirstOrDefault();
                         //Logic.Instance().GetTaskListData().GetTaskById(sm.listId);
                         if (current != null)
                         {
                             current.aabb.Grow(sm.aabb);
                             current.subMeshes.Add(sm);
+                            Debug.WriteLine("Added sub meshes");
                             //current.hasDetail[sm.simplificationLevel] = true;
                         }
                     }
@@ -255,10 +256,10 @@ namespace mTIM
             _light = lightNode.CreateComponent<Light>();
             _light.LightType = LightType.Point;
             _light.Range = 100;
-            _light.Brightness = 1f;
+            _light.Brightness = 0.9f;
             
 
-            cameraNode.LookAt(Vector3.Zero, Vector3.Up, TransformSpace.World);
+            cameraNode.LookAt(Vector3.Zero, Vector3.Down, TransformSpace.World);
         }
 
         void SetupViewport()
@@ -297,10 +298,10 @@ namespace mTIM
                 if (result != null)
                 {
                     TouchedNode = result.Value.Node;
-
                     if (TouchedNode != null)
                     {
-                        Debug.WriteLine($"Input Touch : " + TouchedNode.Name);
+                        Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
+                        Debug.WriteLine($"Input Touch Position: {0} {1} {2}" + result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z);
                     }
                 }
             }

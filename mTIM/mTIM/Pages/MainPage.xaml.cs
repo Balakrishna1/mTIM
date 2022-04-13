@@ -12,7 +12,6 @@ using mTIM.ViewModels;
 using Newtonsoft.Json;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
-using Urho;
 using Xamarin.Forms;
 using Location = Xamarin.Essentials;
 
@@ -21,7 +20,6 @@ namespace mTIM
     public partial class MainPage : ContentPage
     {
         protected UrhoApp App => glBuilding.App;
-        protected WorldInputHandler inputs;
         MainViewModel ViewModel;
         public const int ListWidthInLandscape = 300;
         private double projectFontSize = 0;
@@ -238,6 +236,7 @@ namespace mTIM
                 stackList.Orientation = StackOrientation.Vertical;
                 listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = width;
                 listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
+                stopUrhoView();
                 glBuilding.IsVisible = false;
                 isLoaded = false;
             }
@@ -282,39 +281,6 @@ namespace mTIM
                 cts.Cancel();
             ViewModel.OnDisAppearing();
             base.OnDisappearing();
-        }
-
-        private async Task loadTexturedMesh()
-        {
-            await InitializeUrho();
-
-            var model = App.AddChild<ObjectModel>("model");
-
-            //await model.LoadMesh(ViewModel.ImageSource);
-
-            //var model = App.AddChild<ObjectModel>("model");
-            var path = string.Format(GlobalConstants.GraphicsBlob_FILE, 198);
-            await model.LoadTexturedMesh(path, "mTIM.Meshes.Model2.png", false);
-        }
-
-        private async Task InitializeUrho()
-        {
-            try
-            {
-                // have to wait for the loading task to complete before adding components
-                await glBuilding.LoadingUrhoTask.Task;
-
-                App.RootNode.RemoveAllChildren();
-                App.RootNode.SetWorldRotation(Quaternion.Identity);
-                App.RootNode.Position = Urho.Vector3.Zero;
-                App.Camera.Zoom = 1f;
-
-                inputs = App.AddChild<WorldInputHandler>("inputs");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
         }
 
         /// <summary>
@@ -519,16 +485,25 @@ namespace mTIM
         }
 
         public bool isLoaded = false;
-        private void loadUrhoView()
+        private async Task loadUrhoView()
         {
             if (!isLoaded)
             {
                 //Device.StartTimer(TimeSpan.FromMilliseconds(300), () =>
                 //{
-                    glBuilding.StartUrhoApp();
+                    await glBuilding.StartUrhoApp();
                     isLoaded = true;
                 //    return true;
                 //});
+            }
+        }
+
+        private async Task stopUrhoView()
+        {
+            if (isLoaded)
+            {
+                await glBuilding.ResetUrhoApp();
+                isLoaded = false;
             }
         }
 

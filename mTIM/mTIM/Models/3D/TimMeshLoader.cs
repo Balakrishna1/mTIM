@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
+using mTIM.ViewModels;
 using Urho;
 
 namespace mTIM.Models.D
@@ -43,7 +44,8 @@ namespace mTIM.Models.D
                 for (int iVisu = 0; iVisu < result.Elements.Count(); iVisu++)
                 {
                     Visualizable visu = result.Elements[iVisu];
-                    TimTaskModel taskData = new TimTaskModel();
+                    BaseViewModel ViewModel = App.Current.MainPage.BindingContext as BaseViewModel;
+                    var taskData = ViewModel?.TotalListList.Where(x => x.ObjectId.Equals(visu.Id)).FirstOrDefault();
                     //Logic.Instance().GetTaskListData().GetTaskById(visu.taskId);
                     if (taskData != null && currentProjectId != taskData.Parent)
                     {
@@ -123,6 +125,7 @@ namespace mTIM.Models.D
                             sm.refIndex = iRef;
                             sm.simplificationLevel = 1;
                             sm.listId = taskData != null ? taskData.Id : -1;
+                            builder.subMeshes[builder.subMeshes.Count - 1] = sm;
                         }
                     }
                 }
@@ -153,15 +156,14 @@ namespace mTIM.Models.D
 
 
             mesh.subMeshes = builder.subMeshes;
-
             for (int i = 0; i < mesh.subMeshes.Count; i++)
             {
                 var data = mesh.subMeshes[i];
                 data.lineBatch.startIndex += builder.indices.Count();
                 mesh.subMeshes[i] = data;
             }
+            //mesh.CreateBoundBoxesForSubmeshes();
             return mesh;
-
         }
 
         public static float[] multiply(float[] x, float factor)

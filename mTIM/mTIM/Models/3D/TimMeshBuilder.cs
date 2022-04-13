@@ -175,6 +175,7 @@ namespace mTIM.Models.D
             int index = -1;
             if (!vertexTable.TryGetValue(vertex, out index))
             {
+                //Console.WriteLine(string.Format("Vertex position: {0},{1},{2}", vertex.position.X, vertex.position.Y, vertex.position.Z));
                 vertexTable.TryAdd(vertex, newIndex);
                 vertices.Add(vertex);
                 return newIndex;
@@ -215,27 +216,29 @@ namespace mTIM.Models.D
 
         public TimSubMesh EndSubMesh()
         {
+            TimBatch trianglebatch;
+            TimBatch linebatch;
             TimSubMesh sm = subMeshes[subMeshes.Count - 1];
-
             {
-                TimBatch batch = sm.triangleBatch;
-                batch.primitiveType = PrimitiveType.TriangleList;
-                batch.baseVertexIndex = 0;
-                batch.minIndex = 0;
-                batch.numVertices = vertices.Count();
-                batch.startIndex = lastIndexCount;
-                batch.primitiveCount = (indices.Count() - lastIndexCount) / 3;
+                trianglebatch = sm.triangleBatch;
+                trianglebatch.primitiveType = PrimitiveType.TriangleList;
+                trianglebatch.baseVertexIndex = 0;
+                trianglebatch.minIndex = 0;
+                trianglebatch.numVertices = vertices.GetChunk(0).Count;
+                trianglebatch.startIndex = lastIndexCount;
+                trianglebatch.primitiveCount = (indices.Count() - lastIndexCount) / 3;
             }
             {
-                TimBatch batch = sm.lineBatch;
-                batch.primitiveType = PrimitiveType.LineList;
-                batch.baseVertexIndex = 0;
-                batch.minIndex = 0;
-                batch.numVertices = vertices.Count();
-                batch.startIndex = lastLineIndexCount;
-                batch.primitiveCount = (lineIndices.Count() - lastLineIndexCount) / 2;
+                linebatch = sm.lineBatch;
+                linebatch.primitiveType = PrimitiveType.LineList;
+                linebatch.baseVertexIndex = 0;
+                linebatch.minIndex = 0;
+                linebatch.numVertices = vertices.GetChunk(0).Count;
+                linebatch.startIndex = lastLineIndexCount;
+                linebatch.primitiveCount = (lineIndices.Count() - lastLineIndexCount) / 2;
             }
-
+            sm.triangleBatch = trianglebatch;
+            sm.lineBatch = linebatch;
             sm.aabb = aabb;
             sm.visible = true;
             sm.opaque = false;

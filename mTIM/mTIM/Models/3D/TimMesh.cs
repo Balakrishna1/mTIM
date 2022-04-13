@@ -13,7 +13,7 @@ namespace mTIM.Models.D
         public VertexBuffer vertexBuffer { get; set; }
         public IndexBuffer indexBuffer { get; set; }
         public List<TimSubMesh> subMeshes { get; set; }
-        public List<Vertex> vertices { get; set; } 
+        public List<Vertex> vertices { get; set; }
         public List<Triangle> triangles { get; set; }
         public List<int> lineIndices { get; set; }
         public Urho.Model model { get; set; }
@@ -31,11 +31,11 @@ namespace mTIM.Models.D
 
         public void AddTriangle(int[] data)
         {
-            if(triangles == null)
+            if (triangles == null)
             {
                 triangles = new List<Triangle>();
             }
-            Console.WriteLine(string.Format("Triangle data: {0},{1},{2}", data[0], data[1], data[2]));
+            //Console.WriteLine(string.Format("Triangle data: {0},{1},{2}", data[0], data[1], data[2]));
             triangles.Add(new Triangle() { A = (uint)data[0], B = (uint)data[1], C = (uint)data[2] });
         }
 
@@ -101,30 +101,17 @@ namespace mTIM.Models.D
             return vertices.IndexOf(item);
         }
 
-        public VertexBuffer.PositionNormalColorTexcoord[] GetVertextData(TimSubMesh submesh)
+        private void CreateSubMeshBoundBox(TimSubMesh submesh)
         {
-            var data = new Urho.VertexBuffer.PositionNormalColorTexcoord[submesh.triangleBatch.numVertices];
-            int startIndex = submesh.triangleBatch.baseVertexIndex;
-            int endIndex = startIndex + submesh.triangleBatch.numVertices;
-            for (int i = startIndex; i < endIndex; i++)
-            {
-                var vd = vertices[i];
-
-                var d = new Urho.VertexBuffer.PositionNormalColorTexcoord();
-                d.Position = vd.position;
-                d.Normal = vd.normal;
-                d.TexCoord = getuvs(vd);
-                d.Color = vd.color.ToUInt();
-                data[i] = d;
-            }
-
-            return data;
+            int startIndex = submesh.triangleBatch.startIndex;
+            int count = startIndex + submesh.triangleBatch.numVertices;
+            var verteces = vertices.Skip(startIndex).Take(count);
+            submesh.CreateBoundBox(verteces.ToList());
         }
 
         public int AddVertex(Vertex vertex)
         {
             int newIndex = vertices.Count();
-            //Todo: Getting error need to fix it later.
             var data = vertices.Where(x => x.Equals(vertex)).FirstOrDefault();
             if (data != null)
             {
@@ -150,9 +137,9 @@ namespace mTIM.Models.D
         private Vector2 getuvs(Vertex vd)
         {
             Vector2 vector = new Vector2();
-            if(vd!= null && vd.uvs?.Length > 0)
+            if (vd != null && vd.uvs?.Length > 0)
             {
-                foreach(var uv in vd.uvs)
+                foreach (var uv in vd.uvs)
                 {
                     vector.Add(uv);
                 }
@@ -181,7 +168,7 @@ namespace mTIM.Models.D
         {
             var data = new uint[3 * subMesh.triangleBatch.primitiveCount];
 
-            int startIndex = subMesh.triangleBatch.startIndex/3;
+            int startIndex = subMesh.triangleBatch.startIndex / 3;
             int endIndex = startIndex + subMesh.triangleBatch.primitiveCount;
             int j = 0;
             for (int i = startIndex; i < endIndex; i++)
@@ -211,7 +198,7 @@ namespace mTIM.Models.D
 
         public uint[] Add(uint[] lst, uint[] lst1)
         {
-            
+
             var data = new uint[lst.Length + lst1.Length];
             int idx = lst.Count();
             for (int i = 0; i < lst1.Count(); i++)
@@ -221,6 +208,39 @@ namespace mTIM.Models.D
             }
 
             return data;
+        }
+
+        public Urho.BoundingBox GetBoundingBox()
+        {
+            float minx, miny, minz, maxx, maxy, maxz;
+
+            minx = miny = minz = float.MaxValue;
+            maxx = maxy = maxz = float.MinValue;
+
+            foreach (var v in vertices)
+            {
+                minx = Math.Min(minx, v.position.X);
+                miny = Math.Min(miny, v.position.Y);
+                minz = Math.Min(minz, v.position.Z);
+                maxx = Math.Max(maxx, v.position.X);
+                maxy = Math.Max(maxy, v.position.Y);
+                maxz = Math.Max(maxz, v.position.Z);
+            }
+
+            return new Urho.BoundingBox(
+                new Urho.Vector3(minx, miny, minz),
+                new Urho.Vector3(maxx, maxy, maxz));
+        }
+
+        public void CreateBoundBoxesForSubmeshes()
+        {
+            if(subMeshes?.Count > 0)
+            {
+                foreach(var submesh in subMeshes)
+                {
+                    CreateSubMeshBoundBox(submesh);
+                }
+            }
         }
     }
 
@@ -255,7 +275,6 @@ namespace mTIM.Models.D
 
     public struct TimSubMesh
     {
-
         public TimBatch triangleBatch;
         public TimBatch lineBatch;
 
@@ -268,6 +287,30 @@ namespace mTIM.Models.D
         public Color color;
         public int listId;
         public int simplificationLevel;
+
+        public BoundingBox boundingBox;
+
+        public void CreateBoundBox(List<Vertex> vertices)
+        {
+            float minx, miny, minz, maxx, maxy, maxz;
+
+            minx = miny = minz = float.MaxValue;
+            maxx = maxy = maxz = float.MinValue;
+
+            foreach (var v in vertices)
+            {
+                minx = Math.Min(minx, v.position.X);
+                miny = Math.Min(miny, v.position.Y);
+                minz = Math.Min(minz, v.position.Z);
+                maxx = Math.Max(maxx, v.position.X);
+                maxy = Math.Max(maxy, v.position.Y);
+                maxz = Math.Max(maxz, v.position.Z);
+            }
+
+            boundingBox = new Urho.BoundingBox(
+                new Urho.Vector3(minx, miny, minz),
+                new Urho.Vector3(maxx, maxy, maxz));
+        }
     };
 
 }

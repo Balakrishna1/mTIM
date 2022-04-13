@@ -18,8 +18,6 @@ namespace mTIM.Components
         public override void OnAttachedToNode(Node node)
         {
             base.OnAttachedToNode(node);
-
-            
             //this.AddChild<RotationInput>("rotations");
         }
 
@@ -50,13 +48,13 @@ namespace mTIM.Components
                 TouchState state1 = input.GetTouch(0);
                 TouchState state2 = input.GetTouch(1);
 
-                var distance1 = Distance(state1.Position, state2.Position);                
+                var distance1 = Distance(state1.Position, state2.Position);
 
-                if(distance1 < 120f)
+                if (distance1 < 120f)
                 {
                     // doing a pan
                     float factor = 0.005f;
-                    App.RootNode.Position += new Vector3(-state1.Delta.X*factor, -state1.Delta.Y*factor, 0);
+                    App.RootNode.Position += new Vector3(-state1.Delta.X * factor, -state1.Delta.Y * factor, 0);
                 }
                 else
                 {
@@ -72,8 +70,14 @@ namespace mTIM.Components
                     //App.Camera.Zoom += (distance1 - distance2) * 0.01f;
                 }
 
-                
+
             }
+            //else if (input.NumTouches == 1)
+            //{
+            //    TouchState state1 = input.GetTouch(0);
+            //    string postion = string.Format("Input Touch Postion: X{0} Y{1}", state1.Position.X, state1.Position.Y);
+            //    Debug.WriteLine(postion);
+            //}
 
             if (input.GetKeyDown(Key.W) || input.GetKeyDown(Key.Up)) Pan(PanDirection.Up);
             if (input.GetKeyDown(Key.S) || input.GetKeyDown(Key.Down)) Pan(PanDirection.Down);

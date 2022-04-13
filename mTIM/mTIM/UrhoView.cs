@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
 using Urho;
 using Urho.Forms;
@@ -63,7 +60,8 @@ namespace mTIM
                         TouchEmulation = true,
                     });
                 LoadingUrhoTask.SetResult(true);
-            }else if(_urhoApp.IsInitialized)
+            }
+            else if(_urhoApp.IsInitialized)
             {
                 _urhoApp.AddStuff();
             }
@@ -77,6 +75,15 @@ namespace mTIM
                 _urhoApp = null;
                 Content = null;
                 _urhoSurface = null;
+            }
+        }
+
+        public async Task ResetUrhoApp()
+        {
+            if (_urhoApp != null)
+            {
+                await _urhoApp.Exit();
+                _urhoApp = null;
             }
         }
     }
