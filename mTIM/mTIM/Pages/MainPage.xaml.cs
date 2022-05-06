@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using mTIM.Components;
 using mTIM.Helpers;
 using mTIM.Interfaces;
 using mTIM.Models;
+using mTIM.Models.D;
 using mTIM.ViewModels;
 using Newtonsoft.Json;
 using Plugin.Permissions;
@@ -41,6 +41,8 @@ namespace mTIM
             customCell.SetBinding(ElementViewCell.LevelProperty, "Level");
             customCell.SetBinding(ElementViewCell.ValueProperty, "Value");
             customCell.SetBinding(ElementViewCell.HasChaildsProperty, "HasChailds");
+            customCell.SetBinding(ElementViewCell.IsSelectedProperty, "IsSelected");
+
             ElementViewCell.ActionRightIconClicked -= RightIconClicked;
             ElementViewCell.ActionRightIconClicked += RightIconClicked;
             ElementViewCell.ActionValueClicked -= ValueClicked;
@@ -70,23 +72,87 @@ namespace mTIM
             });
         }
 
+        /// <summary>
+        /// Update the text in model window.
+        /// </summary>
+        /// <param name="value"></param>
         private void updateTextInGameWindow(string value)
         {
             App?.UpdateText(value);
         }
 
+        /// <summary>
+        /// Item tapped in the portrait mode.
+        /// </summary>
+        /// <param name="id"></param>
         private void ItemClicked(int id)
         {
-            var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
-            if (item != null)
-                ViewModel.SelectedItemIndex(ViewModel.SelectedItemList.IndexOf(item));
+            try
+            {
+                //ViewModel.SelectedItemList.ToList().ForEach(x => x.IsSelected = false);
+                var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+                if (GlobalConstants.IsLandscape)
+                {
+                    if (item.HasChailds)
+                    {
+                        Urho.Application.InvokeOnMain(() =>
+                        {
+                            glBuilding.App.Reset();
+                            glBuilding.App.AddStuff();
+                            if (item.Id == 1)
+                            {
+                                glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
+                                glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, 0, ViewModel.Mesh.indeces.Count());
+                            }
+                            else
+                            {
+                                glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
+                                glBuilding.App.LoadInActiveDrawing(ViewModel.Mesh);
+                                TimElementMesh elementsMesh = ViewModel.Mesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
+                                if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
+                                    glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
+                                else
+                                {
+                                    var startIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.startIndex;
+                                    var endIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.primitiveCount;
+                                    glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, endIndex, (ViewModel.Mesh.indeces.Count - endIndex));
+                                }
+                            }
+                        });
+                        //item.IsSelected = true;
+                        //ViewModel.SelectedItemList.Update();
+                    }
+
+                }
+                else
+                {
+                    if (item != null)
+                        ViewModel.SelectedItemIndex(ViewModel.SelectedItemList.IndexOf(item));
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Values collection changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LstValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             lstValues.SelectedItem = null;
         }
 
+        /// <summary>
+        /// Comment clicked in the document cell.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         async void CommentClicked(object sender, System.EventArgs e)
         {
             object itemArgs = ((Button)sender).CommandParameter;
@@ -94,6 +160,11 @@ namespace mTIM
             await TouchHelper.Instance.TouchEffectsWithCommand((Button)sender, 0.9, 100, ViewModel.OnCommentClickedCommand, selectedItem);
         }
 
+        /// <summary>
+        /// Delete clicked in the document cell.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         async void OnDeleteClicked(object sender, EventArgs e)
         {
             object itemArgs = ((ImageButton)sender).CommandParameter;
@@ -101,6 +172,11 @@ namespace mTIM
             await TouchHelper.Instance.TouchEffectsWithCommand((ImageButton)sender, 0.9, 100, ViewModel.OnDeleteClickedCommand, selectedItem);
         }
 
+        /// <summary>
+        /// Eye icon clicked in the picture cell.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         async void OnEyeClicked(object sender, EventArgs e)
         {
             object itemArgs = ((ImageButton)sender).CommandParameter;
@@ -108,6 +184,11 @@ namespace mTIM
             await TouchHelper.Instance.TouchEffectsWithCommand((ImageButton)sender, 0.9, 100, ViewModel.OnViewClickedCommand, selectedItem);
         }
 
+        /// <summary>
+        /// Value item tapped in the cell.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void OnValueTapped(object sender, EventArgs e)
         {
             TappedEventArgs itemArgs = e as TappedEventArgs;
@@ -115,6 +196,10 @@ namespace mTIM
             ViewModel.SelectedValue(selectedItem);
         }
 
+        /// <summary>
+        /// Right icon clicked in the cell.
+        /// </summary>
+        /// <param name="id"></param>
         private void RightIconClicked(int id)
         {
             var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
@@ -122,6 +207,10 @@ namespace mTIM
                 ViewModel.SelectedItemIndex(ViewModel.SelectedItemList.IndexOf(item));
         }
 
+        /// <summary>
+        /// Value clicked in the cell
+        /// </summary>
+        /// <param name="id"></param>
         private void ValueClicked(int id)
         {
             var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
@@ -129,6 +218,9 @@ namespace mTIM
                 ViewModel.SelectedValueItem(item);
         }
 
+        /// <summary>
+        /// To get/update the information.
+        /// </summary>
         private void updateInfo()
         {
             ScaleTo1x(imgBadge);
@@ -179,7 +271,9 @@ namespace mTIM
             ViewModel.UpdateList();
         }
 
-
+        /// <summary>
+        /// To Save device information
+        /// </summary>
         public async void SaveAppMessage()
         {
             AndroidMessageModel androidMessage = new AndroidMessageModel();
@@ -211,8 +305,6 @@ namespace mTIM
                 this.height = height;
                 //reconfigure layout
             }
-            //BarcodeView.Init(height, width);
-            //BarcodeView.IsVisible = true;
             ViewModel.IsScanning = false;
             ViewModel.IsOpenBarcodeView = false;
             if (!CustomBottomSheet.IsInitiated)
@@ -220,7 +312,7 @@ namespace mTIM
                 CustomBottomSheet.Init(height, width);
             }
             CustomBottomSheet.InvokeView(height, width);
-            if(!AppUpdateBottomSheet.IsInitiated)
+            if (!AppUpdateBottomSheet.IsInitiated)
             {
                 AppUpdateBottomSheet.Init(height, width);
             }
@@ -258,7 +350,11 @@ namespace mTIM
             }
         }
 
-
+        /// <summary>
+        /// Update the header text size.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FrameHeader_SizeChanged(object sender, EventArgs e)
         {
             listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
@@ -271,7 +367,6 @@ namespace mTIM
         protected override void OnAppearing()
         {
             ViewModel.OnAppearing();
-            //glBuilding?.StopUrhoApp();
             base.OnAppearing();
         }
 
@@ -377,6 +472,9 @@ namespace mTIM
             return permissionsGranted;
         }
 
+        /// <summary>
+        /// To get the location.
+        /// </summary>
         private async void getLocation()
         {
             try
@@ -411,6 +509,9 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// To get the current location.
+        /// </summary>
         CancellationTokenSource cts;
         async Task GetCurrentLocation()
         {
@@ -484,6 +585,9 @@ namespace mTIM
             ViewModel.IsOpenBarcodeView = false;
         }
 
+        /// <summary>
+        /// Load the urho sharp app.
+        /// </summary>
         public bool isLoaded = false;
         private async Task loadUrhoView()
         {
@@ -491,13 +595,17 @@ namespace mTIM
             {
                 //Device.StartTimer(TimeSpan.FromMilliseconds(300), () =>
                 //{
-                    await glBuilding.StartUrhoApp();
-                    isLoaded = true;
+                await glBuilding.StartUrhoApp();
+                isLoaded = true;
                 //    return true;
                 //});
             }
         }
 
+        /// <summary>
+        /// Stop the urho sharp app.
+        /// </summary>
+        /// <returns></returns>
         private async Task stopUrhoView()
         {
             if (isLoaded)
@@ -507,6 +615,10 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// Refresh icon animation
+        /// </summary>
+        /// <param name="image"></param>
         public void ScaleTo1x(Image image)
         {
             var a = new Xamarin.Forms.Animation();
@@ -516,6 +628,11 @@ namespace mTIM
                 finished: (v, c) => image.Scale = 0.7, repeat: () => true);
         }
 
+        /// <summary>
+        /// To update the text size.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Label_SizeChanged(System.Object sender, System.EventArgs e)
         {
             var lbl = sender as Label;
@@ -529,6 +646,11 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// To update the sub text size.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void LabelSubText_SizeChanged(System.Object sender, System.EventArgs e)
         {
             var lbl = sender as Label;
@@ -542,11 +664,21 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// Camera icon click in the document cell.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void btnCamera_Clicked(System.Object sender, System.EventArgs e)
         {
-           ViewModel.CapturePhotoAsync(null);
+            ViewModel.CapturePhotoAsync(null);
         }
 
+        /// <summary>
+        /// Galary icon click in the document cell.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void btnGalary_Clicked(System.Object sender, System.EventArgs e)
         {
             ViewModel.PickPhotoAsync(null);

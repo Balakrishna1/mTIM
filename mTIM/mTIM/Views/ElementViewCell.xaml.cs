@@ -29,7 +29,9 @@ namespace mTIM
         public static readonly BindableProperty ValueProperty =
             BindableProperty.Create("Value", typeof(string), typeof(ElementViewCell), "Value");
         public static readonly BindableProperty HasChaildsProperty =
-            BindableProperty.Create("HasChailds", typeof(bool), typeof(ElementViewCell), false);
+            BindableProperty.Create("HasChailds", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
+        public static readonly BindableProperty IsSelectedProperty =
+            BindableProperty.Create("IsSelected", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
 
         public int ID
         {
@@ -73,15 +75,22 @@ namespace mTIM
             set { SetValue(HasChaildsProperty, value); }
         }
 
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
+        }
+
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-            var maxLength = GlobalConstants.IsLandscape ? 12 : 40; 
-            if(Name.Length > maxLength)
+            var maxLength = GlobalConstants.IsLandscape ? 12 : 40;
+            if (Name.Length > maxLength)
             {
                 lblName.FontSize = lblName.FontSize - 4;
             }
             lblName.Text = Name;
+            rootView.BackgroundColor = IsSelected ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
             if (HasChailds)
             {
                 absContent.IsVisible = false;
@@ -108,7 +117,7 @@ namespace mTIM
                     case DataType.Doc:
                         stackInfo.IsVisible = false;
                         int count = FileInfoHelper.Instance.GetCount(ID);
-                        lblDocValue.Text = count <= 0 ? string.Empty : count.ToString() + (count ==1 ? "Document" : "Documemts");
+                        lblDocValue.Text = count <= 0 ? string.Empty : count.ToString() + (count == 1 ? "Document" : "Documemts");
                         stackDocument.IsVisible = true;
                         break;
                     case DataType.Prjladen:
@@ -171,6 +180,10 @@ namespace mTIM
             if (!GlobalConstants.IsLandscape && HasChailds)
             {
                 await TouchHelper.Instance.TouchEffectsWithActionStruct(rootView, 0.95, 100, ID, ActionItemClicked);
+            }
+            else
+            {
+                ActionItemClicked?.Invoke(ID);
             }
         }
     }

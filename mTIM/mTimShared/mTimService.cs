@@ -22,6 +22,7 @@ namespace mTimShared
         MobileTimService timService { get; set; }
         public BaseViewModel ViewModel { get; set; }
         public Action<bool> ActionRefreshCallBack { get; set; }
+        public Action<bool> GraphicsDownloadedCallBack { get; set; }
 
         private static mTimService instance;
 
@@ -177,8 +178,8 @@ namespace mTimShared
                         if (!FileHelper.IsFileExists(GlobalConstants.GraphicsBlob_FILE))
                         {
                             await FileHelper.WriteAllBytesAsync(GlobalConstants.GraphicsBlob_FILE, e.Result);
+                            GraphicsDownloadedCallBack?.Invoke(true);
                         }
-                        ViewModel.ImageSource = e.Result;
                         Debug.WriteLine(e.Result);
                     }
                     else if (e.Error != null && !fromAutoSync)
@@ -382,7 +383,7 @@ namespace mTimShared
 
         private void UploadCompleteEvent(int taskId, int postId)
         {
-            timService.UploadFileCompleted+= async (object sender, UploadFileCompletedEventArgs e) =>
+            timService.UploadFileCompleted += async (object sender, UploadFileCompletedEventArgs e) =>
             {
                 await FileInfoHelper.Instance.UpdateFileInfoInList(taskId, postId, e.UploadFileResult, e.UploadFileResultSpecified);
                 FileInfoHelper.Instance.FileUploadCompleted?.Invoke(taskId, postId, e.UploadFileResult, e.UploadFileResultSpecified);
@@ -399,7 +400,7 @@ namespace mTimShared
 
         private void ChangeFileCompleteEvent(int taskId, int fileId, string comment)
         {
-            timService.ChangeFileCommentCompleted+=async (object sender, ChangeFileCommentCompletedEventArgs e) =>
+            timService.ChangeFileCommentCompleted += async (object sender, ChangeFileCommentCompletedEventArgs e) =>
             {
                 await FileInfoHelper.Instance.UpdateFileComment(taskId, fileId, comment);
                 FileInfoHelper.Instance.CommentUpdatedCompleted?.Invoke(taskId, fileId);
@@ -416,10 +417,10 @@ namespace mTimShared
         private void DeleteFileCompleteEvent(int taskId, int fileId)
         {
             timService.DeleteFileCompleted += async (object sender, System.ComponentModel.AsyncCompletedEventArgs e) =>
-              {
-                  await FileInfoHelper.Instance.DeleteFileInList(taskId, fileId);
-                  FileInfoHelper.Instance.DeleteCompleted?.Invoke(taskId, fileId);
-              };
+            {
+                await FileInfoHelper.Instance.DeleteFileInList(taskId, fileId);
+                FileInfoHelper.Instance.DeleteCompleted?.Invoke(taskId, fileId);
+            };
         }
     }
 }

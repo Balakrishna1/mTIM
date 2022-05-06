@@ -1,10 +1,8 @@
 ﻿
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Timers;
-using mTIM.ViewModels;
 using Urho;
 
 namespace mTIM.Models.D
@@ -38,15 +36,16 @@ namespace mTIM.Models.D
                     indexMap[i] = -1;
                 }
 #endif
-
                 int currentProjectId = -1;
 
                 for (int iVisu = 0; iVisu < result.Elements.Count(); iVisu++)
                 {
                     Visualizable visu = result.Elements[iVisu];
-                    BaseViewModel ViewModel = App.Current.MainPage.BindingContext as BaseViewModel;
-                    var taskData = ViewModel?.TotalListList.Where(x => x.ObjectId.Equals(visu.Id)).FirstOrDefault();
+                    Debug.WriteLine("ElementId: " + visu.Id);
+                    //BaseViewModel ViewModel = App.Current.MainPage.BindingContext as BaseViewModel;
+                    //var taskData = ViewModel?.TotalListList.Where(x => x.ObjectId.Equals(visu.Id)).FirstOrDefault();
                     //Logic.Instance().GetTaskListData().GetTaskById(visu.taskId);
+                    TimTaskModel taskData = new TimTaskModel();
                     if (taskData != null && currentProjectId != taskData.Parent)
                     {
                         currentProjectId = taskData.Parent;
@@ -54,15 +53,15 @@ namespace mTIM.Models.D
                     }
                     if (visu.Geometries != null)
                     {
+                        builder.StartElementMesh();
                         for (int iRef = 0; iRef < visu.Geometries.Count(); iRef++)
                         {
                             GeometryReference @ref = visu.Geometries[iRef];
                             uint geometryIndex = @ref.GeometryIndex;
                             float[] m = @ref.Transform.Matrix;
-
+                            Debug.WriteLine("ObjectId: " + @ref.ObjectID);
                             TriangulatedGeometryData triGeometryData = (TriangulatedGeometryData)result.Geometries[(int)geometryIndex];
 
-                            builder.StartSubMesh();
                             for (int iTriangle = 0; iTriangle < triGeometryData.Triangles.Count(); iTriangle++)
                             {
                                 Triangle triangle = triGeometryData.Triangles[iTriangle];
@@ -92,16 +91,19 @@ namespace mTIM.Models.D
                                 Vertex a = new Vertex();
                                 a.position = pa;
                                 a.normal = normalVector;
+                                a.color = Color.FromHex(@ref.ColorTag);
                                 triangleIndices[0] = builder.AddVertex(a);
                                 Vertex b = new Vertex();
                                 b.position = pb;
                                 b.normal = normalVector;
+                                b.color = Color.FromHex(@ref.ColorTag);
                                 triangleIndices[1] = builder.AddVertex(b);
                                 Vertex c = new Vertex();
                                 c.position = pc;
                                 c.normal = normalVector;
+                                c.color = Color.FromHex(@ref.ColorTag);
                                 triangleIndices[2] = builder.AddVertex(c);
-                                mesh.AddTriangle(triangleIndices);
+                                //mesh.AddTriangle(triangleIndices);
                                 builder.AddTriangle(triangleIndices);
 
                                 indexMap[Convert.ToInt32(triangle.A)] = triangleIndices[0];
@@ -120,49 +122,22 @@ namespace mTIM.Models.D
                                 mesh.AddLine(indexMap[Convert.ToInt32(line.A)], indexMap[Convert.ToInt32(line.B)]);
                                 builder.AddLine(indexMap[Convert.ToInt32(line.A)], indexMap[Convert.ToInt32(line.B)]);
                             }
-                            TimSubMesh sm = builder.EndSubMesh();
-                            sm.visualizableIndex = iVisu;
-                            sm.refIndex = iRef;
-                            sm.simplificationLevel = 1;
-                            sm.listId = taskData != null ? taskData.Id : -1;
-                            builder.subMeshes[builder.subMeshes.Count - 1] = sm;
                         }
+                        var em = builder.EndElementMesh();
+                        em.visualizableIndex = iVisu;
+                        em.simplificationLevel = 1;
+                        em.listId = taskData != null ? taskData.Id : -1;
+                        builder.elementMeshes[builder.elementMeshes.Count - 1] = em;
                     }
                 }
-               
+                int vertexCount = builder.vertices.Count();
+                mesh.proto = result;
+                mesh.vertices = builder.vertices.GetChunk(0);
+                mesh.indeces = builder.indices.GetChunk(0);
+                mesh.lineIndices = builder.lineIndices.GetChunk(0);
+                mesh.subMeshes = builder.subMeshes;
+                mesh.elementMeshes = builder.elementMeshes;
             }
-            int vertexCount = builder.vertices.Count();
-
-            //mesh = new TimMesh();
-            mesh.proto = result;
-            mesh.vertices = builder.vertices.GetChunk(0);
-            VertexBuffer vertexBuffer = new VertexBuffer(Application.CurrentContext);
-            //vertexBuffer.SetSize((uint)builder.vertices.Count(), ElementMask.Position, true);
-
-                
-            mesh.vertexBuffer = vertexBuffer;
-
-            IndexBuffer indexBuffer = new IndexBuffer(Application.CurrentContext);
-              
-            if (builder.lineIndices.Count() > 0)
-            {
-                for (int iChunk = 0; iChunk < builder.lineIndices.ChunkCount(); iChunk++)
-                {
-                    int current = builder.indices.Count() + iChunk * builder.lineIndices.SizePerChunk();
-                    //indexBuffer.Fill(builder.lineIndices.GetChunk(iChunk).GetBuffer(), INDEXFORMAT_32, current, builder.lineIndices.GetChunk(iChunk).Count());
-                }
-            }
-            mesh.indexBuffer = indexBuffer;
-
-
-            mesh.subMeshes = builder.subMeshes;
-            for (int i = 0; i < mesh.subMeshes.Count; i++)
-            {
-                var data = mesh.subMeshes[i];
-                data.lineBatch.startIndex += builder.indices.Count();
-                mesh.subMeshes[i] = data;
-            }
-            //mesh.CreateBoundBoxesForSubmeshes();
             return mesh;
         }
 
@@ -177,7 +152,7 @@ namespace mTIM.Models.D
             Matrix4 matrix = new Matrix4(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], m[12], m[13], m[14], m[15]);
             //Matrix4 matrix2 = Matrix4.CreateTranslation(new Vector3(v.X, v.Y, v.Z));
             //var mx = matrix * matrix2;
-            
+
             return Vector3.TransformNormal(new Vector3(v.X, v.Y, v.Z), matrix);
         }
 

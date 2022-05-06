@@ -29,8 +29,10 @@ namespace mTIM.ViewModels
         public IDevice Device;
         public const string installAppFormat = "Install Update{0}";
 
-        public Action<string> ActionSelectedItemText;
+        public TimMesh Mesh { get; set; } = new TimMesh();
+        public Result ProbufResult { get; set; } = new Result();
 
+        public Action<string> ActionSelectedItemText;
         public MainViewModel(INavigation navigation)
         {
             this.Navigation = navigation;
@@ -40,7 +42,54 @@ namespace mTIM.ViewModels
             FileInfoHelper.Instance.LoadExtensions();
             FileInfoHelper.Instance.FileUploadCompleted += FileUploadCompleted;
             FileInfoHelper.Instance.CommentUpdatedCompleted += EditCommentCompleted;
+            Webservice.GraphicsDownloadedCallBack += GraphicsDownloadedCallBack;
             UploadOfflineFilesIntoServer();
+            LoadMesh();
+        }
+
+        private void GraphicsDownloadedCallBack(bool isDownloaded)
+        {
+            Task.Run(() => LoadMesh());
+        }
+
+        public async void LoadMesh()
+        {
+            try
+            {
+                if (!FileHelper.IsFileExists(GlobalConstants.GraphicsBlob_FILE))
+                {
+                    return;
+                }
+                var compressedData = await FileHelper.ReadAllBytesAsync(GlobalConstants.GraphicsBlob_FILE);
+                if (compressedData != null && compressedData.Length > 0)
+                {
+                    ProbufResult = GZipHelper.DeserializeResult(compressedData);
+                    Mesh = CreateMesh(ProbufResult);
+                    if (Mesh != null)
+                    {
+                        var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
+                        if (Mesh.elementMeshes.Any())
+                        {
+                            for (int i = 0; i < Mesh.elementMeshes.Count; i++)
+                            {
+                                var element = Mesh.elementMeshes[i];
+                                element.listId = lst[i].Id;
+                                Mesh.elementMeshes[i] = element;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
+        public TimMesh CreateMesh(Result result)
+        {
+            TimMeshLoader meshLoader = new TimMeshLoader();
+            return meshLoader.Load(result);
         }
 
         #region File related code
@@ -415,7 +464,7 @@ namespace mTIM.ViewModels
         public ICommand BackButtonCommand => new Command(BackButtonCommandExecute);
         private void BackButtonCommandExecute()
         {
-            if(IsValueListVisible || IsDocumentListVisible || IsEditTextVisible)
+            if (IsValueListVisible || IsDocumentListVisible || IsEditTextVisible)
             {
                 IsDocumentListVisible = IsValueListVisible = IsEditTextVisible = false;
                 updateTaskListVisibility();
@@ -563,7 +612,7 @@ namespace mTIM.ViewModels
                                     item.BackgroundColor = Color.LightGray;
                                 }
                             }
-                             LstValues.AddRange(valuesList);
+                            LstValues.AddRange(valuesList);
                         }
                         else
                         {
@@ -822,7 +871,7 @@ namespace mTIM.ViewModels
 
         private void AppData(string json)
         {
-            if(!string.IsNullOrEmpty(json))
+            if (!string.IsNullOrEmpty(json))
             {
                 VersionInfo = JsonConvert.DeserializeObject<AppVersionUpdateInfo>(json);
                 IsNotificationVisible = true;
@@ -927,12 +976,12 @@ namespace mTIM.ViewModels
             AppUpdateTextColor = Color.LightGray;
             Webservice.QueryAppUpdate(AppData);
         }
-        
+
         private async void RightIconCommand(TimTaskModel item)
         {
             if (item != null)
             {
-                switch(item.Type)
+                switch (item.Type)
                 {
                     case DataType.Prjladen:
                     case DataType.Prjladen2:
@@ -940,7 +989,7 @@ namespace mTIM.ViewModels
                         break;
                     case DataType.Aktion:
                     case DataType.Aktion2:
-                        item.Value= DateTime.Now.ToString("HH:mm:ss");
+                        item.Value = DateTime.Now.ToString("HH:mm:ss");
                         SelectedItemList?.Update();
                         break;
                     default:

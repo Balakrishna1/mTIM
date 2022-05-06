@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Urho;
 
 namespace mTIM.Models.D
@@ -48,14 +46,14 @@ namespace mTIM.Models.D
             chunks.Clear();
         }
 
-        public void Add(T t)  
+        public void Add(T t)
         {
             if (chunks.Count == 0 || chunks.Count == S)
             {
                 List<T> T = new List<T>(S);
                 chunks.Add(T);
             }
-            chunks[chunks.Count-1].Add(t);
+            chunks[chunks.Count - 1].Add(t);
             size++;
         }
         private int size;
@@ -125,6 +123,7 @@ namespace mTIM.Models.D
         public Dictionary<Vertex, int> vertexTable = new Dictionary<Vertex, int>();
         public ChunkedArray<int> indices = new ChunkedArray<int>();
         public List<TimSubMesh> subMeshes = new List<TimSubMesh>();
+        public List<TimElementMesh> elementMeshes = new List<TimElementMesh>();
         public int lastLineIndexCount;
         public ChunkedArray<int> lineIndices = new ChunkedArray<int>();
 
@@ -156,7 +155,7 @@ namespace mTIM.Models.D
 
         public void DisposeTemp()
         {
-           //vertexTable.Dispose();
+            //vertexTable.Dispose();
         }
 
         public int AddVertex(Vertex vertex)
@@ -206,6 +205,8 @@ namespace mTIM.Models.D
             vertexTable.Clear();
         }
 
+
+
         public void StartSubMesh()
         {
             subMeshes.Add(new TimSubMesh());
@@ -226,7 +227,7 @@ namespace mTIM.Models.D
                 trianglebatch.minIndex = 0;
                 trianglebatch.numVertices = vertices.GetChunk(0).Count;
                 trianglebatch.startIndex = lastIndexCount;
-                trianglebatch.primitiveCount = (indices.Count() - lastIndexCount) / 3;
+                trianglebatch.primitiveCount = indices.Count();
             }
             {
                 linebatch = sm.lineBatch;
@@ -235,7 +236,46 @@ namespace mTIM.Models.D
                 linebatch.minIndex = 0;
                 linebatch.numVertices = vertices.GetChunk(0).Count;
                 linebatch.startIndex = lastLineIndexCount;
-                linebatch.primitiveCount = (lineIndices.Count() - lastLineIndexCount) / 2;
+                linebatch.primitiveCount = lineIndices.Count();
+            }
+            sm.triangleBatch = trianglebatch;
+            sm.lineBatch = linebatch;
+            sm.aabb = aabb;
+            sm.visible = true;
+            sm.opaque = false;
+            return sm;
+        }
+
+        public void StartElementMesh()
+        {
+            elementMeshes.Add(new TimElementMesh());
+
+            lastIndexCount = indices.Count();
+            lastLineIndexCount = lineIndices.Count();
+        }
+
+        public TimElementMesh EndElementMesh()
+        {
+            TimBatch trianglebatch;
+            TimBatch linebatch;
+            TimElementMesh sm = elementMeshes[elementMeshes.Count - 1];
+            {
+                trianglebatch = sm.triangleBatch;
+                trianglebatch.primitiveType = PrimitiveType.TriangleList;
+                trianglebatch.baseVertexIndex = 0;
+                trianglebatch.minIndex = 0;
+                trianglebatch.numVertices = vertices.GetChunk(0).Count;
+                trianglebatch.startIndex = lastIndexCount;
+                trianglebatch.primitiveCount = indices.GetChunk(0).Count - lastIndexCount;
+            }
+            {
+                linebatch = sm.lineBatch;
+                linebatch.primitiveType = PrimitiveType.LineList;
+                linebatch.baseVertexIndex = 0;
+                linebatch.minIndex = 0;
+                linebatch.numVertices = vertices.GetChunk(0).Count;
+                linebatch.startIndex = lastLineIndexCount;
+                linebatch.primitiveCount = lineIndices.GetChunk(0).Count - lastLineIndexCount;
             }
             sm.triangleBatch = trianglebatch;
             sm.lineBatch = linebatch;

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using mTIM.Enums;
 using Newtonsoft.Json;
 
 namespace mTIM.Models.D
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class TimTaskModel
+    public class TimTaskModel : INotifyPropertyChanged
     {
         public object Action { get; set; }
         public string Color { get; set; }
@@ -35,11 +34,36 @@ namespace mTIM.Models.D
         public DataType Type { get; set; }
         public object Value { get; set; }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(object sender, string propertyName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         [JsonIgnore]
         public bool HasChailds { get; set; }
+
         [JsonIgnore]
-        public AABB aabb { get; set; } = new AABB();
+        private bool _isSelected;
         [JsonIgnore]
-        public List<TimSubMesh> subMeshes { get; set; } = new List<TimSubMesh>();
+        public bool IsSelected
+        {
+            get
+            {
+                return _isSelected;
+            }
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(this, "IsSelected");
+                }
+            }
+        }
     }
 }

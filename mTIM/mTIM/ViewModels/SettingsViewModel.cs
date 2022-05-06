@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using mTIM.Helpers;
-using mTIM.Interfaces;
 using mTIM.Models;
 using Newtonsoft.Json;
 using Xamarin.Forms;

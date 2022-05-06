@@ -11,11 +11,13 @@ namespace mTIM.iOS.Services
     {
         public BaseViewModel ViewModel { get; set; }
         public Action<bool> ActionRefreshCallBack { get; set; }
+        public Action<bool> GraphicsDownloadedCallBack { get; set; }
 
         private void intialize()
         {
             mTimService.Instance.ViewModel = ViewModel;
             mTimService.Instance.ActionRefreshCallBack = ActionRefreshCallBack;
+            mTimService.Instance.GraphicsDownloadedCallBack = GraphicsDownloadedCallBack;
         }
 
         /// <summary>

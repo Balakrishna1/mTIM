@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using Urho;
 
 namespace mTIM.Components
@@ -19,13 +17,6 @@ namespace mTIM.Components
         {
             base.OnAttachedToNode(node);
             //this.AddChild<RotationInput>("rotations");
-        }
-
-        public void Reset()
-        {
-            App.RootNode.SetWorldRotation(Quaternion.Identity);
-            App.RootNode.Position = Vector3.Zero;
-            App.Camera.Zoom = 1f;
         }
 
         protected override void OnUpdate(float timeStep)
@@ -72,12 +63,6 @@ namespace mTIM.Components
 
 
             }
-            //else if (input.NumTouches == 1)
-            //{
-            //    TouchState state1 = input.GetTouch(0);
-            //    string postion = string.Format("Input Touch Postion: X{0} Y{1}", state1.Position.X, state1.Position.Y);
-            //    Debug.WriteLine(postion);
-            //}
 
             if (input.GetKeyDown(Key.W) || input.GetKeyDown(Key.Up)) Pan(PanDirection.Up);
             if (input.GetKeyDown(Key.S) || input.GetKeyDown(Key.Down)) Pan(PanDirection.Down);

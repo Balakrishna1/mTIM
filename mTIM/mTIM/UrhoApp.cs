@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using mTIM.Components;
-using mTIM.Helpers;
 using mTIM.Models.D;
 using mTIM.ViewModels;
 using Urho;
@@ -22,6 +19,7 @@ namespace mTIM
         public Camera Camera => _camera;
         public Light Light => _light;
         public bool IsInitialized => _scene != null;
+        public Urho.Node CameraNode => _cameraNode;
         public Urho.Node TouchedNode;
 
         private Scene _scene;
@@ -29,10 +27,13 @@ namespace mTIM
         private Urho.Node _rootNode;
         private Camera _camera;
         private Light _light;
+        private Urho.Node _cameraNode;
 
         public Text SelectedElement;
 
         private ObjectModel model;
+        private ObjectModel linesModel;
+        private ObjectModel inactiveModel;
 
         public Vector3 CameraPosition => new Vector3(1, 1, 5);
 
@@ -52,7 +53,7 @@ namespace mTIM
             TouchedNode = null;
             _rootNode.RemoveAllChildren();
             _rootNode.SetWorldRotation(Quaternion.Identity);
-            _camera.Zoom = 1f;
+            //_camera.Zoom = 1.1f;
         }
 
         protected override void Start()
@@ -157,24 +158,37 @@ namespace mTIM
             _rootNode.RemoveAllChildren();
             this.AddChild<WorldInputHandler>("inputs");
             model = this.AddChild<ObjectModel>("model");
+        }
 
-            //await model.LoadMesh("mTIM.Meshes.Cube.obj", true);
-            if (!FileHelper.IsFileExists(GlobalConstants.GraphicsBlob_FILE))
+        public void LoadInActiveDrawing(TimMesh mesh)
+        {
+            if (mesh != null)
             {
-                return;
+                inactiveModel = this.AddChild<ObjectModel>("inactiveModel");
+                inactiveModel.LoadMesh(mesh, false);
             }
-            var compressedData = await FileHelper.ReadAllBytesAsync(GlobalConstants.GraphicsBlob_FILE);
-            if (compressedData != null && compressedData.Length > 0)
+        }
+
+        public void LoadLinesDrawing(TimMesh mesh)
+        {
+            if (mesh != null)
             {
-                var result = GZipHelper.DeserializeResult(compressedData);
-                Debug.WriteLine(result.Geometries.Count());
-                var mesh = CreateMesh(result);
-                if (mesh != null)
-                {
-                    model.LoadMesh(mesh);
-                }
+                linesModel = this.AddChild<ObjectModel>("linesModel");
+                linesModel.LoadMesh(mesh, true);
             }
-            //model.LoadModel("HoverBike.mdl", null);
+        }
+
+        public void LoadActiveDrawing(TimMesh mesh, int fromIndex, int toIndex)
+        {
+            if (mesh != null)
+            {
+                model.LoadMesh(mesh, fromIndex, toIndex);
+                //var bbx = mesh.GetBoundingBox();
+                //var max = new Vector3(bbx.Max.X, bbx.Max.Y, bbx.Max.Z);
+
+                //await CameraNode.RunActionsAsync(new EaseInOut(new MoveBy(3, Vector3.Add(max, new Vector3(0f, 0f, 3f))), 10f));
+                //CameraNode.LookAt(Scene.Children.Last().Position, Vector3.Up);
+            }
         }
 
         private T Deserialize<T>(byte[] param)
@@ -186,80 +200,25 @@ namespace mTIM
             }
         }
 
-        public TimMesh CreateMesh(Result result)
-        {
-            TimMesh mesh = null;
-
-            TimMeshLoader meshLoader = new TimMeshLoader();
-            mesh = meshLoader.Load(result);
-            if (mesh != null)
-            {
-                if (ViewModel != null)
-                {
-                    int tc = ViewModel.TotalListList.Count;
-                    //taskListData.GetTaskCount();
-                    for (int i = 0; i < tc; i++)
-                    {
-                        TimTaskModel td = ViewModel.TotalListList[i];
-                        td.aabb = AABB.EMPTY;
-                        td.subMeshes.Clear();
-                    }
-
-                    for (int i = 0; i < mesh.subMeshes.Count(); i++)
-                    {
-                        TimSubMesh sm = mesh.subMeshes[i];
-                        TimTaskModel current = ViewModel.TotalListList.Where(x => x.ExternId.Equals(sm.listId)).FirstOrDefault();
-                        //Logic.Instance().GetTaskListData().GetTaskById(sm.listId);
-                        if (current != null)
-                        {
-                            current.aabb.Grow(sm.aabb);
-                            current.subMeshes.Add(sm);
-                            Debug.WriteLine("Added sub meshes");
-                            //current.hasDetail[sm.simplificationLevel] = true;
-                        }
-                    }
-
-                    PropagateAABB(ViewModel, ViewModel.TotalListList?.Where(x => x.Level.Equals(0)).FirstOrDefault());
-                }
-
-                return mesh;
-            }
-
-            return null;
-        }
-
-        public void PropagateAABB(BaseViewModel VM, TimTaskModel current)
-        {
-            List<TimTaskModel> children = VM.TotalListList.Where(x => x.Level.Equals(current.Level + 1) && x.Parent.Equals(current.Id)).ToList();
-            for (int i = 0; i < children.Count(); i++)
-            {
-                TimTaskModel child = children[i];
-                PropagateAABB(VM, child);
-                if (!child.aabb.IsEmpty())
-                {
-                    current.aabb.Grow(child.aabb);
-                }
-            }
-        }
-
         private void AddCameraAndLight()
         {
-            var cameraNode = _scene.CreateChild("cameraNode");
-            _camera = cameraNode.CreateComponent<Camera>();
+            _cameraNode = _scene.CreateChild("cameraNode");
+            _camera = _cameraNode.CreateComponent<Camera>();
             _camera.Orthographic = true;
 
             _camera.OrthoSize = (float)Application.Current.Graphics.Height * Application.PixelSize;
 
-            cameraNode.Position = CameraPosition;
+            _camera.Zoom = 1.1f;
+            _cameraNode.Position = CameraPosition;
 
-            Urho.Node lightNode = cameraNode.CreateChild("lightNode");
+            Urho.Node lightNode = _cameraNode.CreateChild("lightNode");
             _light = lightNode.CreateComponent<Light>();
             _light.LightType = LightType.Point;
             _light.Range = 100;
             _light.Brightness = 0.9f;
-            
 
-            cameraNode.LookAt(Vector3.Zero, Vector3.Down, TransformSpace.World);
+
+            _cameraNode.LookAt(Vector3.Zero, Vector3.Down, TransformSpace.World);
         }
 
         void SetupViewport()

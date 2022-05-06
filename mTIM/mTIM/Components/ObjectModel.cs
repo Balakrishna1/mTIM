@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using mTIM.Models.D;
 using Urho;
-using Urho.Urho2D;
 
 namespace mTIM.Components
 {
@@ -15,93 +10,121 @@ namespace mTIM.Components
 
         public override void OnAttachedToNode(Urho.Node node)
         {
-            base.OnAttachedToNode(node); 
-        }
-
-        public void LoadModel(string modelPath, string materialPath)
-        {
-            var cache = Application.ResourceCache;
-
-            this.Model = cache.GetModel(modelPath);
-
-            if(string.IsNullOrEmpty(materialPath) == false)
-            {
-                this.SetMaterial(cache.GetMaterial(materialPath));
-
-                App.Light.Brightness = 2f;
-            }
-            else
-            {
-                App.Light.Brightness = 1f;
-            }
-
-            //scaling model node to fit in a 2x2x2 space (not taking orientation of model into account)
-            var halfSize = this.WorldBoundingBox.HalfSize;
-            var scaleFactor = System.Math.Max(halfSize.X, System.Math.Max(halfSize.Y, halfSize.Z));
-            this.Node.ScaleNode(1f / scaleFactor);
-
-            //position model so world bounding box is centered on origin
-            this.Node.Position = this.WorldBoundingBox.Center * -1;
-
+            base.OnAttachedToNode(node);
         }
 
         public bool LoadMesh(TimMesh mesh, bool isLineList = false)
         {
             Urho.Application.InvokeOnMain(() =>
             {
-                var vb = mesh.vertexBuffer;
-                var ib = mesh.indexBuffer;
+                var vb = mesh.vertexBuffer ?? new VertexBuffer(Application.CurrentContext);
+                var ib = mesh.indexBuffer ?? new IndexBuffer(Application.CurrentContext);
 
                 var geom = new Geometry();
 
                 var vdata = mesh.GetVertextData();
                 var idata = mesh.GetIndexData();
                 var ildata = mesh.GetLineIndexData();
-
+                vb.Release();
+                ib.Release();
                 // Shadowed buffer needed for raycasts to work, and so that data can be automatically restored on device loss
-                vb.Shadowed = true;
-                vb.SetSize((uint)vdata.Length, ElementMask.Position | ElementMask.Normal | ElementMask.Color | ElementMask.TexCoord1, true);
-                vb.SetData(vdata.ToArray());
-                vb.Unlock();
+                if (vb != null)
+                {
+                    vb.Shadowed = true;
+                    vb.SetSize((uint)vdata.Length, ElementMask.Position | ElementMask.Normal | ElementMask.Color | ElementMask.TexCoord1, true);
+                    vb.SetData(vdata.ToArray());
+                }
 
-                ib.Shadowed = true;
-                ib.SetSize((uint)(idata.Length), true);
-                ib.SetData(idata);
-                ib.Unlock();
-
+                if (ib != null)
+                {
+                    ib.Shadowed = true;
+                    ib.SetSize(isLineList ? (uint)ildata.Length : (uint)(idata.Length), true);
+                    ib.SetData(isLineList ? ildata : idata);
+                }
                 geom.SetVertexBuffer(0, vb);
                 geom.IndexBuffer = ib;
-                geom.SetDrawRange(isLineList? PrimitiveType.LineList : PrimitiveType.TriangleList, 0 , (uint)idata.Length);
-                //geom.SetDrawRange(PrimitiveType.LineList, (uint)idata.Length, (uint)ildata.Length);
+                geom.SetDrawRange(isLineList ? PrimitiveType.LineList : PrimitiveType.TriangleList, 0, isLineList ? (uint)ildata.Length : (uint)idata.Length);
 
                 var model = new Model();
                 model.NumGeometries = 1;
                 model.SetGeometry(0, 0, geom);
 
-                BoundingBox boundingBox = new BoundingBox();
-                for (int i = 0; i < vdata.Length; i++)
-                {
-                    var position = vdata[i].Position;
-                    boundingBox.Merge(position);
-
-                    var normal = vdata[i].Normal;
-                    vdata[i].Normal = normal;
-                }
                 model.BoundingBox = mesh.GetBoundingBox();
 
-                Material GrayLineMaterial = Material.FromColor(Color.Gray);
-                GrayLineMaterial.SetTechnique(1, CoreAssets.Techniques.NoTextureUnlit, 1, 1);
-                GrayLineMaterial.CullMode = CullMode.Cw;
+                Material GrayLineMaterial = Material.FromColor(Color.FromHex("#40757474"), true);
+                GrayLineMaterial.SetTechnique(1, CoreAssets.Techniques.DiffAddAlpha);
+                GrayLineMaterial.CullMode = CullMode.MaxCullmodes;
                 GrayLineMaterial.FillMode = FillMode.Solid;
                 GrayLineMaterial.LineAntiAlias = true;
 
-                Material BlackLineMaterial = Material.FromColor(Color.Black);
-                BlackLineMaterial.SetTechnique(0, CoreAssets.Techniques.DiffNormal, 0, 0);
-                BlackLineMaterial.CullMode = CullMode.Cw;
+                Material BlackLineMaterial = Material.FromColor(Color.Black, true);
+                GrayLineMaterial.SetTechnique(1, CoreAssets.Techniques.DiffNormal);
+                GrayLineMaterial.CullMode = CullMode.MaxCullmodes;
+                GrayLineMaterial.FillMode = FillMode.Solid;
                 BlackLineMaterial.LineAntiAlias = true;
-
                 Model = model;
                 SetMaterial(isLineList ? BlackLineMaterial : GrayLineMaterial);
+                CastShadows = true;
+
+                //scaling model node to fit in a 2x2x2 space (not taking orientation of model into account)
+                var halfSize = WorldBoundingBox.HalfSize;
+                var scaleFactor = System.Math.Max(halfSize.X, System.Math.Max(halfSize.Y, halfSize.Z));
+
+                //Node.Rotation = new Quaternion(60, 0, 30);
+                Node.ScaleNode(2.5f / scaleFactor);
+                //position model so world bounding box is centered on origin
+                Node.Position = WorldBoundingBox.Center * -1;
+            });
+            return true;
+        }
+
+        public bool LoadMesh(TimMesh mesh, int fromIndex, int toIndex)
+        {
+            Urho.Application.InvokeOnMain(() =>
+            {
+                var vb = mesh.vertexBuffer ?? new VertexBuffer(Application.CurrentContext);
+                var ib = mesh.indexBuffer ?? new IndexBuffer(Application.CurrentContext);
+
+                var geom = new Geometry();
+
+                var vdata = mesh.GetVertextData();
+                var idata = mesh.GetIndexData();
+                var ildata = mesh.GetLineIndexData();
+                vb.Release();
+                ib.Release();
+                // Shadowed buffer needed for raycasts to work, and so that data can be automatically restored on device loss
+                if (vb != null)
+                {
+                    vb.Shadowed = true;
+                    vb.SetSize((uint)vdata.Length, ElementMask.Position | ElementMask.Normal | ElementMask.Color | ElementMask.TexCoord1, true);
+                    vb.SetData(vdata.ToArray());
+                }
+
+                if (ib != null)
+                {
+                    ib.Shadowed = true;
+                    ib.SetSize((uint)(idata.Length), true);
+                    ib.SetData(idata);
+                }
+                geom.SetVertexBuffer(0, vb);
+                geom.IndexBuffer = ib;
+                geom.SetDrawRange(PrimitiveType.TriangleList, (uint)fromIndex, (uint)toIndex);
+
+                //geom.SetDrawRange(PrimitiveType.LineList, (uint)idata.Length, (uint)ildata.Length);
+
+                var model = new Model();
+                model.NumGeometries = 1;
+                model.SetGeometry(0, 0, geom);
+                model.BoundingBox = mesh.GetBoundingBox();
+
+                Material GrayLineMaterial = Material.FromColor(Color.FromHex("#757474"), false);
+                GrayLineMaterial.SetTechnique(5, CoreAssets.Techniques.Diff);
+                GrayLineMaterial.CullMode = CullMode.MaxCullmodes;
+                GrayLineMaterial.FillMode = FillMode.Solid;
+                GrayLineMaterial.LineAntiAlias = true;
+
+                Model = model;
+                SetMaterial(GrayLineMaterial);
                 CastShadows = true;
 
                 //scaling model node to fit in a 2x2x2 space (not taking orientation of model into account)

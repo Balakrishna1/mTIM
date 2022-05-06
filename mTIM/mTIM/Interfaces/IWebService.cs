@@ -8,6 +8,7 @@ namespace mTIM.Interfaces
     {
         public BaseViewModel ViewModel { get; set; }
         public Action<bool> ActionRefreshCallBack { get; set; }
+        public Action<bool> GraphicsDownloadedCallBack { get; set; }
         void QueryAppUpdate(Action<string> actionAppUpdate);
         void GetTasksListIDsFortheData(bool isFromAutoSync = false);
         void SyncTaskList(string taskListJson, bool isFromAutoSync = false);
