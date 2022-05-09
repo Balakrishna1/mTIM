@@ -33,6 +33,7 @@ namespace mTIM.ViewModels
         public Result ProbufResult { get; set; } = new Result();
 
         public Action<string> ActionSelectedItemText;
+        public Action<int> UpdateDrawing;
         public MainViewModel(INavigation navigation)
         {
             this.Navigation = navigation;
@@ -429,6 +430,24 @@ namespace mTIM.ViewModels
             }
         }
 
+        private TimTaskModel selectedItem;
+        public void UpdateIndexSelection(int id)
+        {
+            if (selectedItem != null)
+            {
+                var pindex = SelectedItemList.IndexOf(selectedItem);
+                if (pindex >= 0)
+                {
+                    selectedItem.IsSelected = false;
+                    SelectedItemList.ReplaceItem(pindex, selectedItem);
+                }
+            }
+            selectedItem = SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            var index = SelectedItemList.IndexOf(selectedItem);
+            selectedItem.IsSelected = true;
+            SelectedItemList.ReplaceItem(index, selectedItem);
+        }
+
         public void SelectedValueItem(TimTaskModel model)
         {
             openValues(model);
@@ -481,8 +500,14 @@ namespace mTIM.ViewModels
                     headerStrings.RemoveAt(headerStrings.Count - 1);
                     updateHeaderTexts();
                     //SelectedItemText = selectedItem.Name;
+                    SelectedItemList.ToList().ForEach(x => x.IsSelected = false);
                     SelectedItemList.Clear();
                     SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedItem.Level) && x.Parent.Equals(selectedItem.Parent)));
+                    var item = SelectedItemList.Where(x => x.IsSelected == true).FirstOrDefault();
+                    if (item != null)
+                    {
+                        UpdateDrawing?.Invoke(item.Id);
+                    }
                 }
             }
             //RefreshData();

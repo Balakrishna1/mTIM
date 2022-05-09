@@ -58,6 +58,8 @@ namespace mTIM
             frameHeader.SizeChanged += FrameHeader_SizeChanged;
             ViewModel.ActionSelectedItemText -= updateTextInGameWindow;
             ViewModel.ActionSelectedItemText += updateTextInGameWindow;
+            ViewModel.UpdateDrawing -= UpdateDrawing;
+            ViewModel.UpdateDrawing += UpdateDrawing;
 
             Task.Run(async () =>
             {
@@ -68,6 +70,39 @@ namespace mTIM
                 else
                 {
                     updateInfo();
+                }
+            });
+        }
+
+        private void UpdateDrawing(int id)
+        {
+            if (!GlobalConstants.IsLandscape)
+            {
+                return;
+            }
+            listView.ScrollTo(ViewModel.SelectedItemList.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Start, false);
+            Urho.Application.InvokeOnMain(() =>
+            {
+                glBuilding.App.Reset();
+                glBuilding.App.AddStuff();
+                if (id == 1)
+                {
+                    glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
+                    glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, 0, ViewModel.Mesh.indeces.Count());
+                }
+                else
+                {
+                    glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
+                    glBuilding.App.LoadInActiveDrawing(ViewModel.Mesh);
+                    TimElementMesh elementsMesh = ViewModel.Mesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
+                    if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
+                        glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
+                    else
+                    {
+                        var startIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.startIndex;
+                        var endIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.primitiveCount;
+                        glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, endIndex, (ViewModel.Mesh.indeces.Count - endIndex));
+                    }
                 }
             });
         }
@@ -89,7 +124,6 @@ namespace mTIM
         {
             try
             {
-                //ViewModel.SelectedItemList.ToList().ForEach(x => x.IsSelected = false);
                 var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
                 if (GlobalConstants.IsLandscape)
                 {
@@ -119,8 +153,7 @@ namespace mTIM
                                 }
                             }
                         });
-                        //item.IsSelected = true;
-                        //ViewModel.SelectedItemList.Update();
+                        ViewModel.UpdateIndexSelection(id);
                     }
 
                 }
