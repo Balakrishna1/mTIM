@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using mTIM.Components;
@@ -33,9 +34,8 @@ namespace mTIM
 
         private ObjectModel model;
         private ObjectModel linesModel;
-        private ObjectModel inactiveModel;
 
-        public Vector3 CameraPosition => new Vector3(1, 1, 5);
+        public Vector3 CameraPosition => new Vector3(0, 0, 6);
 
 
         MainViewModel ViewModel = App.Current.MainPage.BindingContext as MainViewModel;
@@ -160,36 +160,61 @@ namespace mTIM
             model = this.AddChild<ObjectModel>("model");
         }
 
-        public void LoadInActiveDrawing(TimMesh mesh)
-        {
-            if (mesh != null)
-            {
-                inactiveModel = this.AddChild<ObjectModel>("inactiveModel");
-                inactiveModel.LoadMesh(mesh, false);
-            }
-        }
-
         public void LoadLinesDrawing(TimMesh mesh)
         {
-            if (mesh != null)
+            try
             {
-                linesModel = this.AddChild<ObjectModel>("linesModel");
-                linesModel.LoadMesh(mesh, true);
+                if (mesh != null)
+                {
+                    linesModel = this.AddChild<ObjectModel>("linesModel");
+                    linesModel.LoadLinesMesh(mesh, true);
+                }
+            }catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
 
         public void LoadActiveDrawing(TimMesh mesh, int fromIndex, int toIndex)
         {
-            if (mesh != null)
+            try
             {
-                model.LoadMesh(mesh, fromIndex, toIndex);
-                //var bbx = mesh.GetBoundingBox();
-                //var max = new Vector3(bbx.Max.X, bbx.Max.Y, bbx.Max.Z);
+                if (mesh != null)
+                {
+                    model.LoadMesh(mesh, fromIndex, toIndex);
+                    //var bbx = mesh.GetBoundingBox();
+                    //var max = new Vector3(bbx.Max.X, bbx.Max.Y, bbx.Max.Z);
 
-                //await CameraNode.RunActionsAsync(new EaseInOut(new MoveBy(3, Vector3.Add(max, new Vector3(0f, 0f, 3f))), 10f));
-                //CameraNode.LookAt(Scene.Children.Last().Position, Vector3.Up);
+                    //await CameraNode.RunActionsAsync(new EaseInOut(new MoveBy(3, Vector3.Add(max, new Vector3(0f, 0f, 3f))), 10f));
+                    //CameraNode.LookAt(Scene.Children.Last().Position, Vector3.Up);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
+
+        public void LoadEelementsDrawing(TimMesh mesh, bool isActive, int skipElements = 0)
+        {
+            try
+            {
+                if (mesh != null)
+                {
+                    var elements = mesh.elementMeshes.Skip(skipElements);
+                    foreach (var element in elements)
+                    {
+                        var model = this.AddChild<ObjectModel>(element.listId.ToString());
+                        model.LoadElementMesh(mesh, element, isActive);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
+
 
         private T Deserialize<T>(byte[] param)
         {
@@ -204,7 +229,7 @@ namespace mTIM
         {
             _cameraNode = _scene.CreateChild("cameraNode");
             _camera = _cameraNode.CreateComponent<Camera>();
-            _camera.Orthographic = true;
+            _camera.Orthographic = false;
 
             _camera.OrthoSize = (float)Application.Current.Graphics.Height * Application.PixelSize;
 
@@ -243,15 +268,8 @@ namespace mTIM
 
         private void Input_TouchEnd(TouchEndEventArgs obj)
         {
-            TouchedNode = null;
-        }
-
-        private void Input_TouchBegin(TouchBeginEventArgs obj)
-        {
             try
             {
-                Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
-
                 Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
                 var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
                 if (result != null)
@@ -261,6 +279,40 @@ namespace mTIM
                     {
                         Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
                         Debug.WriteLine($"Input Touch Position: {0} {1} {2}" + result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z);
+                        ViewModel.SlectedElementPositionIn3D(Convert.ToInt32(TouchedNode.Name));
+                    }
+                }
+                TouchedNode = null;
+            }catch(Exception ex)
+            {
+                TouchedNode = null;
+                Debug.WriteLine($"Touch_Exception: { ex.Message}");
+            }
+        }
+
+        private void Input_TouchBegin(TouchBeginEventArgs obj)
+        {
+            try
+            {
+                Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
+                Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
+                var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
+                if (result != null)
+                {
+                    TouchedNode = result.Value.Node;
+                    if (TouchedNode != null)
+                    {
+                        int value = Convert.ToInt32(TouchedNode.Name);
+                        if (value > 1)
+                        {
+                            var model = (ObjectModel)result.Value.Drawable;
+                            Material blueLineMaterial = Material.FromColor(Color.FromHex("#6495ED"), false);
+                            blueLineMaterial.SetTechnique(5, CoreAssets.Techniques.Diff);
+                            blueLineMaterial.CullMode = CullMode.MaxCullmodes;
+                            blueLineMaterial.FillMode = FillMode.Solid;
+                            blueLineMaterial.LineAntiAlias = true;
+                            model.SetMaterial(blueLineMaterial);
+                        }
                     }
                 }
             }
@@ -268,6 +320,7 @@ namespace mTIM
             {
                 Debug.WriteLine($"Touch_Exception: { ex.Message}");
             }
+
         }
     }
 
@@ -279,6 +332,14 @@ namespace mTIM
                 return null;
 
             return app.RootNode.AddChild<T>(label);
+        }
+
+        public static void RemoveChild(this UrhoApp app, string label) 
+        {
+            if (!app.IsInitialized)
+                return;
+            var node = app.RootNode.GetChild(label);
+            app.RootNode.RemoveChild(node);
         }
 
         public static T AddChild<T>(this Component component, string label) where T : Component

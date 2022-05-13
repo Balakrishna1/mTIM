@@ -21,7 +21,7 @@ namespace mTIM.Helpers
         public const string IMEI_FILE = "imei_02.json";
         public const string TASKLIST_FILE = "tasklist.json";
         public const string FILES_INFO = "filesinformation.json";
-        public const string GraphicsBlob_FILE = "model_3d.mdl";
+        public const string GraphicsBlob_FILE = "model_3d.proto";
         public const string FileExtesons = "file_extesons.json";
         public static  bool IsLandscape = false;
         public static int DefaultSyncMinites { get; set; } = 5;

@@ -402,6 +402,39 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isShowGalaryIcon, value);
         }
 
+        public void SlectedElementPositionIn3D(int id)
+        {
+            if (id <= 1)
+            {
+                return;
+            }
+            var selectedElement = TotalListList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            if (selectedElement != null)
+            {
+                SelectedItemList.Clear();
+                SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedElement.Level) && x.Parent.Equals(selectedElement.Parent)));
+                UpdateIndexSelection(id);
+                UpdateDrawing?.Invoke(id);
+                previousId = selectedElement.Parent;
+                headerStrings = new List<string>();
+                AddHeaders(selectedElement);
+                headerStrings.Reverse();
+                updateHeaderTexts();
+            }
+        }
+
+        private void AddHeaders(TimTaskModel selectedTask)
+        {
+            int parentId = selectedTask.Parent;
+            while (parentId > 0)
+            {
+                var item = TotalListList.Where(x => x.Id == parentId).FirstOrDefault();
+                item.IsSelected = true;
+                headerStrings.Add(item.Name);
+                parentId = item.Parent;
+            }
+        }
+
         /// <summary>
         /// To update the header data and list based on selection.
         /// </summary>

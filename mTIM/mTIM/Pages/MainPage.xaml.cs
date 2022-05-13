@@ -80,7 +80,18 @@ namespace mTIM
             {
                 return;
             }
-            listView.ScrollTo(ViewModel.SelectedItemList.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Start, false);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                listView.ScrollTo(ViewModel.SelectedItemList?.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Start, false);
+            });
+            Urho.Application.InvokeOnMain(() =>
+            {
+                Update3dDrawing(id);
+            });
+        }
+
+        private void Update3dDrawing(int id)
+        {
             Urho.Application.InvokeOnMain(() =>
             {
                 glBuilding.App.Reset();
@@ -88,20 +99,22 @@ namespace mTIM
                 if (id == 1)
                 {
                     glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
-                    glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, 0, ViewModel.Mesh.indeces.Count());
+                    glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, true);
                 }
                 else
                 {
                     glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
-                    glBuilding.App.LoadInActiveDrawing(ViewModel.Mesh);
+                    glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, false);
                     TimElementMesh elementsMesh = ViewModel.Mesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
                     if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
                         glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
                     else
                     {
-                        var startIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.startIndex;
-                        var endIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.primitiveCount;
-                        glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, endIndex, (ViewModel.Mesh.indeces.Count - endIndex));
+                        glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, true, 1);
+                        //var startIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.startIndex;
+                        //var endIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.primitiveCount;
+                        //glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, endIndex, (ViewModel.Mesh.indeces.Count - endIndex));
+
                     }
                 }
             });
@@ -129,30 +142,7 @@ namespace mTIM
                 {
                     if (item.HasChailds)
                     {
-                        Urho.Application.InvokeOnMain(() =>
-                        {
-                            glBuilding.App.Reset();
-                            glBuilding.App.AddStuff();
-                            if (item.Id == 1)
-                            {
-                                glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
-                                glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, 0, ViewModel.Mesh.indeces.Count());
-                            }
-                            else
-                            {
-                                glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
-                                glBuilding.App.LoadInActiveDrawing(ViewModel.Mesh);
-                                TimElementMesh elementsMesh = ViewModel.Mesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
-                                if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
-                                    glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
-                                else
-                                {
-                                    var startIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.startIndex;
-                                    var endIndex = ViewModel.Mesh.elementMeshes[0].triangleBatch.primitiveCount;
-                                    glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, endIndex, (ViewModel.Mesh.indeces.Count - endIndex));
-                                }
-                            }
-                        });
+                        Update3dDrawing(id);
                         ViewModel.UpdateIndexSelection(id);
                     }
 
@@ -352,6 +342,7 @@ namespace mTIM
             AppUpdateBottomSheet.InvokeView(height, width);
             if (height > width)
             {
+                ViewModel?.SelectedItemList?.ToList().ForEach(x => x.IsSelected = false);
                 //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
                 GlobalConstants.IsLandscape = false;
                 stackHeader.Orientation = StackOrientation.Vertical;
@@ -424,7 +415,7 @@ namespace mTIM
                 Permission.Phone,
                 Permission.Camera,
                 Permission.LocationWhenInUse,
-                Permission.Storage
+                Permission.Storage,
             };
 
             var permissionsNeededList = new List<Permission>();
