@@ -45,6 +45,10 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// To Intialize the game window. 
+        /// </summary>
+        /// <returns></returns>
         public async Task StartUrhoApp()
         {
             if (_urhoSurface == null)
@@ -67,6 +71,10 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// To stop the game window.
+        /// </summary>
+        /// <returns></returns>
         public async Task StopUrhoApp()
         {
             if (_urhoApp != null)
@@ -78,6 +86,10 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// To reset the window.
+        /// </summary>
+        /// <returns></returns>
         public async Task ResetUrhoApp()
         {
             if (_urhoApp != null)

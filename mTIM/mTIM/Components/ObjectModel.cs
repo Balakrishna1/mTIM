@@ -78,6 +78,38 @@ namespace mTIM.Components
             return true;
         }
 
+        public void UpdateMaterial(bool isActive)
+        {
+            Urho.Application.InvokeOnMain(() =>
+            {
+                Material activeMaterial = Material.FromColor(Color.FromHex("#757474"), false);
+                activeMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
+                activeMaterial.CullMode = CullMode.MaxCullmodes;
+                activeMaterial.FillMode = FillMode.Solid;
+                activeMaterial.LineAntiAlias = true;
+
+                Material inActiveMaterial = Material.FromColor(Color.FromHex("#40757474"), false);
+                inActiveMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
+                inActiveMaterial.CullMode = CullMode.MaxCullmodes;
+                inActiveMaterial.FillMode = FillMode.Solid;
+                inActiveMaterial.LineAntiAlias = true;
+                SetMaterial(isActive ? activeMaterial : inActiveMaterial);
+            });
+        }
+
+        public void UpdateSelection()
+        {
+            Urho.Application.InvokeOnMain(() =>
+            {
+                Material selectMaterial = Material.FromColor(Color.FromHex("#6495ED"), false);
+                selectMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
+                selectMaterial.CullMode = CullMode.MaxCullmodes;
+                selectMaterial.FillMode = FillMode.Solid;
+                selectMaterial.LineAntiAlias = true;
+                SetMaterial(selectMaterial);
+            });
+        }
+
         public bool LoadMesh(TimMesh mesh, int fromIndex, int toIndex)
         {
             Urho.Application.InvokeOnMain(() =>
@@ -139,7 +171,7 @@ namespace mTIM.Components
             return true;
         }
 
-        public void LoadElementMesh(TimMesh mesh, TimElementMesh timElement,bool isActiveList)
+        public void LoadElementMesh(TimMesh mesh, TimElementMesh timElement, bool isActiveList)
         {
             Urho.Application.InvokeOnMain(() =>
             {
@@ -178,7 +210,7 @@ namespace mTIM.Components
                 model.SetGeometry(0, 0, geom);
                 model.BoundingBox = mesh.GetBoundingBox();
 
-                Material GrayLineMaterial = Material.FromColor(Color.FromHex(isActiveList? "#757474" : "#40757474"), false);
+                Material GrayLineMaterial = Material.FromColor(Color.FromHex(isActiveList ? "#757474" : "#40757474"), false);
                 GrayLineMaterial.SetTechnique(5, CoreAssets.Techniques.Diff);
                 GrayLineMaterial.CullMode = CullMode.MaxCullmodes;
                 GrayLineMaterial.FillMode = FillMode.Solid;

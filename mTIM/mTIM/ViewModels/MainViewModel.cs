@@ -34,6 +34,7 @@ namespace mTIM.ViewModels
 
         public Action<string> ActionSelectedItemText;
         public Action<int> UpdateDrawing;
+        public Action<int> UpdateListSelection;
         public MainViewModel(INavigation navigation)
         {
             this.Navigation = navigation;
@@ -414,7 +415,7 @@ namespace mTIM.ViewModels
                 SelectedItemList.Clear();
                 SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedElement.Level) && x.Parent.Equals(selectedElement.Parent)));
                 UpdateIndexSelection(id);
-                UpdateDrawing?.Invoke(id);
+                UpdateListSelection?.Invoke(id);
                 previousId = selectedElement.Parent;
                 headerStrings = new List<string>();
                 AddHeaders(selectedElement);

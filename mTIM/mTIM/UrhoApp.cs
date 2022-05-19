@@ -45,6 +45,9 @@ namespace mTIM
             _scene = null;
         }
 
+        /// <summary>
+        /// This is used to reset the window. 
+        /// </summary>
         public void Reset()
         {
             if (!IsInitialized)
@@ -123,14 +126,23 @@ namespace mTIM
             //this.UI.Root.AddChild(element);
         }
 
+        /// <summary>
+        /// To update the selected element name in the model window.
+        /// </summary>
+        /// <param name="text"></param>
         public void UpdateText(string text)
         {
             textElement.Value = text;
         }
 
-
+        /// <summary>
+        /// UnhandledException
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UrhoViewApp_UnhandledException(object sender, Urho.UnhandledExceptionEventArgs e)
         {
+            Debug.WriteLine("UnhandledException: " + e.Exception.Message);
             e.Handled = true;
         }
 
@@ -140,12 +152,11 @@ namespace mTIM
             // bones. Note that debug geometry has to be separately requested each frame. Disable depth test so that we can see the
             // bones properly
             Renderer.DrawDebugGeometry(false);
-            //var debugRenderer = _scene.CreateComponent<DebugRenderer>();
-            //var physicsWorld = _scene.CreateComponent<PhysicsWorld>();
-            //if (physicsWorld != null)
-            //    physicsWorld.SetDebugRenderer(debugRenderer);
         }
 
+        /// <summary>
+        /// Intialize the Scene and also creating the component and rootnode.
+        /// </summary>
         private void InitScene()
         {
             _scene = new Scene();
@@ -153,13 +164,20 @@ namespace mTIM
             _rootNode = _scene.CreateChild("rootNode");
         }
 
-        public async void AddStuff()
+        /// <summary>
+        /// To Clear and Add the intial nodes.
+        /// </summary>
+        public void AddStuff()
         {
             _rootNode.RemoveAllChildren();
             this.AddChild<WorldInputHandler>("inputs");
             model = this.AddChild<ObjectModel>("model");
         }
 
+        /// <summary>
+        /// To draw the lines
+        /// </summary>
+        /// <param name="mesh"></param>
         public void LoadLinesDrawing(TimMesh mesh)
         {
             try
@@ -169,12 +187,19 @@ namespace mTIM
                     linesModel = this.AddChild<ObjectModel>("linesModel");
                     linesModel.LoadLinesMesh(mesh, true);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
         }
 
+        /// <summary>
+        /// To update the Selected/Active elements in the model window.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="fromIndex"></param>
+        /// <param name="toIndex"></param>
         public void LoadActiveDrawing(TimMesh mesh, int fromIndex, int toIndex)
         {
             try
@@ -195,6 +220,12 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// To load the each element mesh
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="isActive"></param>
+        /// <param name="skipElements"></param>
         public void LoadEelementsDrawing(TimMesh mesh, bool isActive, int skipElements = 0)
         {
             try
@@ -225,6 +256,9 @@ namespace mTIM
             }
         }
 
+        /// <summary>
+        /// To Add the Camera and Light.
+        /// </summary>
         private void AddCameraAndLight()
         {
             _cameraNode = _scene.CreateChild("cameraNode");
@@ -233,7 +267,7 @@ namespace mTIM
 
             _camera.OrthoSize = (float)Application.Current.Graphics.Height * Application.PixelSize;
 
-            _camera.Zoom = 1.1f;
+            _camera.Zoom = 1f;
             _cameraNode.Position = CameraPosition;
 
             Urho.Node lightNode = _cameraNode.CreateChild("lightNode");
@@ -246,9 +280,11 @@ namespace mTIM
             _cameraNode.LookAt(Vector3.Zero, Vector3.Down, TransformSpace.World);
         }
 
+        /// <summary>
+        /// SetupViewport
+        /// </summary>
         void SetupViewport()
         {
-
             var renderer = Application.Current.Renderer;
             Viewport vp = new Viewport(Application.Current.Context, Scene, _camera);
             renderer.SetViewport(0, vp);
@@ -268,26 +304,49 @@ namespace mTIM
 
         private void Input_TouchEnd(TouchEndEventArgs obj)
         {
-            try
+            int id = TryGetNumber(TouchedNode?.Name);
+            if (id > 1)
             {
-                Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
-                var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
-                if (result != null)
+                UpdateElements();
+                ViewModel.SlectedElementPositionIn3D(id);
+            }
+            TouchedNode = null;
+        }
+
+        /// <summary>
+        /// Updating the drawing file based on touch selection without refreshing the entire model.
+        /// </summary>
+        private void UpdateElements()
+        {
+            foreach (var element in _rootNode.Children)
+            {
+                Debug.WriteLine(element.Name);
+                var elementID = TryGetNumber(element.Name);
+                if (elementID > 0)
                 {
-                    TouchedNode = result.Value.Node;
-                    if (TouchedNode != null)
+                    var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
+                    if (objectModel != null)
                     {
-                        Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
-                        Debug.WriteLine($"Input Touch Position: {0} {1} {2}" + result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z);
-                        ViewModel.SlectedElementPositionIn3D(Convert.ToInt32(TouchedNode.Name));
+                        //Debug.WriteLine($"Updated Node name: " + element.Name);
+                        objectModel.UpdateMaterial((element.Name == TouchedNode.Name && elementID > 1));
                     }
                 }
-                TouchedNode = null;
-            }catch(Exception ex)
-            {
-                TouchedNode = null;
-                Debug.WriteLine($"Touch_Exception: { ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// This is used to get int from string.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private int TryGetNumber(string id)
+        {
+            int elementId;
+            bool success = int.TryParse(id, out elementId);
+            if (success)
+                return elementId;
+            else
+                return -1;
         }
 
         private void Input_TouchBegin(TouchBeginEventArgs obj)
@@ -302,16 +361,13 @@ namespace mTIM
                     TouchedNode = result.Value.Node;
                     if (TouchedNode != null)
                     {
-                        int value = Convert.ToInt32(TouchedNode.Name);
+                        Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
+                        Debug.WriteLine($"Input Touch Position: {0} {1} {2}" + result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z);
+                        int value = TryGetNumber(TouchedNode.Name);
                         if (value > 1)
                         {
                             var model = (ObjectModel)result.Value.Drawable;
-                            Material blueLineMaterial = Material.FromColor(Color.FromHex("#6495ED"), false);
-                            blueLineMaterial.SetTechnique(5, CoreAssets.Techniques.Diff);
-                            blueLineMaterial.CullMode = CullMode.MaxCullmodes;
-                            blueLineMaterial.FillMode = FillMode.Solid;
-                            blueLineMaterial.LineAntiAlias = true;
-                            model.SetMaterial(blueLineMaterial);
+                            model.UpdateSelection();
                         }
                     }
                 }
@@ -320,7 +376,6 @@ namespace mTIM
             {
                 Debug.WriteLine($"Touch_Exception: { ex.Message}");
             }
-
         }
     }
 
@@ -334,7 +389,7 @@ namespace mTIM
             return app.RootNode.AddChild<T>(label);
         }
 
-        public static void RemoveChild(this UrhoApp app, string label) 
+        public static void RemoveChild(this UrhoApp app, string label)
         {
             if (!app.IsInitialized)
                 return;
