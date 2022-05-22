@@ -63,6 +63,11 @@ namespace mTimShared
             }
         }
 
+        /// <summary>
+        /// GetTaskListIdForDayCompleted callback.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void TimService_GetTaskListIdForDayCompleted(object sender, GetTaskListIdForDayCompletedEventArgs e)
         {
             try
@@ -117,6 +122,11 @@ namespace mTimShared
             }
         }
 
+        /// <summary>
+        /// GetFilesInformationCompleted callback. This will fire after getting the files information of the current project from service.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private List<Task> DownloadList;
         private async void TimService_GetFilesInformationCompleted(object sender, GetFilesInformationCompletedEventArgs e)
         {
@@ -162,7 +172,7 @@ namespace mTimShared
         }
 
         /// <summary>
-        /// This method is used to get the 3D drawing file.
+        /// This is the GetGraphicsBlobProtobufGZippedCompleted callback of 3D drawing.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -194,6 +204,11 @@ namespace mTimShared
             }
         }
 
+        /// <summary>
+        /// GetTaskListCompleted Callback. This will fire after getting the list from service.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TimService_GetTaskListCompleted(object sender, GetTaskListCompletedEventArgs e)
         {
             //UserDialogs.Instance.HideLoading();
@@ -201,6 +216,7 @@ namespace mTimShared
             {
                 string json = JsonConvert.SerializeObject(e.Result);
                 Debug.WriteLine("Task Data:" + json);
+                //Passing the list json to BaseViewModel.
                 ViewModel.UpdateList(json);
             }
             else if (e.Error != null && !fromAutoSync)
@@ -233,7 +249,11 @@ namespace mTimShared
                 DownloadAndOpenFile(fileId, fileIdSpecified);
             }
         }
-
+        /// <summary>
+        /// This is used the download the project files data.
+        /// </summary>
+        /// <param name="fileId"></param>
+        /// <param name="fileIdSpecified"></param>
         public async void DownloadAndOpenFile(int fileId, bool fileIdSpecified)
         {
             try
@@ -291,6 +311,12 @@ namespace mTimShared
             }
         }
 
+        /// <summary>
+        /// This is used the save the file in local FileSystem after getting the information from service.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="fileId"></param>
+        /// <returns></returns>
         private async Task FileCompletedEvent(MobileTimService service, int fileId)
         {
             service.GetFileCompleted += async delegate (object sender, GetFileCompletedEventArgs e)
@@ -319,6 +345,11 @@ namespace mTimShared
             };
         }
 
+        /// <summary>
+        /// This is used to sync the local data to server.
+        /// </summary>
+        /// <param name="taskListJson"></param>
+        /// <param name="isFromAutoSync"></param>
         public void SyncTaskList(string taskListJson, bool isFromAutoSync = false)
         {
             try
@@ -336,6 +367,10 @@ namespace mTimShared
             }
         }
 
+        /// <summary>
+        /// This is used to get the App information.
+        /// </summary>
+        /// <param name="actionAppUpdate"></param>
         Action<string> ActionAppUpdate;
         public void QueryAppUpdate(Action<string> actionAppUpdate)
         {
@@ -353,6 +388,11 @@ namespace mTimShared
             }
         }
 
+        /// <summary>
+        /// QueryAppUpdateCompleted callback.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TimService_QueryAppUpdateCompleted(object sender, QueryAppUpdateCompletedEventArgs e)
         {
             if (e.Error == null && !e.Cancelled)
@@ -366,6 +406,21 @@ namespace mTimShared
             }
         }
 
+        /// <summary>
+        /// This is used to upload the file to server.
+        /// </summary>
+        /// <param name="taskListIdSpecified"></param>
+        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
+        /// <param name="posIdSpecified"></param>
+        /// <param name="fileContent"></param>
+        /// <param name="extension"></param>
+        /// <param name="gps"></param>
+        /// <param name="comment"></param>
+        /// <param name="time"></param>
+        /// <param name="timeSpecified"></param>
+        /// <param name="UploadFileResult"></param>
+        /// <param name="UploadFileResultSpecified"></param>
         public void UploadFile(bool taskListIdSpecified, int taskId, int postId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified)
         {
             timService = new MobileTimService(GlobalConstants.GetAppURL());
@@ -373,6 +428,19 @@ namespace mTimShared
             timService.UploadFile(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, true, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
         }
 
+        /// <summary>
+        /// This is used to upload the file to server asynchronously. 
+        /// </summary>
+        /// <param name="taskListIdSpecified"></param>
+        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
+        /// <param name="posIdSpecified"></param>
+        /// <param name="fileContent"></param>
+        /// <param name="extension"></param>
+        /// <param name="gps"></param>
+        /// <param name="comment"></param>
+        /// <param name="time"></param>
+        /// <param name="timeSpecified"></param>
         public void UploadFileAsync(bool taskListIdSpecified, int taskId, int postId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified)
         {
             timService = new MobileTimService(GlobalConstants.GetAppURL());
@@ -381,6 +449,11 @@ namespace mTimShared
             timService.UploadFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, true, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified);
         }
 
+        /// <summary>
+        /// To set UploadFileCompleted callback.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
         private void UploadCompleteEvent(int taskId, int postId)
         {
             timService.UploadFileCompleted += async (object sender, UploadFileCompletedEventArgs e) =>
@@ -390,6 +463,13 @@ namespace mTimShared
             };
         }
 
+        /// <summary>
+        /// This is used to post the chnaged File comment to server.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="fileId"></param>
+        /// <param name="fileIdSpecified"></param>
+        /// <param name="comment"></param>
         public void ChangeFileComment(int taskId, int fileId, bool fileIdSpecified, string comment)
         {
             timService = new MobileTimService(GlobalConstants.GetAppURL());
@@ -398,6 +478,12 @@ namespace mTimShared
             timService.ChangeFileCommentAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified, comment);
         }
 
+        /// <summary>
+        /// Callback of ChangeFileComment.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="fileId"></param>
+        /// <param name="comment"></param>
         private void ChangeFileCompleteEvent(int taskId, int fileId, string comment)
         {
             timService.ChangeFileCommentCompleted += async (object sender, ChangeFileCommentCompletedEventArgs e) =>
@@ -407,6 +493,12 @@ namespace mTimShared
             };
         }
 
+        /// <summary>
+        /// This is used to delete the file from server.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="fileId"></param>
+        /// <param name="fileIdSpecified"></param>
         public void DeleteFile(int taskId, int fileId, bool fileIdSpecified)
         {
             timService = new MobileTimService(GlobalConstants.GetAppURL());
@@ -414,6 +506,11 @@ namespace mTimShared
             timService.DeleteFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);
         }
 
+        /// <summary>
+        /// To intialize the DeleteFileCompleted callback. 
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="fileId"></param>
         private void DeleteFileCompleteEvent(int taskId, int fileId)
         {
             timService.DeleteFileCompleted += async (object sender, System.ComponentModel.AsyncCompletedEventArgs e) =>

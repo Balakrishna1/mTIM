@@ -17,6 +17,12 @@ namespace mTIM.Models.D
         {
         }
 
+
+        /// <summary>
+        /// This is used to load the mesh from VisualElements.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         TimMesh mesh = new TimMesh();
         public TimMesh Load(Result result)
         {
@@ -41,10 +47,6 @@ namespace mTIM.Models.D
                 for (int iVisu = 0; iVisu < result.Elements.Count(); iVisu++)
                 {
                     Visualizable visu = result.Elements[iVisu];
-                    Debug.WriteLine("ElementId: " + visu.Id);
-                    //BaseViewModel ViewModel = App.Current.MainPage.BindingContext as BaseViewModel;
-                    //var taskData = ViewModel?.TotalListList.Where(x => x.ObjectId.Equals(visu.Id)).FirstOrDefault();
-                    //Logic.Instance().GetTaskListData().GetTaskById(visu.taskId);
                     TimTaskModel taskData = new TimTaskModel();
                     if (taskData != null && currentProjectId != taskData.Parent)
                     {
@@ -59,7 +61,6 @@ namespace mTIM.Models.D
                             GeometryReference @ref = visu.Geometries[iRef];
                             uint geometryIndex = @ref.GeometryIndex;
                             float[] m = @ref.Transform.Matrix;
-                            Debug.WriteLine("ObjectId: " + @ref.ObjectID);
                             TriangulatedGeometryData triGeometryData = (TriangulatedGeometryData)result.Geometries[(int)geometryIndex];
 
                             for (int iTriangle = 0; iTriangle < triGeometryData.Triangles.Count(); iTriangle++)

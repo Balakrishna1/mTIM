@@ -30,16 +30,6 @@ namespace mTIM.Models.D
             elementMeshes = new List<TimElementMesh>();
         }
 
-        public void AddTriangle(int[] data)
-        {
-            //if (triangles == null)
-            //{
-            //    triangles = new List<Triangle>();
-            //}
-            ////Console.WriteLine(string.Format("Triangle data: {0},{1},{2}", data[0], data[1], data[2]));
-            //triangles.Add(new Triangle() { A = (uint)data[0], B = (uint)data[1], C = (uint)data[2] });
-        }
-
         public void AddLine(int indexA, int indexB)
         {
             if (lineIndices == null)
@@ -77,6 +67,10 @@ namespace mTIM.Models.D
             return result;
         }
 
+        /// <summary>
+        /// To get the vertex data from Mesh.
+        /// </summary>
+        /// <returns></returns>
         public VertexBuffer.PositionNormalColorTexcoord[] GetVertextData()
         {
             var data = new Urho.VertexBuffer.PositionNormalColorTexcoord[vertices.Count];
@@ -96,88 +90,10 @@ namespace mTIM.Models.D
             return data;
         }
 
-        public VertexBuffer.PositionNormalColorTexcoord[] GetVertextData(int fromIndex, int toIndex)
-        {
-            var vertexes = vertices.GetRange(fromIndex, (toIndex - fromIndex));
-            var data = new Urho.VertexBuffer.PositionNormalColorTexcoord[vertexes.Count()];
-
-            for (int i = 0; i < vertexes.Count; i++)
-            {
-                var vd = vertexes[i];
-
-                var d = new Urho.VertexBuffer.PositionNormalColorTexcoord();
-                d.Position = vd.position;
-                d.Normal = vd.normal;
-                //d.TexCoord = getuvs(vd);
-                d.Color = vd.color.ToUInt();
-                data[i] = d;
-            }
-
-            return data;
-        }
-
-        //public uint[] GetIndexData(int fromIndex, int toIndex)
-        //{
-        //    var trianglsList = indeces.GetRange(fromIndex, toIndex);
-        //    var data = new uint[3 * trianglsList.Count];
-
-        //    for (int i = 0; i < trianglsList.Count; i++)
-        //    {
-        //        int idx = 3 * i;
-
-        //        data[idx + 0] = trianglsList[i].A;
-        //        data[idx + 1] = trianglsList[i].B;
-        //        data[idx + 2] = trianglsList[i].C;
-        //    }
-
-        //    return data;
-        //}
-
-        public int GetPositionIndex(Vector3 position)
-        {
-            var item = vertices?.Where(x => x.Equals(position)).FirstOrDefault();
-            return vertices.IndexOf(item);
-        }
-
-        public int AddVertex(Vertex vertex)
-        {
-            int newIndex = vertices.Count();
-            var data = vertices.Where(x => x.Equals(vertex)).FirstOrDefault();
-            if (data != null)
-            {
-                int index = vertices.IndexOf(data);
-
-                if (index == -1)
-                {
-                    vertices.Add(vertex);
-                    return newIndex;
-                }
-                else
-                {
-                    return index;
-                }
-            }
-            else
-            {
-                vertices.Add(vertex);
-            }
-            return newIndex;
-        }
-
-        private Vector2 getuvs(Vertex vd)
-        {
-            Vector2 vector = new Vector2();
-            if (vd != null && vd.uvs?.Length > 0)
-            {
-                foreach (var uv in vd.uvs)
-                {
-                    vector.Add(uv);
-                }
-            }
-
-            return vector;
-        }
-
+        /// <summary>
+        /// To the Index data from mesh.
+        /// </summary>
+        /// <returns></returns>
         public uint[] GetIndexData()
         {
             var data = new uint[indeces.Count];
@@ -189,26 +105,10 @@ namespace mTIM.Models.D
             return data;
         }
 
-        //public uint[] GetIndexData(TimSubMesh subMesh)
-        //{
-        //    var data = new uint[3 * subMesh.triangleBatch.primitiveCount];
-
-        //    int startIndex = subMesh.triangleBatch.startIndex / 3;
-        //    int endIndex = startIndex + subMesh.triangleBatch.primitiveCount;
-        //    int j = 0;
-        //    for (int i = startIndex; i < endIndex; i++)
-        //    {
-        //        int idx = 3 * j;
-
-        //        data[idx + 0] = indeces[i].A;
-        //        data[idx + 1] = indeces[i].B;
-        //        data[idx + 2] = indeces[i].C;
-        //        j++;
-        //    }
-
-        //    return data;
-        //}
-
+        /// <summary>
+        /// This is used the get the line indices data from mesh.
+        /// </summary>
+        /// <returns></returns>
         public uint[] GetLineIndexData()
         {
             //uint[] indData = GetIndexData();
@@ -221,20 +121,10 @@ namespace mTIM.Models.D
             return data;
         }
 
-        public uint[] Add(uint[] lst, uint[] lst1)
-        {
-
-            var data = new uint[lst.Length + lst1.Length];
-            int idx = lst.Count();
-            for (int i = 0; i < lst1.Count(); i++)
-            {
-                data[idx] = (uint)lst1[i];
-                idx++;
-            }
-
-            return data;
-        }
-
+        /// <summary>
+        /// To get the BoundingBox based vertices.
+        /// </summary>
+        /// <returns></returns>
         public Urho.BoundingBox GetBoundingBox()
         {
             float minx, miny, minz, maxx, maxy, maxz;

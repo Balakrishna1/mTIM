@@ -54,6 +54,9 @@ namespace mTIM.ViewModels
             Task.Run(() => LoadMesh());
         }
 
+        /// <summary>
+        /// Load the mesh in background when download the data from service.
+        /// </summary>
         public async void LoadMesh()
         {
             try
@@ -88,13 +91,27 @@ namespace mTIM.ViewModels
             }
         }
 
+        /// <summary>
+        /// This is used to create the mesh.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public TimMesh CreateMesh(Result result)
         {
             TimMeshLoader meshLoader = new TimMeshLoader();
-            return meshLoader.Load(result);
+            var mesh = meshLoader.Load(result);
+            meshLoader.Dispose();
+            return mesh;
         }
 
         #region File related code
+        /// <summary>
+        /// File upload completed callback.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
+        /// <param name="UploadFileId"></param>
+        /// <param name="UploadFileSpecified"></param>
         private void FileUploadCompleted(int taskId, int postId, int UploadFileId, bool UploadFileSpecified)
         {
             var item = LstFiles.Where(x => x.FileID.Equals(UploadFileId)).FirstOrDefault();
@@ -109,6 +126,11 @@ namespace mTIM.ViewModels
             }
         }
 
+        /// <summary>
+        /// Edit comment completed callback.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="fileId"></param>
         private void EditCommentCompleted(int taskId, int fileId)
         {
             var item = LstFiles.Where(x => x.FileID.Equals(fileId)).FirstOrDefault();
@@ -279,6 +301,9 @@ namespace mTIM.ViewModels
             });
         }
 
+        /// <summary>
+        /// To update the selected model.
+        /// </summary>
         private void updateSelectedItem()
         {
             int index = SelectedItemList.IndexOf(SelectedModel);
@@ -403,6 +428,10 @@ namespace mTIM.ViewModels
             set => SetAndRaisePropertyChanged(ref isShowGalaryIcon, value);
         }
 
+        /// <summary>
+        /// Update the selected element in List.
+        /// </summary>
+        /// <param name="id"></param>
         public void SlectedElementPositionIn3D(int id)
         {
             if (id <= 1)
@@ -424,6 +453,10 @@ namespace mTIM.ViewModels
             }
         }
 
+        /// <summary>
+        ///To add the header strings.
+        /// </summary>
+        /// <param name="selectedTask"></param>
         private void AddHeaders(TimTaskModel selectedTask)
         {
             int parentId = selectedTask.Parent;
@@ -465,6 +498,10 @@ namespace mTIM.ViewModels
         }
 
         private TimTaskModel selectedItem;
+        /// <summary>
+        /// To Update item selection in the list.
+        /// </summary>
+        /// <param name="id"></param>
         public void UpdateIndexSelection(int id)
         {
             if (selectedItem != null)
@@ -482,16 +519,28 @@ namespace mTIM.ViewModels
             SelectedItemList.ReplaceItem(index, selectedItem);
         }
 
+        /// <summary>
+        /// Value click in list.
+        /// </summary>
+        /// <param name="model"></param>
         public void SelectedValueItem(TimTaskModel model)
         {
             openValues(model);
         }
 
+        /// <summary>
+        /// Document click in list.
+        /// </summary>
+        /// <param name="id"></param>
         private void SelectedDocumentItem(int id)
         {
             openDocumentValues(id);
         }
 
+        /// <summary>
+        /// To open the seleceted document.
+        /// </summary>
+        /// <param name="id"></param>
         private void openDocumentValues(int id)
         {
             var values = GetValues(id);
@@ -504,6 +553,11 @@ namespace mTIM.ViewModels
             }
         }
 
+        /// <summary>
+        /// To get the values of selected item.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private List<FileInfo> GetValues(int id)
         {
             var values = FileInfoHelper.Instance.GetValues(id);
@@ -747,6 +801,9 @@ namespace mTIM.ViewModels
             }
         }
 
+        /// <summary>
+        /// To update the task list visibility.
+        /// </summary>
         private void updateTaskListVisibility()
         {
             if (IsValueListVisible || IsDocumentListVisible || IsEditTextVisible)
@@ -759,6 +816,9 @@ namespace mTIM.ViewModels
             }
         }
 
+        /// <summary>
+        /// Update the header texts.
+        /// </summary>
         private void updateHeaderTexts()
         {
             SelectedItemText = headerStrings.LastOrDefault();
