@@ -100,7 +100,6 @@ namespace mTIM.ViewModels
         {
             TimMeshLoader meshLoader = new TimMeshLoader();
             var mesh = meshLoader.Load(result);
-            meshLoader.Dispose();
             return mesh;
         }
 
