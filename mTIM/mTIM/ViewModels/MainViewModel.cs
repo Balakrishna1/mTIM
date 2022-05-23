@@ -976,6 +976,7 @@ namespace mTIM.ViewModels
                     if (list != null)
                     {
                         UpdateChaildValues(list);
+                        //UpdateListToTree(list);
                         TotalListList.AddRange(list);
                         RefreshData();
                     }

@@ -149,10 +149,16 @@ namespace mTIM.ViewModels
                 if (list != null)
                 {
                     UpdateChaildValues(list);
+                    //UpdateListToTree(list);
                     TotalListList.AddRange(list);
                     RefreshData();
                 }
             }
+        }
+
+        public void UpdateListToTree(List<TimTaskModel> list)
+        {
+          var root = list.BuildTree();
         }
 
         public void UpdateChaildValues(List<TimTaskModel> list)

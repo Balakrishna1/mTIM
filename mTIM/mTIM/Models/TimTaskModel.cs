@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using mTIM.Enums;
 using Newtonsoft.Json;
 
@@ -33,6 +34,23 @@ namespace mTIM.Models.D
         public bool SplitGraphicSpecified { get; set; }
         public DataType Type { get; set; }
         public object Value { get; set; }
+
+        [JsonIgnore]
+        public List<TimTaskModel> Children { get; set; }
+
+        [JsonIgnore]
+        public List<TimTaskModel> Ancestors { get; set; }
+
+
+        public List<TimTaskModel> GetChildrenFromId(int id, int level)
+        {
+            var list = new List<TimTaskModel>();
+            if (this.Id == id && this.Level == level)
+            {
+                list = Children;
+            }
+            return list;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
