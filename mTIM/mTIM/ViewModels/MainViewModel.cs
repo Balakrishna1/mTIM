@@ -479,7 +479,7 @@ namespace mTIM.ViewModels
             {
                 ListBackgroundColor = GlobalConstants.IsLandscape ? Color.White : Color.DimGray;
                 var selectedItem = SelectedItemList[position];
-                if (selectedItem != null && selectedItem.HasChailds)
+                if (selectedItem != null && selectedItem.HasChilds)
                 {
                     previousId = selectedItem.Id;
                     IsShowBackButton = true;

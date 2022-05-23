@@ -16,10 +16,17 @@ namespace mTimShared
         {
         }
 
+        /// <summary>
+        /// This methos is used to get the resized/compressed image byte code.
+        /// </summary>
+        /// <param name="imageData"></param>
+        /// <param name="compressionPercentage"></param>
+        /// <returns></returns>
         public static byte[] CompressImageBytes(byte[] imageData, int compressionPercentage)
         {
             return GetResizedImage(imageData, compressionPercentage);
         }
+
 #if __ANDROID__
         private static byte[] GetResizedImage(byte[] imageData, int compressionPercentage)
         {

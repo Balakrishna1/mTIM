@@ -45,7 +45,7 @@ namespace mTIM.Models.D
         }
 
         [JsonIgnore]
-        public bool HasChailds { get; set; }
+        public bool HasChilds { get; set; }
 
         [JsonIgnore]
         private bool _isSelected;

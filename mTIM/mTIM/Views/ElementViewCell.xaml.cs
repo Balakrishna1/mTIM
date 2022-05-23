@@ -28,8 +28,8 @@ namespace mTIM
             BindableProperty.Create("Level", typeof(string), typeof(ElementViewCell), "Level");
         public static readonly BindableProperty ValueProperty =
             BindableProperty.Create("Value", typeof(string), typeof(ElementViewCell), "Value");
-        public static readonly BindableProperty HasChaildsProperty =
-            BindableProperty.Create("HasChailds", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
+        public static readonly BindableProperty HasChildsProperty =
+            BindableProperty.Create("HasChilds", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
         public static readonly BindableProperty IsSelectedProperty =
             BindableProperty.Create("IsSelected", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
 
@@ -69,10 +69,10 @@ namespace mTIM
             set { SetValue(ValueProperty, value); }
         }
 
-        public bool HasChailds
+        public bool HasChilds
         {
-            get { return (bool)GetValue(HasChaildsProperty); }
-            set { SetValue(HasChaildsProperty, value); }
+            get { return (bool)GetValue(HasChildsProperty); }
+            set { SetValue(HasChildsProperty, value); }
         }
 
         public bool IsSelected
@@ -91,7 +91,7 @@ namespace mTIM
             }
             lblName.Text = Name;
             rootView.BackgroundColor = IsSelected ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
-            if (HasChailds)
+            if (HasChilds)
             {
                 absContent.IsVisible = false;
                 imgInfoButton.Source = ImageSource.FromFile("icon_forword.png");
@@ -177,7 +177,7 @@ namespace mTIM
 
         async void OnItemTapped(object sender, EventArgs e)
         {
-            if (!GlobalConstants.IsLandscape && HasChailds)
+            if (!GlobalConstants.IsLandscape && HasChilds)
             {
                 await TouchHelper.Instance.TouchEffectsWithActionStruct(rootView, 0.95, 100, ID, ActionItemClicked);
             }

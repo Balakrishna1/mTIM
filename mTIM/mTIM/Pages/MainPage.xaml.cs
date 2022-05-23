@@ -40,7 +40,7 @@ namespace mTIM
             customCell.SetBinding(ElementViewCell.ColorProperty, "Color");
             customCell.SetBinding(ElementViewCell.LevelProperty, "Level");
             customCell.SetBinding(ElementViewCell.ValueProperty, "Value");
-            customCell.SetBinding(ElementViewCell.HasChaildsProperty, "HasChailds");
+            customCell.SetBinding(ElementViewCell.HasChildsProperty, "HasChilds");
             customCell.SetBinding(ElementViewCell.IsSelectedProperty, "IsSelected");
 
             ElementViewCell.ActionRightIconClicked -= RightIconClicked;
@@ -153,7 +153,7 @@ namespace mTIM
                 var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
                 if (GlobalConstants.IsLandscape)
                 {
-                    if (item.HasChailds)
+                    if (item.HasChilds)
                     {
                         Update3dDrawing(id);
                         ViewModel.UpdateIndexSelection(id);

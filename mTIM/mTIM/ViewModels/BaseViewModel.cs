@@ -161,7 +161,7 @@ namespace mTIM.ViewModels
             {
                 if (list.Where(x => x.Parent.Equals(item.Id)).ToList()?.Count > 0)
                 {
-                    item.HasChailds = true;
+                    item.HasChilds = true;
                 }
             }
         }
