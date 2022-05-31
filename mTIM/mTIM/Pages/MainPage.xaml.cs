@@ -123,7 +123,9 @@ namespace mTIM
                         glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, false);
                         TimElementMesh elementsMesh = ViewModel.Mesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
                         if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
+                        {
                             glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
+                        }
                         else
                         {
                             glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, true, 1);
@@ -155,10 +157,16 @@ namespace mTIM
                 {
                     if (item.HasChilds)
                     {
-                        Update3dDrawing(id);
+                        if (glBuilding.App != null && glBuilding.App.IsElementAvailable(id) && id > 1)
+                        {
+                            glBuilding.App?.UpdateElements(id.ToString());
+                        }
+                        else
+                        {
+                            Update3dDrawing(id);
+                        }
                         ViewModel.UpdateIndexSelection(id);
                     }
-
                 }
                 else
                 {

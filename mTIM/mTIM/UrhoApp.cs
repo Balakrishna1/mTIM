@@ -44,8 +44,8 @@ namespace mTIM
         {
             _scene = null;
         }
-
-        /// <summary>
+        
+		/// <summary>
         /// This is used to reset the window. 
         /// </summary>
         public void Reset()
@@ -125,7 +125,7 @@ namespace mTIM
 
             //this.UI.Root.AddChild(element);
         }
-
+       
         /// <summary>
         /// To update the selected element name in the model window.
         /// </summary>
@@ -142,7 +142,7 @@ namespace mTIM
         /// <param name="e"></param>
         private void UrhoViewApp_UnhandledException(object sender, Urho.UnhandledExceptionEventArgs e)
         {
-            Debug.WriteLine("UnhandledException: " + e.Exception.Message);
+        	Debug.WriteLine("UnhandledException: " + e.Exception.Message);
             e.Handled = true;
         }
 
@@ -153,7 +153,7 @@ namespace mTIM
             // bones properly
             Renderer.DrawDebugGeometry(false);
         }
-
+        
         /// <summary>
         /// Intialize the Scene and also creating the component and rootnode.
         /// </summary>
@@ -163,7 +163,7 @@ namespace mTIM
             _octree = _scene.CreateComponent<Octree>();
             _rootNode = _scene.CreateChild("rootNode");
         }
-
+        
         /// <summary>
         /// To Clear and Add the intial nodes.
         /// </summary>
@@ -172,6 +172,24 @@ namespace mTIM
             _rootNode.RemoveAllChildren();
             this.AddChild<WorldInputHandler>("inputs");
             model = this.AddChild<ObjectModel>("model");
+        }
+
+        /// <summary>
+        /// To check the element is already added to window or not. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool IsElementAvailable(int id)
+        {
+            var node = _rootNode.Children?.Where(x => x.Name.Equals(id.ToString())).FirstOrDefault();
+            if (node != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -194,7 +212,7 @@ namespace mTIM
             }
         }
 
-        /// <summary>
+		/// <summary>
         /// To update the Selected/Active elements in the model window.
         /// </summary>
         /// <param name="mesh"></param>
@@ -219,7 +237,7 @@ namespace mTIM
                 Debug.WriteLine(ex.Message);
             }
         }
-
+        
         /// <summary>
         /// To load the each element mesh
         /// </summary>
@@ -235,8 +253,21 @@ namespace mTIM
                     var elements = mesh.elementMeshes.Skip(skipElements);
                     foreach (var element in elements)
                     {
-                        var model = this.AddChild<ObjectModel>(element.listId.ToString());
-                        model.LoadElementMesh(mesh, element, isActive);
+                        if (_rootNode != null && IsElementAvailable(element.listId))
+                        {
+                           var node =  _rootNode.Children?.Where(x => x.Name.Equals(element.listId.ToString())).FirstOrDefault();
+                            var objectModel = (ObjectModel)node?.Components?.FirstOrDefault();
+                            if (objectModel != null)
+                            {
+                                objectModel.UpdateMaterial(element.listId > 1);
+                            }
+                            //UpdateElements(element.listId.ToString());
+                        }
+                        else
+                        {
+                            var model = this.AddChild<ObjectModel>(element.listId.ToString());
+                            model.LoadElementMesh(mesh, element, isActive);
+                        }
                     }
                 }
             }
@@ -259,6 +290,7 @@ namespace mTIM
         /// <summary>
         /// To Add the Camera and Light.
         /// </summary>
+
         private void AddCameraAndLight()
         {
             _cameraNode = _scene.CreateChild("cameraNode");
@@ -307,7 +339,7 @@ namespace mTIM
             int id = TryGetNumber(TouchedNode?.Name);
             if (id > 1)
             {
-                UpdateElements();
+                UpdateElements(TouchedNode.Name);
                 ViewModel.SlectedElementPositionIn3D(id);
             }
             TouchedNode = null;
@@ -316,7 +348,8 @@ namespace mTIM
         /// <summary>
         /// Updating the drawing file based on touch selection without refreshing the entire model.
         /// </summary>
-        private void UpdateElements()
+
+        public void UpdateElements(string touchNodeName)
         {
             foreach (var element in _rootNode.Children)
             {
@@ -328,7 +361,7 @@ namespace mTIM
                     if (objectModel != null)
                     {
                         //Debug.WriteLine($"Updated Node name: " + element.Name);
-                        objectModel.UpdateMaterial((element.Name == TouchedNode.Name && elementID > 1));
+                        objectModel.UpdateMaterial(element.Name == touchNodeName && elementID > 1);
                     }
                 }
             }
