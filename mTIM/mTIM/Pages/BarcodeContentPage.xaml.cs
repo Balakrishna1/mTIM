@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using mTIM.ViewModels;
 using Xamarin.Forms;
 using ZXing;

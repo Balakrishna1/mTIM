@@ -8,11 +8,21 @@ namespace mTIM.Components
     {
         protected UrhoApp App => Application.Current as UrhoApp;
 
+        public static string NormalColorCode = "#757474";//Gray color
+        public static string TransparentColorCode = "#26757474"; //15% transpent gray color.
+        public static string SelectionColorCode = "#6495ED"; //Blue color.
+
         public override void OnAttachedToNode(Urho.Node node)
         {
             base.OnAttachedToNode(node);
         }
 
+        /// <summary>
+        /// Load the lines
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="isLineList"></param>
+        /// <returns></returns>
         public bool LoadLinesMesh(TimMesh mesh, bool isLineList = false)
         {
             Urho.Application.InvokeOnMain(() =>
@@ -51,7 +61,7 @@ namespace mTIM.Components
 
                 model.BoundingBox = mesh.GetBoundingBox();
 
-                Material GrayLineMaterial = Material.FromColor(Color.FromHex("#40757474"), true);
+                Material GrayLineMaterial = Material.FromColor(Color.FromHex(TransparentColorCode), true);
                 GrayLineMaterial.SetTechnique(1, CoreAssets.Techniques.DiffAddAlpha);
                 GrayLineMaterial.CullMode = CullMode.MaxCullmodes;
                 GrayLineMaterial.FillMode = FillMode.Solid;
@@ -64,7 +74,7 @@ namespace mTIM.Components
                 BlackLineMaterial.LineAntiAlias = true;
                 Model = model;
                 SetMaterial(isLineList ? BlackLineMaterial : GrayLineMaterial);
-                CastShadows = true;
+                CastShadows = false;
 
                 //scaling model node to fit in a 2x2x2 space (not taking orientation of model into account)
                 var halfSize = WorldBoundingBox.HalfSize;
@@ -78,17 +88,21 @@ namespace mTIM.Components
             return true;
         }
 
+        /// <summary>
+        /// Update the meterial to element
+        /// </summary>
+        /// <param name="isActive"></param>
         public void UpdateMaterial(bool isActive)
         {
             Urho.Application.InvokeOnMain(() =>
             {
-                Material activeMaterial = Material.FromColor(Color.FromHex("#757474"), false);
+                Material activeMaterial = Material.FromColor(Color.FromHex(NormalColorCode), false);
                 activeMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
                 activeMaterial.CullMode = CullMode.MaxCullmodes;
                 activeMaterial.FillMode = FillMode.Solid;
                 activeMaterial.LineAntiAlias = true;
 
-                Material inActiveMaterial = Material.FromColor(Color.FromHex("#40757474"), false);
+                Material inActiveMaterial = Material.FromColor(Color.FromHex(TransparentColorCode), false);
                 inActiveMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
                 inActiveMaterial.CullMode = CullMode.MaxCullmodes;
                 inActiveMaterial.FillMode = FillMode.Solid;
@@ -97,11 +111,14 @@ namespace mTIM.Components
             });
         }
 
+        /// <summary>
+        /// To update the selection.
+        /// </summary>
         public void UpdateSelection()
         {
             Urho.Application.InvokeOnMain(() =>
             {
-                Material selectMaterial = Material.FromColor(Color.FromHex("#6495ED"), false);
+                Material selectMaterial = Material.FromColor(Color.FromHex(SelectionColorCode), false);
                 selectMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
                 selectMaterial.CullMode = CullMode.MaxCullmodes;
                 selectMaterial.FillMode = FillMode.Solid;
@@ -110,6 +127,13 @@ namespace mTIM.Components
             });
         }
 
+        /// <summary>
+        /// To load the 3D drawing based on index.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="fromIndex"></param>
+        /// <param name="toIndex"></param>
+        /// <returns></returns>
         public bool LoadMesh(TimMesh mesh, int fromIndex, int toIndex)
         {
             Urho.Application.InvokeOnMain(() =>
@@ -149,7 +173,7 @@ namespace mTIM.Components
                 model.SetGeometry(0, 0, geom);
                 model.BoundingBox = mesh.GetBoundingBox();
 
-                Material GrayLineMaterial = Material.FromColor(Color.FromHex("#757474"), false);
+                Material GrayLineMaterial = Material.FromColor(Color.FromHex(NormalColorCode), false);
                 GrayLineMaterial.SetTechnique(5, CoreAssets.Techniques.Diff);
                 GrayLineMaterial.CullMode = CullMode.MaxCullmodes;
                 GrayLineMaterial.FillMode = FillMode.Solid;
@@ -157,7 +181,7 @@ namespace mTIM.Components
 
                 Model = model;
                 SetMaterial(GrayLineMaterial);
-                CastShadows = true;
+                CastShadows = false;
 
                 //scaling model node to fit in a 2x2x2 space (not taking orientation of model into account)
                 var halfSize = WorldBoundingBox.HalfSize;
@@ -171,6 +195,12 @@ namespace mTIM.Components
             return true;
         }
 
+        /// <summary>
+        /// To load the element mesh.
+        /// </summary>
+        /// <param name="mesh"></param>
+        /// <param name="timElement"></param>
+        /// <param name="isActiveList"></param>
         public void LoadElementMesh(TimMesh mesh, TimElementMesh timElement, bool isActiveList)
         {
             Urho.Application.InvokeOnMain(() =>
@@ -210,7 +240,7 @@ namespace mTIM.Components
                 model.SetGeometry(0, 0, geom);
                 model.BoundingBox = mesh.GetBoundingBox();
 
-                Material GrayLineMaterial = Material.FromColor(Color.FromHex(isActiveList ? "#757474" : "#40757474"), false);
+                Material GrayLineMaterial = Material.FromColor(Color.FromHex(isActiveList ? NormalColorCode : TransparentColorCode), false);
                 GrayLineMaterial.SetTechnique(5, CoreAssets.Techniques.Diff);
                 GrayLineMaterial.CullMode = CullMode.MaxCullmodes;
                 GrayLineMaterial.FillMode = FillMode.Solid;
@@ -218,7 +248,7 @@ namespace mTIM.Components
 
                 Model = model;
                 SetMaterial(GrayLineMaterial);
-                CastShadows = true;
+                CastShadows = false;
 
                 //scaling model node to fit in a 2x2x2 space (not taking orientation of model into account)
                 var halfSize = WorldBoundingBox.HalfSize;

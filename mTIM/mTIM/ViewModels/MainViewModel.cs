@@ -42,6 +42,9 @@ namespace mTIM.ViewModels
             SelectedItemList = new ObservableCollectionRanged<TimTaskModel>();
             FileInfoHelper.Instance.LoadFileList();
             FileInfoHelper.Instance.LoadExtensions();
+            FileInfoHelper.Instance.FileUploadCompleted -= FileUploadCompleted;
+            FileInfoHelper.Instance.CommentUpdatedCompleted -= EditCommentCompleted;
+            Webservice.GraphicsDownloadedCallBack -= GraphicsDownloadedCallBack;
             FileInfoHelper.Instance.FileUploadCompleted += FileUploadCompleted;
             FileInfoHelper.Instance.CommentUpdatedCompleted += EditCommentCompleted;
             Webservice.GraphicsDownloadedCallBack += GraphicsDownloadedCallBack;
@@ -72,7 +75,7 @@ namespace mTIM.ViewModels
                     Mesh = CreateMesh(ProbufResult);
                     if (Mesh != null)
                     {
-                        var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
+                        var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000" && x.Parent != 0).ToList();
                         if (Mesh.elementMeshes.Any())
                         {
                             for (int i = 0; i < Mesh.elementMeshes.Count; i++)

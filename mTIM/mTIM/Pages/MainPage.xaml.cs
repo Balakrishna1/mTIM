@@ -84,7 +84,7 @@ namespace mTIM
             }
             Device.BeginInvokeOnMainThread(() =>
             {
-                listView.ScrollTo(ViewModel.SelectedItemList?.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Start, false);
+                listView.ScrollTo(ViewModel.SelectedItemList?.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Center, true);
             });
             Urho.Application.InvokeOnMain(() =>
             {
@@ -100,7 +100,7 @@ namespace mTIM
             }
             Device.BeginInvokeOnMainThread(() =>
             {
-                listView.ScrollTo(ViewModel.SelectedItemList?.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Start, false);
+                listView.ScrollTo(ViewModel.SelectedItemList?.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Center, true);
             });
         }
 
