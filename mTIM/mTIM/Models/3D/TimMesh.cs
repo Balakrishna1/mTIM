@@ -205,6 +205,7 @@ namespace mTIM.Models.D
         public bool active;
         public Color color;
         public int listId;
+        public int rootId;
         public int simplificationLevel;
     };
 

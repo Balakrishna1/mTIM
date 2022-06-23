@@ -148,26 +148,9 @@ namespace mTIM.ViewModels
                 TotalListList.Clear();
                 if (list != null)
                 {
-                    UpdateChaildValues(list);
-                    //UpdateListToTree(list);
+                    list.UpdateList();
                     TotalListList.AddRange(list);
                     RefreshData();
-                }
-            }
-        }
-
-        public void UpdateListToTree(List<TimTaskModel> list)
-        {
-          var root = list.BuildTree();
-        }
-
-        public void UpdateChaildValues(List<TimTaskModel> list)
-        {
-            foreach (var item in list)
-            {
-                if (list.Where(x => x.Parent.Equals(item.Id)).ToList()?.Count > 0)
-                {
-                    item.HasChilds = true;
                 }
             }
         }

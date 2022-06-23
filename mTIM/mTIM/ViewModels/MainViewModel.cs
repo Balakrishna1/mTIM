@@ -75,13 +75,14 @@ namespace mTIM.ViewModels
                     Mesh = CreateMesh(ProbufResult);
                     if (Mesh != null)
                     {
-                        var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000" && x.Parent != 0).ToList();
+                        var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
                         if (Mesh.elementMeshes.Any())
                         {
                             for (int i = 0; i < Mesh.elementMeshes.Count; i++)
                             {
                                 var element = Mesh.elementMeshes[i];
                                 element.listId = lst[i].Id;
+                                element.rootId= lst[i].RootId;
                                 Mesh.elementMeshes[i] = element;
                             }
                         }
@@ -490,7 +491,7 @@ namespace mTIM.ViewModels
                     headerStrings.Add(selectedItem.Name);
                     updateHeaderTexts();
                     SelectedItemList.Clear();
-                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedItem.Level + 1) && x.Parent.Equals(selectedItem.Id)));
+                    SelectedItemList.AddRange(selectedItem.Childrens);
                 }
                 else
                 {
@@ -617,117 +618,12 @@ namespace mTIM.ViewModels
                 switch (SelectedModel.Type)
                 {
                     case DataType.Int:
-                        if (!string.IsNullOrEmpty(SelectedModel.Range))
-                        {
-                            IsValueListVisible = true;
-                            updateTaskListVisibility();
-                            string v = SelectedModel.Range;
-                            int step = 1;
-                            int indexStep = v.IndexOf(':');
-                            if (indexStep == -1)
-                                indexStep = v.IndexOf('|');
-                            if (indexStep != -1)
-                            {
-                                string stepString = v.Substring(indexStep + 1);
-                                v = v.Substring(0, indexStep);
-                                int.TryParse(stepString, out step);
-                            }
-                            Debug.WriteLine(step <= 0 ? "Step has to be greater than 0!" : "");
-                            int indexTo = v.IndexOf('-');
-                            if (indexTo != -1)
-                            {
-                                string fromString = v.Substring(0, indexTo);
-                                string toString = v.Substring(indexTo + 1);
-                                int valueFrom = 0;
-                                int.TryParse(fromString, out valueFrom);
-
-                                int valueTo = valueFrom;
-                                int.TryParse(toString, out valueTo);
-                                Debug.WriteLine(valueFrom > valueTo ? "To value is smaller than from value" : "");
-
-                                for (int i = valueFrom; i <= valueTo; i += step)
-                                    valuesList.Add(new Value() { Data = i });
-                            }
-                            if (SelectedModel.Range.Contains(","))
-                            {
-                                var result = SelectedModel.Range.Split(',');
-                                if (result.Length > 0)
-                                {
-                                    foreach (var value in result)
-                                    {
-                                        valuesList.Add(new Value() { Data = value });
-                                    }
-                                }
-                            }
-                            if (SelectedModel.Value != null)
-                            {
-                                var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
-                                if (item != null)
-                                {
-                                    item.BackgroundColor = Color.LightGray;
-                                }
-                            }
-                            LstValues.AddRange(valuesList);
-                        }
-                        else
-                        {
-                            InputText = SelectedModel.Value?.ToString(); ;
-                            IsEditTextVisible = true;
-                            updateTaskListVisibility();
-                        }
-                        break;
                     case DataType.Float:
                         if (!string.IsNullOrEmpty(SelectedModel.Range))
                         {
                             IsValueListVisible = true;
                             updateTaskListVisibility();
-                            string v = SelectedModel.Range;
-                            float step = 1;
-                            int indexStep = v.IndexOf(':');
-                            if (indexStep == -1)
-                                indexStep = v.IndexOf('|');
-                            if (indexStep != -1)
-                            {
-                                string stepString = v.Substring(indexStep + 1);
-                                v = v.Substring(0, indexStep);
-                                float.TryParse(stepString, out step);
-                            }
-                            Debug.WriteLine(step <= 0 ? "Step has to be greater than 0!" : "");
-                            int indexTo = v.IndexOf('-');
-                            if (indexTo != -1)
-                            {
-                                string fromString = v.Substring(0, indexTo);
-                                string toString = v.Substring(indexTo + 1);
-                                float valueFrom = 0;
-                                float.TryParse(fromString, out valueFrom);
-
-                                float valueTo = valueFrom;
-                                float.TryParse(toString, out valueTo);
-                                Debug.WriteLine(valueFrom > valueTo ? "To value is smaller than from value" : "");
-
-                                for (float i = valueFrom; i <= valueTo; i += step)
-                                    valuesList.Add(new Value() { Data = Convert.ToDecimal(i).ToString("0.00") });
-                            }
-                            if (SelectedModel.Range.Contains(","))
-                            {
-                                var result = SelectedModel.Range.Split(',');
-                                if (result.Length > 0)
-                                {
-                                    foreach (var value in result)
-                                    {
-                                        valuesList.Add(new Value() { Data = Convert.ToDecimal(value).ToString("0.00") });
-                                    }
-                                }
-                            }
-                            if (SelectedModel.Value != null)
-                            {
-                                var item = valuesList.Where(x => x.Data.Equals(SelectedModel.Value)).FirstOrDefault();
-                                if (item != null)
-                                {
-                                    item.BackgroundColor = Color.LightGray;
-                                }
-                            }
-                            LstValues.AddRange(valuesList);
+                            LstValues.AddRange(SelectedModel.Values);
                         }
                         else
                         {
@@ -738,7 +634,6 @@ namespace mTIM.ViewModels
                         break;
                     case DataType.Bool:
                         SelectedModel.Value = !Convert.ToBoolean(SelectedModel.Value);
-                        SelectedItemList.Update();
                         break;
                     case DataType.Doc:
                         IsShowGalaryIcon = false;
@@ -770,8 +665,7 @@ namespace mTIM.ViewModels
             IsValueListVisible = false;
             if (item != null)
             {
-                SelectedModel.Value = item.Data;
-                SelectedItemList.Update();
+                SelectedModel.UpdateValue(item.Data);
             }
             updateTaskListVisibility();
             SaveTaskList();
@@ -978,8 +872,7 @@ namespace mTIM.ViewModels
                     TotalListList.Clear();
                     if (list != null)
                     {
-                        UpdateChaildValues(list);
-                        //UpdateListToTree(list);
+                        list.UpdateList();
                         TotalListList.AddRange(list);
                         RefreshData();
                     }
@@ -1112,11 +1005,11 @@ namespace mTIM.ViewModels
                     case DataType.Aktion:
                     case DataType.Aktion2:
                         item.Value = DateTime.Now.ToString("HH:mm:ss");
-                        SelectedItemList?.Update();
                         break;
                     default:
                         break;
                 }
+                SaveTaskList();
             }
         }
 
@@ -1131,15 +1024,9 @@ namespace mTIM.ViewModels
         private void OkButtonCommandExecute()
         {
             SelectedModel.Value = InputText;
-            SelectedItemList.Update();
             IsEditTextVisible = false;
             updateTaskListVisibility();
+            SaveTaskList();
         }
-    }
-
-    public class Value
-    {
-        public object Data { get; set; }
-        public Color BackgroundColor { get; set; } = Color.Transparent;
     }
 }

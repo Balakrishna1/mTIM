@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using mTIM.Enums;
 using Newtonsoft.Json;
 
@@ -33,37 +36,39 @@ namespace mTIM.Models.D
         public bool SplitGraphic { get; set; }
         public bool SplitGraphicSpecified { get; set; }
         public DataType Type { get; set; }
-        public object Value { get; set; }
 
-        [JsonIgnore]
-        public List<TimTaskModel> Children { get; set; }
-
-        [JsonIgnore]
-        public List<TimTaskModel> Ancestors { get; set; }
-
-
-        public List<TimTaskModel> GetChildrenFromId(int id, int level)
+        private object value;
+        public object Value
         {
-            var list = new List<TimTaskModel>();
-            if (this.Id == id && this.Level == level)
+            get { return value; }
+            set
             {
-                list = Children;
+                this.value = value;
+                OnPropertyChanged();
             }
-            return list;
         }
 
+        [JsonIgnore]
+        public IList<Value> Values { get; set; } = new List<Value>();
+
+        [JsonIgnore]
+        public IEnumerable<TimTaskModel> Childrens { get; set; }
+
+        //[JsonIgnore]
+        //public IEnumerable<TimTaskModel> Ancestors { get; set; }
+
+        [JsonIgnore]
+        public int RootId { get; set; }
+
+        // Make base class for this logic, something like BindableBase
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(object sender, string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (this.PropertyChanged != null)
-            {
-                PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         [JsonIgnore]
-        public bool HasChilds { get; set; }
+        public bool HasChilds => Childrens?.Count() > 0;
 
         [JsonIgnore]
         private bool _isSelected;
@@ -79,8 +84,126 @@ namespace mTIM.Models.D
                 if (_isSelected != value)
                 {
                     _isSelected = value;
-                    OnPropertyChanged(this, "IsSelected");
+                    OnPropertyChanged();
                 }
+            }
+        }
+
+        public void LoadValues()
+        {
+            switch (Type)
+            {
+                case DataType.Int:
+                    if (!string.IsNullOrEmpty(Range))
+                    {
+                        string v = Range;
+                        int step = 1;
+                        int indexStep = v.IndexOf(':');
+                        if (indexStep == -1)
+                            indexStep = v.IndexOf('|');
+                        if (indexStep != -1)
+                        {
+                            string stepString = v.Substring(indexStep + 1);
+                            v = v.Substring(0, indexStep);
+                            int.TryParse(stepString, out step);
+                        }
+                        int indexTo = v.IndexOf('-');
+                        if (indexTo != -1)
+                        {
+                            string fromString = v.Substring(0, indexTo);
+                            string toString = v.Substring(indexTo + 1);
+                            int valueFrom = 0;
+                            int.TryParse(fromString, out valueFrom);
+
+                            int valueTo = valueFrom;
+                            int.TryParse(toString, out valueTo);
+
+                            for (int i = valueFrom; i <= valueTo; i += step)
+                                Values.Add(new Value() { Data = i });
+                        }
+                        if (Range.Contains(","))
+                        {
+                            var result = Range.Split(',');
+                            if (result.Length > 0)
+                            {
+                                foreach (var value in result)
+                                {
+                                    Values.Add(new Value() { Data = value });
+                                }
+                            }
+                        }
+                        if (Value != null)
+                        {
+                            var item = Values.Where(x => x.Data.Equals(Value)).FirstOrDefault();
+                            if (item != null)
+                            {
+                                item.BackgroundColor = Xamarin.Forms.Color.LightGray;
+                            }
+                        }
+                    }
+                    break;
+                case DataType.Float:
+                    if (!string.IsNullOrEmpty(Range))
+                    {
+                        string v = Range;
+                        float step = 1;
+                        int indexStep = v.IndexOf(':');
+                        if (indexStep == -1)
+                            indexStep = v.IndexOf('|');
+                        if (indexStep != -1)
+                        {
+                            string stepString = v.Substring(indexStep + 1);
+                            v = v.Substring(0, indexStep);
+                            float.TryParse(stepString, out step);
+                        }
+                        int indexTo = v.IndexOf('-');
+                        if (indexTo != -1)
+                        {
+                            string fromString = v.Substring(0, indexTo);
+                            string toString = v.Substring(indexTo + 1);
+                            float valueFrom = 0;
+                            float.TryParse(fromString, out valueFrom);
+
+                            float valueTo = valueFrom;
+                            float.TryParse(toString, out valueTo);
+
+                            for (float i = valueFrom; i <= valueTo; i += step)
+                                Values.Add(new Value() { Data = Convert.ToDecimal(i).ToString("0.00") });
+                        }
+                        if (Range.Contains(","))
+                        {
+                            var result = Range.Split(',');
+                            if (result.Length > 0)
+                            {
+                                foreach (var value in result)
+                                {
+                                    Values.Add(new Value() { Data = Convert.ToDecimal(value).ToString("0.00") });
+                                }
+                            }
+                        }
+                        UpdateValue(Value);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// To update the selected value
+        /// </summary>
+        /// <param name="value"></param>
+        public void UpdateValue(object value)
+        {
+            if (value != null)
+            {
+                Values?.ToList().ForEach(x => x.BackgroundColor = Xamarin.Forms.Color.White);
+                var item = Values?.Where(x => x.Data.Equals(value)).FirstOrDefault();
+                if (item != null)
+                {
+                    item.BackgroundColor = Xamarin.Forms.Color.LightGray;
+                }
+                Value = value;
             }
         }
     }

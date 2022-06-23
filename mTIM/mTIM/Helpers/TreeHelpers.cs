@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using mTIM.Enums;
 using mTIM.Models;
 using mTIM.Models.D;
+using mTIM.ViewModels;
 
 namespace mTIM.Helpers
 {
@@ -21,7 +23,7 @@ namespace mTIM.Helpers
             {
                 for (int i = 0; i < roots.Count(); i++)
                 {
-                    AddChildren(roots[i], source);
+                    AddChildren(roots[i], source, roots[i].RootId);
                 }
             }
 
@@ -29,41 +31,89 @@ namespace mTIM.Helpers
         }
 
         /// <summary>
+        /// To update the rootid to childrens.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static IList<TimTaskModel> UpdateList(this IEnumerable<TimTaskModel> source)
+        {
+            source.ToList().ForEach(x => x.LoadValues());
+            var roots = source.Where(x => x.Level.Equals(0) && x.Parent.Equals(0)).ToList();
+
+            if (roots.Count() > 0)
+            {
+                for (int i = 0; i < roots.Count(); i++)
+                {
+                    UpdateRootIdToChildren(roots[i], source, roots[i].RootId);
+                }
+            }
+
+            return roots;
+        }
+
+
+
+        /// <summary>
         /// Add children to parent. 
         /// </summary>
         /// <param name="node"></param>
         /// <param name="source"></param>
-        private static void AddChildren(TimTaskModel node, IEnumerable<TimTaskModel> source)
+        private static void UpdateRootIdToChildren(TimTaskModel node, IEnumerable<TimTaskModel> source, int rootId)
         {
             if (source.Contains(node))
             {
-                node.Children = source.Where(x => x.Parent.Equals(node.Id) && x.Level.Equals(node.Level + 1)).ToList();
-                for (int i = 0; i < node.Children.Count; i++)
+                node.Childrens = source.Where(x => x.Parent.Equals(node.Id) && x.Level.Equals(node.Level + 1));
+                for (int i = 0; i < node.Childrens.Count(); i++)
                 {
-                    AddChildren(node.Children[i], source);
-                    AddAncestors(node.Children[i], source);
+                    node.Childrens.ElementAt(i).RootId = rootId;
+                    UpdateRootIdToChildren(node.Childrens.ElementAt(i), source, rootId);
                 }
             }
             else
             {
-                node.Children = new List<TimTaskModel>();
+                node.Childrens = new List<TimTaskModel>();
             }
         }
 
-        private static void AddAncestors(TimTaskModel node, IEnumerable<TimTaskModel> source)
+
+
+        /// <summary>
+        /// Add children to parent. 
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="source"></param>
+        private static void AddChildren(TimTaskModel node, IEnumerable<TimTaskModel> source, int rootId)
         {
             if (source.Contains(node))
             {
-                node.Ancestors = source.Where(x => x.Level.Equals(node.Level) && x.Parent.Equals(node.Parent)).ToList();
-                for (int i = 0; i < node.Ancestors.Count; i++)
-                    AddAncestors(node.Ancestors[i], source);
+                node.Childrens = source.Where(x => x.Parent.Equals(node.Id) && x.Level.Equals(node.Level + 1));
+                for (int i = 0; i < node.Childrens.Count(); i++)
+                {
+                    node.Childrens.ElementAt(i).RootId = rootId;
+                    AddChildren(node.Childrens.ElementAt(i), source, rootId);
+                    //AddAncestors(node.Childrens.ElementAt(i), source, rootId);
+                }
             }
             else
             {
-                node.Ancestors = new List<TimTaskModel>();
+                node.Childrens = new List<TimTaskModel>();
             }
         }
 
+        //private static void AddAncestors(TimTaskModel node, IEnumerable<TimTaskModel> source, int rootId)
+        //{
+        //    if (source.Contains(node))
+        //    {
+        //        node.Ancestors = source.Where(x => x.Level.Equals(node.Level) && x.Parent.Equals(node.Parent));
+        //        for (int i = 0; i < node.Ancestors.Count(); i++)
+        //            AddAncestors(node.Ancestors.ElementAt(i), source, rootId);
+        //    }
+        //    else
+        //    {
+        //        node.Ancestors = new List<TimTaskModel>();
+        //    }
+        //}
+
 
 
         /// <summary>
@@ -71,9 +121,9 @@ namespace mTIM.Helpers
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static IList<TimTaskModel> GetChildrensFromParent(this TimTaskModel source)
+        public static IEnumerable<TimTaskModel> GetChildrensFromParent(this TimTaskModel source)
         {
-            return source.Children;
+            return source.Childrens;
         }
 
         /// <summary>
@@ -81,7 +131,7 @@ namespace mTIM.Helpers
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static IList<TimTaskModel> GetParentFromChildren(this IEnumerable<TimTaskModel> source, int id, int level)
+        public static IEnumerable<TimTaskModel> GetParentFromChildren(this IEnumerable<TimTaskModel> source, int id, int level)
         {
             if(source != null)
             {
@@ -89,10 +139,10 @@ namespace mTIM.Helpers
                 {
                     if(item.Id == id && item.Level == level)
                     {
-                        return item.Children;
+                        return item.Childrens;
                     }else
                     {
-                        GetParentFromChildren(item.Children, id, level);
+                        GetParentFromChildren(item.Childrens, id, level);
                     }
                 }
             }
@@ -111,7 +161,7 @@ namespace mTIM.Helpers
             {
                 TimTaskModel node = nodes.Pop();
                 yield return node;
-                foreach (var n in node.Children) nodes.Push(n);
+                foreach (var n in node.Childrens) nodes.Push(n);
             }
         }
     }

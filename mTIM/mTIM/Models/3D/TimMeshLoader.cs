@@ -17,7 +17,6 @@ namespace mTIM.Models.D
         {
         }
 
-
         /// <summary>
         /// This is used to load the mesh from VisualElements.
         /// </summary>
@@ -53,9 +52,9 @@ namespace mTIM.Models.D
                         currentProjectId = taskData.Parent;
                         builder.StartProject();
                     }
+                    builder.StartElementMesh();
                     if (visu.Geometries != null)
                     {
-                        builder.StartElementMesh();
                         for (int iRef = 0; iRef < visu.Geometries.Count(); iRef++)
                         {
                             GeometryReference @ref = visu.Geometries[iRef];
@@ -129,6 +128,15 @@ namespace mTIM.Models.D
                         em.simplificationLevel = 1;
                         em.listId = taskData != null ? taskData.Id : -1;
                         builder.elementMeshes[builder.elementMeshes.Count - 1] = em;
+                    }
+                    else
+                    {
+                        var em = builder.EndElementMesh();
+                        em.visualizableIndex = iVisu;
+                        em.simplificationLevel = 1;
+                        em.listId = taskData != null ? taskData.Id : -1;
+                        builder.elementMeshes[builder.elementMeshes.Count - 1] = em;
+                        Debug.WriteLine("Geometries are empty at:" + iVisu);
                     }
                 }
                 int vertexCount = builder.vertices.Count();

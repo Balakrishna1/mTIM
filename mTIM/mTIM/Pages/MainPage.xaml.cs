@@ -104,7 +104,7 @@ namespace mTIM
             });
         }
 
-        private void Update3dDrawing(int id)
+        private void Update3dDrawing(int id, int rootId = 0)
         {
             Urho.Application.InvokeOnMain(() =>
             {
@@ -163,7 +163,7 @@ namespace mTIM
                         }
                         else
                         {
-                            Update3dDrawing(id);
+                            Update3dDrawing(id, item.RootId);
                         }
                         ViewModel.UpdateIndexSelection(id);
                     }

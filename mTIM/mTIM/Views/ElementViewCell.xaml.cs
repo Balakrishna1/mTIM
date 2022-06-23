@@ -2,9 +2,11 @@
 using mTIM.Enums;
 using mTIM.Helpers;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace mTIM
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ElementViewCell : ViewCell
     {
         public ElementViewCell()
@@ -27,11 +29,11 @@ namespace mTIM
         public static readonly BindableProperty LevelProperty =
             BindableProperty.Create("Level", typeof(string), typeof(ElementViewCell), "Level");
         public static readonly BindableProperty ValueProperty =
-            BindableProperty.Create("Value", typeof(string), typeof(ElementViewCell), "Value");
+            BindableProperty.Create("Value", typeof(string), typeof(ElementViewCell), "Value", propertyChanged: HandleValueChangesPropertyChanged);
         public static readonly BindableProperty HasChildsProperty =
             BindableProperty.Create("HasChilds", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
         public static readonly BindableProperty IsSelectedProperty =
-            BindableProperty.Create("IsSelected", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
+            BindableProperty.Create("IsSelected", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay, propertyChanged: HandleSelectionChangesPropertyChanged);
 
         public int ID
         {
@@ -79,6 +81,43 @@ namespace mTIM
         {
             get { return (bool)GetValue(IsSelectedProperty); }
             set { SetValue(IsSelectedProperty, value); }
+        }
+
+        private static void HandleSelectionChangesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            ElementViewCell targetView;
+            targetView = (ElementViewCell)bindable;
+            if (targetView != null)
+                targetView.rootView.BackgroundColor = ((bool)newValue) ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
+        }
+
+        private static void HandleValueChangesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            ElementViewCell targetView;
+            targetView = (ElementViewCell)bindable;
+            if (targetView != null)
+                targetView.UpdateValue((string)newValue);
+        }
+
+        private void UpdateValue(string Value)
+        {
+            switch (Type)
+            {
+                case DataType.Int:
+                case DataType.String:
+                case DataType.Float:
+                    lblValue.Text = Value;
+                    break;
+                case DataType.Bool:
+                    chbValue.Source = ImageSource.FromFile(Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
+                    break;
+                case DataType.Aktion:
+                case DataType.Aktion2:
+                    lblTime.Text = Value;
+                    break;
+                default:
+                    break;
+            }
         }
 
         protected override void OnBindingContextChanged()
