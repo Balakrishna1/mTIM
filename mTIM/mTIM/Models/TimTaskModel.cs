@@ -58,7 +58,7 @@ namespace mTIM.Models.D
         //public IEnumerable<TimTaskModel> Ancestors { get; set; }
 
         [JsonIgnore]
-        public int RootId { get; set; }
+        public int ProjectId { get; set; }
 
         // Make base class for this logic, something like BindableBase
         public event PropertyChangedEventHandler PropertyChanged;

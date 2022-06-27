@@ -24,6 +24,7 @@ namespace mTIM
         public const int ListWidthInLandscape = 300;
         private double projectFontSize = 0;
         private double projectSubtextFontSize = 0;
+        private TimMesh CurrentMesh = new TimMesh();
 
         public MainPage()
         {
@@ -104,7 +105,7 @@ namespace mTIM
             });
         }
 
-        private void Update3dDrawing(int id, int rootId = 0)
+        private void Update3dDrawing(int id, int rootIndex = 0)
         {
             Urho.Application.InvokeOnMain(() =>
             {
@@ -112,23 +113,23 @@ namespace mTIM
                 {
                     glBuilding.App.Reset();
                     glBuilding.App.AddStuff();
-                    if (id == 1)
+                    if (id == CurrentMesh.ProjectId)
                     {
-                        glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
-                        glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, true);
+                        glBuilding.App.LoadLinesDrawing(CurrentMesh);
+                        glBuilding.App.LoadEelementsDrawing(CurrentMesh, true);
                     }
                     else
                     {
-                        glBuilding.App.LoadLinesDrawing(ViewModel.Mesh);
-                        glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, false);
-                        TimElementMesh elementsMesh = ViewModel.Mesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
+                        glBuilding.App.LoadLinesDrawing(CurrentMesh);
+                        glBuilding.App.LoadEelementsDrawing(CurrentMesh, false);
+                        TimElementMesh elementsMesh = CurrentMesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
                         if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
                         {
-                            glBuilding.App.LoadActiveDrawing(ViewModel.Mesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
+                            glBuilding.App.LoadActiveDrawing(CurrentMesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
                         }
                         else
                         {
-                            glBuilding.App.LoadEelementsDrawing(ViewModel.Mesh, true, 1);
+                            glBuilding.App.LoadEelementsDrawing(CurrentMesh, true, 1);
                         }
                     }
                 }
@@ -163,7 +164,8 @@ namespace mTIM
                         }
                         else
                         {
-                            Update3dDrawing(id, item.RootId);
+                            CurrentMesh = ViewModel.Meshes.Where(x => x.ProjectId == item.ProjectId).FirstOrDefault();
+                            Update3dDrawing(id);
                         }
                         ViewModel.UpdateIndexSelection(id);
                     }
@@ -173,8 +175,6 @@ namespace mTIM
                     if (item != null)
                         ViewModel.SelectedItemIndex(ViewModel.SelectedItemList.IndexOf(item));
                 }
-
-
             }
             catch (Exception ex)
             {

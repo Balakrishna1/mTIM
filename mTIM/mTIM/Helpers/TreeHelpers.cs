@@ -23,7 +23,7 @@ namespace mTIM.Helpers
             {
                 for (int i = 0; i < roots.Count(); i++)
                 {
-                    AddChildren(roots[i], source, roots[i].RootId);
+                    AddChildren(roots[i], source, roots[i].ProjectId);
                 }
             }
 
@@ -38,13 +38,14 @@ namespace mTIM.Helpers
         public static IList<TimTaskModel> UpdateList(this IEnumerable<TimTaskModel> source)
         {
             source.ToList().ForEach(x => x.LoadValues());
-            var roots = source.Where(x => x.Level.Equals(0) && x.Parent.Equals(0)).ToList();
+            var roots = source.Where(x => x.Path.EndsWith("/Prj")).ToList();
 
             if (roots.Count() > 0)
             {
                 for (int i = 0; i < roots.Count(); i++)
                 {
-                    UpdateRootIdToChildren(roots[i], source, roots[i].RootId);
+                    roots[i].ProjectId = roots[i].Id;
+                    UpdateRootIdToChildren(roots[i], source, roots[i].Id);
                 }
             }
 
@@ -58,15 +59,15 @@ namespace mTIM.Helpers
         /// </summary>
         /// <param name="node"></param>
         /// <param name="source"></param>
-        private static void UpdateRootIdToChildren(TimTaskModel node, IEnumerable<TimTaskModel> source, int rootId)
+        private static void UpdateRootIdToChildren(TimTaskModel node, IEnumerable<TimTaskModel> source, int parentId)
         {
             if (source.Contains(node))
             {
                 node.Childrens = source.Where(x => x.Parent.Equals(node.Id) && x.Level.Equals(node.Level + 1));
                 for (int i = 0; i < node.Childrens.Count(); i++)
                 {
-                    node.Childrens.ElementAt(i).RootId = rootId;
-                    UpdateRootIdToChildren(node.Childrens.ElementAt(i), source, rootId);
+                    node.Childrens.ElementAt(i).ProjectId = parentId;
+                    UpdateRootIdToChildren(node.Childrens.ElementAt(i), source, parentId);
                 }
             }
             else
@@ -82,15 +83,15 @@ namespace mTIM.Helpers
         /// </summary>
         /// <param name="node"></param>
         /// <param name="source"></param>
-        private static void AddChildren(TimTaskModel node, IEnumerable<TimTaskModel> source, int rootId)
+        private static void AddChildren(TimTaskModel node, IEnumerable<TimTaskModel> source, int parentId)
         {
             if (source.Contains(node))
             {
                 node.Childrens = source.Where(x => x.Parent.Equals(node.Id) && x.Level.Equals(node.Level + 1));
                 for (int i = 0; i < node.Childrens.Count(); i++)
                 {
-                    node.Childrens.ElementAt(i).RootId = rootId;
-                    AddChildren(node.Childrens.ElementAt(i), source, rootId);
+                    node.Childrens.ElementAt(i).ProjectId = parentId;
+                    AddChildren(node.Childrens.ElementAt(i), source, parentId);
                     //AddAncestors(node.Childrens.ElementAt(i), source, rootId);
                 }
             }

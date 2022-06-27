@@ -7,7 +7,6 @@ namespace mTIM.Models.D
 {
     public class TimMesh
     {
-        public Result proto { get; set; }
         public string ElementName { get; set; }
         public VertexBuffer vertexBuffer { get; set; }
         public IndexBuffer indexBuffer { get; set; }
@@ -17,10 +16,10 @@ namespace mTIM.Models.D
         public List<int> indeces { get; set; }
         public List<int> lineIndices { get; set; }
         public Urho.Model model { get; set; }
+        public int ProjectId { get; set; }
 
         public TimMesh()
         {
-            this.proto = null;
             this.vertexBuffer = null;
             this.indexBuffer = null;
             vertices = new List<Vertex>();

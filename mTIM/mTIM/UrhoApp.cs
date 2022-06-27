@@ -255,7 +255,7 @@ namespace mTIM
                     {
                         if (_rootNode != null && IsElementAvailable(element.listId))
                         {
-                           var node =  _rootNode.Children?.Where(x => x.Name.Equals(element.listId.ToString())).FirstOrDefault();
+                            var node = _rootNode.Children?.Where(x => x.Name.Equals(element.listId.ToString())).FirstOrDefault();
                             var objectModel = (ObjectModel)node?.Components?.FirstOrDefault();
                             if (objectModel != null)
                             {

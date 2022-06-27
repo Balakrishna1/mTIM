@@ -29,7 +29,7 @@ namespace mTIM.ViewModels
         public IDevice Device;
         public const string installAppFormat = "Install Update{0}";
 
-        public TimMesh Mesh { get; set; } = new TimMesh();
+        public IList<TimMesh> Meshes { get; set; } = new List<TimMesh>();
         public Result ProbufResult { get; set; } = new Result();
 
         public Action<string> ActionSelectedItemText;
@@ -72,21 +72,21 @@ namespace mTIM.ViewModels
                 if (compressedData != null && compressedData.Length > 0)
                 {
                     ProbufResult = GZipHelper.DeserializeResult(compressedData);
-                    Mesh = CreateMesh(ProbufResult);
-                    if (Mesh != null)
-                    {
-                        var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
-                        if (Mesh.elementMeshes.Any())
-                        {
-                            for (int i = 0; i < Mesh.elementMeshes.Count; i++)
-                            {
-                                var element = Mesh.elementMeshes[i];
-                                element.listId = lst[i].Id;
-                                element.rootId= lst[i].RootId;
-                                Mesh.elementMeshes[i] = element;
-                            }
-                        }
-                    }
+                    Meshes = CreateMesh(ProbufResult);
+                    //if (Mesh != null)
+                    //{
+                    //    var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
+                    //    if (Mesh.elementMeshes.Any())
+                    //    {
+                    //        for (int i = 0; i < Mesh.elementMeshes.Count; i++)
+                    //        {
+                    //            var element = Mesh.elementMeshes[i];
+                    //            element.listId = lst[i].Id;
+                    //            element.rootId= lst[i].RootId;
+                    //            Mesh.elementMeshes[i] = element;
+                    //        }
+                    //    }
+                    //}
                 }
             }
             catch (Exception ex)
@@ -100,11 +100,12 @@ namespace mTIM.ViewModels
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public TimMesh CreateMesh(Result result)
+        public IList<TimMesh> CreateMesh(Result result)
         {
             TimMeshLoader meshLoader = new TimMeshLoader();
-            var mesh = meshLoader.Load(result);
-            return mesh;
+            var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
+            var meshes = meshLoader.Load(result, lst);
+            return meshes;
         }
 
         #region File related code

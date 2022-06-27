@@ -22,10 +22,11 @@ namespace mTIM.Models.D
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        TimMesh mesh = new TimMesh();
-        public TimMesh Load(Result result)
+        TimMesh mesh;
+        public List<TimMesh> Load(Result result, List<TimTaskModel> elementsList)
         {
-            if (result.Elements.Count() == 0)
+            List<TimMesh> meshes = new List<TimMesh>();
+            if (result.Elements.Count() == 0 && elementsList?.Count() != result.Elements.Count())
             {
                 return null;
             }
@@ -42,19 +43,32 @@ namespace mTIM.Models.D
                 }
 #endif
                 int currentProjectId = -1;
-
                 for (int iVisu = 0; iVisu < result.Elements.Count(); iVisu++)
                 {
                     Visualizable visu = result.Elements[iVisu];
-                    TimTaskModel taskData = new TimTaskModel();
-                    if (taskData != null && currentProjectId != taskData.Parent)
+                    TimTaskModel taskData = elementsList[iVisu];
+                    if (taskData != null && currentProjectId != taskData.ProjectId)
                     {
-                        currentProjectId = taskData.Parent;
+                        if(mesh != null)
+                        {
+                            var meshDataCopy = new TimMesh()
+                            {
+                                ProjectId = currentProjectId,
+                                vertices = builder.vertices.GetChunk(0),
+                                indeces = builder.indices.GetChunk(0),
+                                lineIndices = builder.lineIndices.GetChunk(0),
+                                elementMeshes = builder.elementMeshes.ToList()
+                            };
+                            meshes.Add(meshDataCopy);
+                        }
+                        mesh = new TimMesh();
+                        currentProjectId = taskData.ProjectId;
                         builder.StartProject();
+                        builder.Reset();
                     }
-                    builder.StartElementMesh();
                     if (visu.Geometries != null)
                     {
+                        builder.StartElementMesh();
                         for (int iRef = 0; iRef < visu.Geometries.Count(); iRef++)
                         {
                             GeometryReference @ref = visu.Geometries[iRef];
@@ -119,7 +133,6 @@ namespace mTIM.Models.D
                             for (int iLine = 0; iLine < triGeometryData.Lines.Count(); iLine++)
                             {
                                 Line line = triGeometryData.Lines[iLine];
-                                mesh.AddLine(indexMap[Convert.ToInt32(line.A)], indexMap[Convert.ToInt32(line.B)]);
                                 builder.AddLine(indexMap[Convert.ToInt32(line.A)], indexMap[Convert.ToInt32(line.B)]);
                             }
                         }
@@ -129,26 +142,21 @@ namespace mTIM.Models.D
                         em.listId = taskData != null ? taskData.Id : -1;
                         builder.elementMeshes[builder.elementMeshes.Count - 1] = em;
                     }
-                    else
-                    {
-                        var em = builder.EndElementMesh();
-                        em.visualizableIndex = iVisu;
-                        em.simplificationLevel = 1;
-                        em.listId = taskData != null ? taskData.Id : -1;
-                        builder.elementMeshes[builder.elementMeshes.Count - 1] = em;
-                        Debug.WriteLine("Geometries are empty at:" + iVisu);
-                    }
                 }
-                int vertexCount = builder.vertices.Count();
-                mesh.proto = result;
-                mesh.vertices = builder.vertices.GetChunk(0);
-                mesh.indeces = builder.indices.GetChunk(0);
-                mesh.lineIndices = builder.lineIndices.GetChunk(0);
-                mesh.subMeshes = builder.subMeshes;
-                mesh.elementMeshes = builder.elementMeshes;
+
+                var meshData = new TimMesh()
+                {
+                    ProjectId= currentProjectId,
+                    vertices = builder.vertices.GetChunk(0),
+                    indeces = builder.indices.GetChunk(0),
+                    lineIndices = builder.lineIndices.GetChunk(0),
+                    elementMeshes = builder.elementMeshes.ToList()
+                };
+                meshes.Add(meshData);
             }
-            return mesh;
+            return meshes;
         }
+
 
         public static float[] multiply(float[] x, float factor)
         {

@@ -122,33 +122,30 @@ namespace mTIM.Models.D
         //public RobinTable<Vertex, int, RobinObjectAdapter<Vertex>> vertexTable = new RobinTable<Vertex,int, RobinObjectAdapter<Vertex>>();
         public Dictionary<Vertex, int> vertexTable = new Dictionary<Vertex, int>();
         public ChunkedArray<int> indices = new ChunkedArray<int>();
-        public List<TimSubMesh> subMeshes = new List<TimSubMesh>();
-        public List<TimElementMesh> elementMeshes = new List<TimElementMesh>();
+        public IList<TimElementMesh> elementMeshes = new List<TimElementMesh>();
         public int lastLineIndexCount;
         public ChunkedArray<int> lineIndices = new ChunkedArray<int>();
 
         public TimMeshBuilder()
         {
-            //vertexTable.Resize(256 * 1024);
-            subMeshes = new List<TimSubMesh>(1024);
             lastIndexCount = 0;
             lastLineIndexCount = 0;
         }
 
         public void Dispose()
         {
-            for (int i = 0; i < subMeshes.Count; i++)
-                subMeshes.RemoveAt(i);
+            for (int i = 0; i < elementMeshes.Count; i++)
+                elementMeshes.RemoveAt(i);
         }
 
         public void Reset()
         {
             vertices.Clear();
             vertexTable.Clear();
-            subMeshes.Clear();
             indices.Clear();
             lastIndexCount = 0;
             lineIndices.Clear();
+            elementMeshes.Clear();
             lastLineIndexCount = 0;
             aabb = new AABB();
         }
@@ -203,47 +200,6 @@ namespace mTIM.Models.D
         {
             //Log("VertexTAbleSize: %d %d\n", vertexTable.GetSize(), vertexTable.GetCapacity());
             vertexTable.Clear();
-        }
-
-
-
-        public void StartSubMesh()
-        {
-            subMeshes.Add(new TimSubMesh());
-
-            lastIndexCount = indices.Count();
-            lastLineIndexCount = lineIndices.Count();
-        }
-
-        public TimSubMesh EndSubMesh()
-        {
-            TimBatch trianglebatch;
-            TimBatch linebatch;
-            TimSubMesh sm = subMeshes[subMeshes.Count - 1];
-            {
-                trianglebatch = sm.triangleBatch;
-                trianglebatch.primitiveType = PrimitiveType.TriangleList;
-                trianglebatch.baseVertexIndex = 0;
-                trianglebatch.minIndex = 0;
-                trianglebatch.numVertices = vertices.GetChunk(0).Count;
-                trianglebatch.startIndex = lastIndexCount;
-                trianglebatch.primitiveCount = indices.Count();
-            }
-            {
-                linebatch = sm.lineBatch;
-                linebatch.primitiveType = PrimitiveType.LineList;
-                linebatch.baseVertexIndex = 0;
-                linebatch.minIndex = 0;
-                linebatch.numVertices = vertices.GetChunk(0).Count;
-                linebatch.startIndex = lastLineIndexCount;
-                linebatch.primitiveCount = lineIndices.Count();
-            }
-            sm.triangleBatch = trianglebatch;
-            sm.lineBatch = linebatch;
-            sm.aabb = aabb;
-            sm.visible = true;
-            sm.opaque = false;
-            return sm;
         }
 
         public void StartElementMesh()
