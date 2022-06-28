@@ -113,7 +113,7 @@ namespace mTIM
                 {
                     glBuilding.App.Reset();
                     glBuilding.App.AddStuff();
-                    if (TreeHelpers.IsParent(id))
+                    if (TimTaskListHelper.IsParent(id))
                     {
                         glBuilding.App.LoadLinesDrawing(CurrentMesh);
                         glBuilding.App.LoadEelementsDrawing(CurrentMesh, true);
@@ -158,7 +158,7 @@ namespace mTIM
                 {
                     if (item.HasChilds)
                     {
-                        if (glBuilding.App != null && glBuilding.App.IsElementAvailable(id) && !TreeHelpers.IsParent(id))
+                        if (glBuilding.App != null && glBuilding.App.IsElementAvailable(id) && !TimTaskListHelper.IsParent(id))
                         {
                                 glBuilding.App?.UpdateElements(id.ToString());
                         }
@@ -363,7 +363,7 @@ namespace mTIM
             AppUpdateBottomSheet.InvokeView(height, width);
             if (height > width)
             {
-                ViewModel?.TotalListList?.ToList().ForEach(x => x.IsSelected = false);
+                TimTaskListHelper.GetTotalList()?.ToList()?.ForEach(x => x.IsSelected = false);
                 //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
                 GlobalConstants.IsLandscape = false;
                 stackHeader.Orientation = StackOrientation.Vertical;

@@ -73,20 +73,6 @@ namespace mTIM.ViewModels
                 {
                     ProbufResult = GZipHelper.DeserializeResult(compressedData);
                     Meshes = CreateMesh(ProbufResult);
-                    //if (Mesh != null)
-                    //{
-                    //    var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
-                    //    if (Mesh.elementMeshes.Any())
-                    //    {
-                    //        for (int i = 0; i < Mesh.elementMeshes.Count; i++)
-                    //        {
-                    //            var element = Mesh.elementMeshes[i];
-                    //            element.listId = lst[i].Id;
-                    //            element.rootId= lst[i].RootId;
-                    //            Mesh.elementMeshes[i] = element;
-                    //        }
-                    //    }
-                    //}
                 }
             }
             catch (Exception ex)
@@ -103,7 +89,7 @@ namespace mTIM.ViewModels
         public IList<TimMesh> CreateMesh(Result result)
         {
             TimMeshLoader meshLoader = new TimMeshLoader();
-            var lst = TotalListList?.Where(x => x.ObjectId != "00000000-0000-0000-0000-000000000000").ToList();
+            var lst = TimTaskListHelper.GetPrecastElements();
             var meshes = meshLoader.Load(result, lst);
             return meshes;
         }
@@ -442,11 +428,11 @@ namespace mTIM.ViewModels
             {
                 return;
             }
-            var selectedElement = TotalListList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            var selectedElement = TimTaskListHelper.GetItem(id);
             if (selectedElement != null)
             {
                 SelectedItemList.Clear();
-                SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedElement.Level) && x.Parent.Equals(selectedElement.Parent)));
+                SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(selectedElement.Parent, selectedElement.Level)) ;
                 UpdateIndexSelection(id);
                 UpdateListSelection?.Invoke(id);
                 previousId = selectedElement.Parent;
@@ -466,7 +452,7 @@ namespace mTIM.ViewModels
             int parentId = selectedTask.Parent;
             while (parentId > 0)
             {
-                var item = TotalListList.Where(x => x.Id == parentId).FirstOrDefault();
+                var item = TimTaskListHelper.GetItem(parentId);
                 item.IsSelected = true;
                 headerStrings.Add(item.Name);
                 parentId = item.Parent;
@@ -588,7 +574,7 @@ namespace mTIM.ViewModels
             if (previousId >= 0)
             {
                 ListBackgroundColor = GlobalConstants.IsLandscape ? Color.White : Color.DimGray;
-                var selectedItem = TotalListList.Where(x => x.Id.Equals(previousId)).FirstOrDefault();
+                var selectedItem = TimTaskListHelper.GetItem(previousId);
                 if (selectedItem != null)
                 {
                     previousId = selectedItem.Parent;
@@ -598,7 +584,7 @@ namespace mTIM.ViewModels
                     //SelectedItemText = selectedItem.Name;
                     SelectedItemList.ToList().ForEach(x => x.IsSelected = false);
                     SelectedItemList.Clear();
-                    SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(selectedItem.Level) && x.Parent.Equals(selectedItem.Parent)));
+                    SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(selectedItem.Parent, selectedItem.Level));
                     var item = SelectedItemList.Where(x => x.IsSelected == true).FirstOrDefault();
                     if (item != null)
                     {
@@ -731,7 +717,7 @@ namespace mTIM.ViewModels
             else if (headerStrings.Count == 0)
             {
                 IsShowBackButton = false;
-                SelectedItemText = TotalListList?.Where(x => x.Level.Equals(0)).FirstOrDefault()?.Name;
+                SelectedItemText = TimTaskListHelper.GetItem(0)?.Name;
                 SubText = string.Empty;
             }
             else
@@ -849,13 +835,12 @@ namespace mTIM.ViewModels
             updateHeaderTexts();
             IsDocumentListVisible = IsValueListVisible = IsEditTextVisible = false;
             updateTaskListVisibility();
-            //SelectedItemText =  TotalListList.Where(x => x.Level.Equals(0)).FirstOrDefault().Name;
             ListBackgroundColor = Color.White;
             IsOpenMenuOptions = false;
             IsOpenUpdateOptions = false;
             IsShowBackButton = false;
             SelectedItemList.Clear();
-            SelectedItemList.AddRange(TotalListList.Where(x => x.Level.Equals(1) && x.Parent.Equals(0)));
+            SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(0, 1));
         }
 
         public async void UpdateList()
@@ -874,11 +859,9 @@ namespace mTIM.ViewModels
                     string json = await FileHelper.ReadTextAsync(GlobalConstants.TASKLIST_FILE);
                     Debug.WriteLine("Task List: " + json);
                     var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
-                    TotalListList.Clear();
                     if (list != null)
                     {
                         list.UpdateList();
-                        TotalListList.AddRange(list);
                         RefreshData();
                     }
                 }

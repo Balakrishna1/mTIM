@@ -338,7 +338,7 @@ namespace mTIM
         private void Input_TouchEnd(TouchEndEventArgs obj)
         {
             int id = TryGetNumber(TouchedNode?.Name);
-            if (!TreeHelpers.IsParent(id))
+            if (!TimTaskListHelper.IsParent(id))
             {
                 UpdateElements(TouchedNode.Name);
                 ViewModel.SlectedElementPositionIn3D(id);
@@ -398,7 +398,7 @@ namespace mTIM
                         Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
                         Debug.WriteLine($"Input Touch Position: {0} {1} {2}" + result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z);
                         int value = TryGetNumber(TouchedNode.Name);
-                        if (!TreeHelpers.IsParent(value))
+                        if (!TimTaskListHelper.IsParent(value))
                         {
                             var model = (ObjectModel)result.Value.Drawable;
                             model.UpdateSelection();

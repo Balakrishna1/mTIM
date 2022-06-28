@@ -23,7 +23,7 @@ namespace mTIM.Models.D
         /// <param name="result"></param>
         /// <returns></returns>
         TimMesh mesh;
-        public List<TimMesh> Load(Result result, List<TimTaskModel> elementsList)
+        public List<TimMesh> Load(Result result, IList<TimTaskModel> elementsList)
         {
             List<TimMesh> meshes = new List<TimMesh>();
             if (result.Elements.Count() == 0 && elementsList?.Count() != result.Elements.Count())

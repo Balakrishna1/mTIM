@@ -18,7 +18,6 @@ namespace mTIM.ViewModels
 {
     public class BaseViewModel : BaseViewModelBase, INotifyPropertyChanged
     {
-        public List<TimTaskModel> TotalListList = new List<TimTaskModel>();
         public IWebService Webservice { get; set; }
         public IImageCompressionService ImageCompressionService;
         public byte[] ImageSource { get; set; }
@@ -145,11 +144,9 @@ namespace mTIM.ViewModels
             {
                 await FileHelper.WriteTextAsync(GlobalConstants.TASKLIST_FILE, json);
                 var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
-                TotalListList.Clear();
                 if (list != null)
                 {
                     list.UpdateList();
-                    TotalListList.AddRange(list);
                     RefreshData();
                 }
             }
@@ -281,14 +278,15 @@ namespace mTIM.ViewModels
         {
             SaveTaskList();
             Webservice.ViewModel = this;
-            Webservice.SyncTaskList(JsonConvert.SerializeObject(TotalListList), isFromAuto);
+            Webservice.SyncTaskList(JsonConvert.SerializeObject(TimTaskListHelper.GetTotalList()), isFromAuto);
         }
 
         public void SaveTaskList()
         {
-            if (TotalListList != null && TotalListList.Count > 0)
+            var totalList = TimTaskListHelper.GetTotalList();
+            if (totalList != null && totalList.Count > 0)
             {
-                var json = JsonConvert.SerializeObject(TotalListList);
+                var json = JsonConvert.SerializeObject(totalList);
                 FileHelper.WriteTextAsync(GlobalConstants.TASKLIST_FILE, json);
             }
         }

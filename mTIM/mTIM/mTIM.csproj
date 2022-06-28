@@ -87,9 +87,6 @@
     <None Remove="UrhoSharp.Forms" />
     <None Remove="System.IO" />
     <None Remove="Celeste.GameFiles.XMLParser" />
-    <None Remove="Meshes\Model.obj" />
-    <None Remove="Meshes\Model2.obj" />
-    <None Remove="Meshes\Model2.png" />
     <None Remove="Rg.Plugins.Popup" />
     <None Remove="Syncfusion.Xamarin.Buttons" />
     <None Remove="Xamarin.Forms.SaveOpenPDFPackage" />
@@ -102,7 +99,6 @@
     <None Remove="Unofficial.OpenTK" />
     <None Remove="NUtilLibrary_TIM" />
     <None Remove="Precast.DbCore" />
-    <None Remove="Meshes\Cube.obj" />
     <None Remove="Xam.Plugin.Media" />
   </ItemGroup>
   <ItemGroup>
@@ -117,12 +113,6 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Enums\" />
     <Folder Include="Models\3D\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Meshes\Model.obj" />
-    <EmbeddedResource Include="Meshes\Model2.obj" />
-    <EmbeddedResource Include="Meshes\Model2.png" />
-    <EmbeddedResource Include="Meshes\Cube.obj" />
   </ItemGroup>
   <ItemGroup>
     <XliffResource Include="MultilingualResources\mTIM.de.xlf" />

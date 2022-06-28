@@ -10,7 +10,6 @@ namespace mTIM.Models.D
         public string ElementName { get; set; }
         public VertexBuffer vertexBuffer { get; set; }
         public IndexBuffer indexBuffer { get; set; }
-        public List<TimSubMesh> subMeshes { get; set; }
         public List<TimElementMesh> elementMeshes { get; set; }
         public List<Vertex> vertices { get; set; }
         public List<int> indeces { get; set; }
@@ -25,7 +24,6 @@ namespace mTIM.Models.D
             vertices = new List<Vertex>();
             indeces = new List<int>();
             lineIndices = new List<int>();
-            subMeshes = new List<TimSubMesh>();
             elementMeshes = new List<TimElementMesh>();
         }
 
