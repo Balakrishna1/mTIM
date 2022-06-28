@@ -516,6 +516,10 @@ namespace mTIM.ViewModels
                     selectedItem.IsSelected = false;
                     SelectedItemList.ReplaceItem(pindex, selectedItem);
                 }
+                else
+                {
+                    SelectedItemList.ToList().ForEach(x => x.IsSelected = false);
+                }
             }
             selectedItem = SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
             var index = SelectedItemList.IndexOf(selectedItem);

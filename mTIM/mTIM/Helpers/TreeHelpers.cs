@@ -30,6 +30,7 @@ namespace mTIM.Helpers
             return roots;
         }
 
+        public static IList<TimTaskModel> ProjectList { get; set;}
         /// <summary>
         /// To update the rootid to childrens.
         /// </summary>
@@ -39,7 +40,7 @@ namespace mTIM.Helpers
         {
             source.ToList().ForEach(x => x.LoadValues());
             var roots = source.Where(x => x.Path.EndsWith("/Prj")).ToList();
-
+            ProjectList = roots;
             if (roots.Count() > 0)
             {
                 for (int i = 0; i < roots.Count(); i++)
@@ -51,8 +52,6 @@ namespace mTIM.Helpers
 
             return roots;
         }
-
-
 
         /// <summary>
         /// Add children to parent. 
@@ -99,6 +98,16 @@ namespace mTIM.Helpers
             {
                 node.Childrens = new List<TimTaskModel>();
             }
+        }
+
+        public static bool IsParent(int id)
+        {
+            bool isParent = true;
+            if (id > 1)
+            {
+                isParent = ProjectList?.Where(x => x.Id == id).ToList()?.Count > 0;
+            }
+            return isParent;
         }
 
         //private static void AddAncestors(TimTaskModel node, IEnumerable<TimTaskModel> source, int rootId)

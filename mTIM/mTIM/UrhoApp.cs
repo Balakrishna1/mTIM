@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using mTIM.Components;
+using mTIM.Helpers;
 using mTIM.Models.D;
 using mTIM.ViewModels;
 using Urho;
@@ -337,7 +338,7 @@ namespace mTIM
         private void Input_TouchEnd(TouchEndEventArgs obj)
         {
             int id = TryGetNumber(TouchedNode?.Name);
-            if (id > 1)
+            if (!TreeHelpers.IsParent(id))
             {
                 UpdateElements(TouchedNode.Name);
                 ViewModel.SlectedElementPositionIn3D(id);
@@ -386,7 +387,7 @@ namespace mTIM
         {
             try
             {
-                Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
+                //Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
                 Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
                 var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
                 if (result != null)
@@ -397,7 +398,7 @@ namespace mTIM
                         Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
                         Debug.WriteLine($"Input Touch Position: {0} {1} {2}" + result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z);
                         int value = TryGetNumber(TouchedNode.Name);
-                        if (value > 1)
+                        if (!TreeHelpers.IsParent(value))
                         {
                             var model = (ObjectModel)result.Value.Drawable;
                             model.UpdateSelection();

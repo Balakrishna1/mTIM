@@ -105,15 +105,15 @@ namespace mTIM
             });
         }
 
-        private void Update3dDrawing(int id, int rootIndex = 0)
+        private void Update3dDrawing(int id)
         {
             Urho.Application.InvokeOnMain(() =>
             {
-                if (glBuilding.App != null)
+                if (glBuilding.App != null && CurrentMesh != null)
                 {
                     glBuilding.App.Reset();
                     glBuilding.App.AddStuff();
-                    if (id == CurrentMesh.ProjectId)
+                    if (TreeHelpers.IsParent(id))
                     {
                         glBuilding.App.LoadLinesDrawing(CurrentMesh);
                         glBuilding.App.LoadEelementsDrawing(CurrentMesh, true);
@@ -158,9 +158,9 @@ namespace mTIM
                 {
                     if (item.HasChilds)
                     {
-                        if (glBuilding.App != null && glBuilding.App.IsElementAvailable(id) && id > 1)
+                        if (glBuilding.App != null && glBuilding.App.IsElementAvailable(id) && !TreeHelpers.IsParent(id))
                         {
-                            glBuilding.App?.UpdateElements(id.ToString());
+                                glBuilding.App?.UpdateElements(id.ToString());
                         }
                         else
                         {
