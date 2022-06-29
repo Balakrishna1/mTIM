@@ -169,6 +169,7 @@ namespace mTIM
                         }
                         ViewModel.UpdateIndexSelection(id);
                     }
+                    ViewModel?.ActionSelectedItemText?.Invoke(item.Name);
                 }
                 else
                 {

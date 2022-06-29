@@ -432,7 +432,7 @@ namespace mTIM.ViewModels
             if (selectedElement != null)
             {
                 SelectedItemList.Clear();
-                SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(selectedElement.Parent, selectedElement.Level)) ;
+                SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(selectedElement.Parent, selectedElement.Level));
                 UpdateIndexSelection(id);
                 UpdateListSelection?.Invoke(id);
                 previousId = selectedElement.Parent;
@@ -440,6 +440,8 @@ namespace mTIM.ViewModels
                 AddHeaders(selectedElement);
                 headerStrings.Reverse();
                 updateHeaderTexts();
+                if (GlobalConstants.IsLandscape)
+                    ActionSelectedItemText?.Invoke(selectedElement.Name);
             }
         }
 
@@ -586,9 +588,10 @@ namespace mTIM.ViewModels
                     SelectedItemList.Clear();
                     SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(selectedItem.Parent, selectedItem.Level));
                     var item = SelectedItemList.Where(x => x.IsSelected == true).FirstOrDefault();
-                    if (item != null)
+                    if (item != null && GlobalConstants.IsLandscape)
                     {
                         UpdateDrawing?.Invoke(item.Id);
+                        ActionSelectedItemText?.Invoke(selectedItem.Name);
                     }
                 }
             }
