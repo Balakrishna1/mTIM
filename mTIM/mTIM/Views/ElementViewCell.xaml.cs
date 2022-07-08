@@ -88,7 +88,7 @@ namespace mTIM
             ElementViewCell targetView;
             targetView = (ElementViewCell)bindable;
             if (targetView != null)
-                targetView.rootView.BackgroundColor = ((bool)newValue) ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
+                targetView.rootView.BackgroundColor = ((bool)newValue) ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.White;
         }
 
         private static void HandleValueChangesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -120,13 +120,14 @@ namespace mTIM
             }
         }
 
+
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
             var maxLength = GlobalConstants.IsLandscape ? 12 : 40;
             if (Name.Length > maxLength)
             {
-                lblName.FontSize = lblName.FontSize - 4;
+                lblName.FontSize = (int)lblName.FontSize - 4;
             }
             lblName.Text = Name;
             rootView.BackgroundColor = IsSelected ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;

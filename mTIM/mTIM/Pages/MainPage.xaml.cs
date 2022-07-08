@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using Location = Xamarin.Essentials;
 
 namespace mTIM
@@ -21,7 +23,7 @@ namespace mTIM
     {
         protected UrhoApp App => glBuilding.App;
         MainViewModel ViewModel;
-        public const int ListWidthInLandscape = 300;
+        public const double ListWidthInLandscape = 300;
         private double projectFontSize = 0;
         private double projectSubtextFontSize = 0;
         private TimMesh CurrentMesh = new TimMesh();
@@ -381,6 +383,7 @@ namespace mTIM
             else
             {
                 //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
+                //ListWidthInLandscape = (width / 4) * 1.5;
                 GlobalConstants.IsLandscape = true;
                 glBuilding.IsVisible = true;
                 stackHeader.Orientation = StackOrientation.Horizontal;
@@ -392,8 +395,17 @@ namespace mTIM
                 listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
                 glBuilding.WidthRequest = width - ListWidthInLandscape;
                 glBuilding.HeightRequest = height - frameHeader.Height;
+                //glBuilding.BackgroundColor = Color.White;
                 loadUrhoView();
             }
+
+
+            var safeInsets = On<iOS>().SafeAreaInsets();
+            safeInsets.Right = 0;
+            safeInsets.Left = GlobalConstants.IsLandscape ? 40 : 0;
+            safeInsets.Top = GlobalConstants.IsLandscape ? 0 : 40;
+            safeInsets.Bottom = 0;
+            Padding = safeInsets;
         }
 
         /// <summary>
@@ -414,6 +426,11 @@ namespace mTIM
         {
             ViewModel.OnAppearing();
             base.OnAppearing();
+
+            if(GlobalConstants.IsLandscape && Device.RuntimePlatform.Equals(Device.iOS))
+            {
+                loadUrhoView();
+            }
         }
 
         protected override void OnDisappearing()

@@ -63,7 +63,7 @@
              </StackLayout>
         </StackLayout>
         </Frame>
-        <StackLayout x:Name="stackList" Orientation="Vertical">
+        <StackLayout x:Name="stackList" Orientation="Vertical" BackgroundColor="White">
             <AbsoluteLayout x:Name="absListView">
                 <ListView  x:Name="listView" IsVisible="{Binding IsTaskListVisible}" HasUnevenRows="True" SelectionMode="Single" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"/>
                 <ListView x:Name="lstValues" ItemsSource="{Binding LstValues}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
@@ -127,7 +127,7 @@
                </StackLayout>
             </AbsoluteLayout>
             <!--<sk:SKGLView x:Name="glBuilding" PaintSurface="glBuilding_PaintSurface" BackgroundColor="LightCoral" VerticalOptions="Fill" HorizontalOptions="Fill" IsVisible="false" />-->
-            <local:UrhoView x:Name="glBuilding" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="LightCoral">
+            <local:UrhoView x:Name="glBuilding" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="LightCoral" IsVisible="true">
             </local:UrhoView>
         </StackLayout>
     </StackLayout>

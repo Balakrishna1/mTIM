@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Urho;
 using Urho.Forms;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace mTIM
@@ -20,8 +22,15 @@ namespace mTIM
         public UrhoView()
         {
             LoadingUrhoTask = new TaskCompletionSource<bool>();
-            _urhoSurface = new UrhoSurface();
-
+            this.BackgroundColor = Xamarin.Forms.Color.LightCoral;
+            _urhoSurface = new UrhoSurface()
+            {
+                BackgroundColor = Xamarin.Forms.Color.LightCoral,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
+            _urhoSurface.HorizontalOptions = LayoutOptions.FillAndExpand;
+            _urhoSurface.VerticalOptions = LayoutOptions.FillAndExpand;
             Content = new Grid
             {
                 Children =
@@ -29,20 +38,16 @@ namespace mTIM
                     _urhoSurface
                 }
             };
+            Content.HorizontalOptions = LayoutOptions.FillAndExpand;
+            Content.VerticalOptions = LayoutOptions.FillAndExpand;
         }
 
-        protected override async void OnParentSet()
+        protected override void OnSizeAllocated(double width, double height)
         {
-            base.OnParentSet();
-
-            if (this.Parent == null)
-            {
-                await StopUrhoApp();
-            }
-            else
-            {
-                //await StartUrhoApp();
-            }
+            base.OnSizeAllocated(width, height);
+            //Debug.WriteLine($"width: {width} height: {height}");
+            if (!Device.RuntimePlatform.Equals(Device.iOS) && DeviceDisplay.MainDisplayInfo.Orientation != DisplayOrientation.Landscape) return;
+            _urhoSurface.LayoutTo(new Rectangle(new Point(0, 0), new Size(width, height)));
         }
 
         /// <summary>
@@ -51,23 +56,30 @@ namespace mTIM
         /// <returns></returns>
         public async Task StartUrhoApp()
         {
-            if (_urhoSurface == null)
-                throw new System.Exception("Urho Surface not defined");
+            try
+            {
+                if (_urhoSurface == null)
+                    throw new System.Exception("Urho Surface not defined");
 
-            if (_urhoApp == null)
-            {
-                //This will fail if called twice within an application
-                _urhoApp = await _urhoSurface.Show<UrhoApp>(
-                    new ApplicationOptions()
-                    {
-                        Orientation = ApplicationOptions.OrientationType.LandscapeAndPortrait,
-                        TouchEmulation = true,
-                    });
-                LoadingUrhoTask.SetResult(true);
+                if (_urhoApp == null)
+                {
+                    //This will fail if called twice within an application
+                    _urhoApp = await _urhoSurface.Show<UrhoApp>(
+                        new ApplicationOptions(assetsFolder: null)
+                        {
+                            Orientation = ApplicationOptions.OrientationType.LandscapeAndPortrait,
+                            TouchEmulation = true
+                        });
+                    LoadingUrhoTask.SetResult(true);
+                }
+                else if (_urhoApp.IsInitialized)
+                {
+                    _urhoApp.AddStuff();
+                }
             }
-            else if(_urhoApp.IsInitialized)
+            catch (Exception ex)
             {
-                _urhoApp.AddStuff();
+                Debug.WriteLine(ex.Message);
             }
         }
 

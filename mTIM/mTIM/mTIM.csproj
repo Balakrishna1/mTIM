@@ -97,8 +97,6 @@
     <None Remove="protobuf-net" />
     <None Remove="CjClutter.ObjLoader" />
     <None Remove="Unofficial.OpenTK" />
-    <None Remove="NUtilLibrary_TIM" />
-    <None Remove="Precast.DbCore" />
     <None Remove="Xam.Plugin.Media" />
   </ItemGroup>
   <ItemGroup>
@@ -156,13 +154,5 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="NUtilLibrary_TIM">
-      <HintPath>..\..\..\..\Downloads\NUtilLibrary_TIM.dll</HintPath>
-    </Reference>
-    <Reference Include="Precast.DbCore">
-      <HintPath>..\..\Precast.DbCore.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

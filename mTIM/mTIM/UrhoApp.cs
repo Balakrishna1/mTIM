@@ -70,8 +70,7 @@ namespace mTIM
 
             SetupViewport();
 
-            if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.Android)
-                AddStuff();
+            AddStuff();
 
             CreateText();
             Input.TouchBegin += Input_TouchBegin;
@@ -118,7 +117,7 @@ namespace mTIM
             };
             text.TextEffect = TextEffect.Stroke;
             text.SetColor(Color.Black);
-            text.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
+            text.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: ScaleFontSize(30));
             //element = new UIElement();
             //element.AddChild(text);
             //element.HorizontalAlignment = HorizontalAlignment.Right;
@@ -126,7 +125,16 @@ namespace mTIM
 
             //this.UI.Root.AddChild(element);
         }
-       
+
+        private int ScaleFontSize(int fontSize)
+        {
+            if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS)
+            {
+                fontSize = (fontSize/2 + 1);
+            }
+            return fontSize;
+        }
+
         /// <summary>
         /// To update the selected element name in the model window.
         /// </summary>
@@ -152,7 +160,8 @@ namespace mTIM
             // If draw debug mode is enabled, draw viewport debug geometry, which will show eg. drawable bounding boxes and skeleton
             // bones. Note that debug geometry has to be separately requested each frame. Disable depth test so that we can see the
             // bones properly
-            Renderer.DrawDebugGeometry(false);
+            if (this.IsActive)
+                Renderer.DrawDebugGeometry(false);
         }
         
         /// <summary>
