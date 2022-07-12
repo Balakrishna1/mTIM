@@ -47,8 +47,8 @@ namespace mTIM.Helpers
             var baseUrl = GlobalConstants.AppBaseURL;
             if (baseUrl.Length > 0)
             {
-                if (!baseUrl.EndsWith('/'))
-                    baseUrl = baseUrl + '/';
+                if (!baseUrl.EndsWith("/"))
+                    baseUrl = baseUrl + "/";
                 baseUrl = baseUrl + "External/" + GlobalConstants.VERSION + "/External.svc";
             }
             //else

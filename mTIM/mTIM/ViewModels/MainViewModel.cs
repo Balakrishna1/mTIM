@@ -186,12 +186,12 @@ namespace mTIM.ViewModels
                                 Webservice.UploadFile(true, SelectedModel.Id, postId, true, bytes, extension, "", result.Text, DateTime.Now, true, out uploadFileResult, out uploadFileResultSpecified);
                                 if (uploadFileResult > 0)
                                 {
-                                    var index = LstFiles.IndexOf(info);
+                                    var indx = LstFiles.IndexOf(info);
                                     info.FileID = uploadFileResult;
                                     info.FileIDSpecified = uploadFileResultSpecified;
                                     info.IsOffline = false;
                                     if (index >= 0)
-                                        LstFiles.ReplaceItem(index, info);
+                                        LstFiles.ReplaceItem(indx, info);
                                     updateSelectedItem();
                                 }
                             }

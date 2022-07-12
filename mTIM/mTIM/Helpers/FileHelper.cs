@@ -29,7 +29,7 @@ namespace mTIM.Helpers
                 dir.Delete(true);
             }
             if (!string.IsNullOrEmpty(jsonSettings))
-                await FileHelper.WriteTextAsync(GlobalConstants.SETTINGS_FILE, jsonSettings);
+                await WriteTextAsync(GlobalConstants.SETTINGS_FILE, jsonSettings);
         }
 
         public static string GetFilePath(string fileName)
@@ -53,7 +53,11 @@ namespace mTIM.Helpers
             {
                 File.Delete(file);
             }
+#if NETSTANDARD2_0
+            File.WriteAllText(file, content);
+#else
             await File.WriteAllTextAsync(file, content);
+#endif
         }
 
         public static void WriteText(string fileName, string content)
@@ -79,7 +83,11 @@ namespace mTIM.Helpers
             {
                 File.Delete(file);
             }
+#if NETSTANDARD2_0
+            File.WriteAllBytes(file, content);
+#else
             await File.WriteAllBytesAsync(file, content);
+#endif
         }
 
         public static async Task<string> ReadTextAsync(string fileName)
@@ -89,7 +97,12 @@ namespace mTIM.Helpers
             string file = Path.Combine(AppDirectory, fileName);
             if (File.Exists(file))
             {
-                data =  await File.ReadAllTextAsync(file);
+
+#if NETSTANDARD2_0
+                data = File.ReadAllText(file);
+#else
+                data = await File.ReadAllTextAsync(file);
+#endif
             }
             return data;
         }
@@ -112,7 +125,14 @@ namespace mTIM.Helpers
             string file = Path.Combine(AppDirectory, fileName);
             if (File.Exists(file))
             {
-                return await File.ReadAllBytesAsync(file);
+
+
+#if NETSTANDARD2_0
+                return File.ReadAllBytes(file);
+#else
+              return await File.ReadAllBytesAsync(file);
+#endif
+
             }
             else
             {

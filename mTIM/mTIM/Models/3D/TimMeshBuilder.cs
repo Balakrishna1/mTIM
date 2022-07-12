@@ -172,7 +172,7 @@ namespace mTIM.Models.D
             if (!vertexTable.TryGetValue(vertex, out index))
             {
                 //Console.WriteLine(string.Format("Vertex position: {0},{1},{2}", vertex.position.X, vertex.position.Y, vertex.position.Z));
-                vertexTable.TryAdd(vertex, newIndex);
+                vertexTable.Add(vertex, newIndex);
                 vertices.Add(vertex);
                 return newIndex;
             }

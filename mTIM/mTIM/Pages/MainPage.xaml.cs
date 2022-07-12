@@ -399,13 +399,15 @@ namespace mTIM
                 loadUrhoView();
             }
 
-
-            var safeInsets = On<iOS>().SafeAreaInsets();
-            safeInsets.Right = 0;
-            safeInsets.Left = GlobalConstants.IsLandscape ? 40 : 0;
-            safeInsets.Top = GlobalConstants.IsLandscape ? 0 : 40;
-            safeInsets.Bottom = 0;
-            Padding = safeInsets;
+            if (Device.RuntimePlatform.Equals(Device.iOS))
+            {
+                var safeInsets = On<iOS>().SafeAreaInsets();
+                safeInsets.Right = 0;
+                safeInsets.Left = GlobalConstants.IsLandscape ? 40 : 0;
+                safeInsets.Top = GlobalConstants.IsLandscape ? 0 : 40;
+                safeInsets.Bottom = 0;
+                Padding = safeInsets;
+            }
         }
 
         /// <summary>
