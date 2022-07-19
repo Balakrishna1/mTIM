@@ -46,53 +46,10 @@
     <PackageReference Include="protobuf-net" Version="3.0.101" />
     <PackageReference Include="CjClutter.ObjLoader" Version="1.0.0" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="MultilingualResources\mTIM.de.xlf" />
-    <None Remove="MultilingualResources\mTIM.pl.xlf" />
-    <None Remove="MultilingualResources\mTIM.ru.xlf" />
-    <None Remove="MultilingualResources\mTIM.zh-Hans.xlf" />
-    <None Remove="MultilingualResources\mTIM.zh-Hant.xlf" />
-    <None Remove="Plugin.Permissions" />
-    <None Remove="BottomSheetXF" />
-    <None Remove="Xamarin.Forms.PancakeView" />
-    <None Remove="Xamarin.Forms" />
-    <None Remove="ViewModels\" />
-    <None Remove="Models\" />
-    <None Remove="TouchView" />
-    <None Remove="ZXing.Net.Mobile" />
-    <None Remove="ZXing.Net.Mobile.Forms" />
-    <None Remove="PluginsPopup" />
-    <None Remove="Pages\" />
-    <None Remove="Views\" />
-    <None Remove="Resources\" />
-    <None Remove="Interfaces\" />
-    <None Remove="Grpc.Tools" />
-    <None Remove="Google.Protobuf" />
-    <None Remove="Grpc.Net.ClientFactory" />
-    <None Remove="Newtonsoft.Json" />
-    <None Remove="Acr.UserDialogs" />
-    <None Remove="SkiaSharp.Views.Forms" />
-    <None Remove="OpenTK" />
-    <None Remove="OpenTK.NetStandard" />
-    <None Remove="OpenTK.Graphics" />
-    <None Remove="OpenGL.Net" />
-    <None Remove="PCLStorage" />
-    <None Remove="OpenTK.Core" />
-    <None Remove="UrhoSharp.Forms" />
-    <None Remove="System.IO" />
-    <None Remove="Celeste.GameFiles.XMLParser" />
-    <None Remove="Rg.Plugins.Popup" />
-    <None Remove="Syncfusion.Xamarin.Buttons" />
-    <None Remove="Xamarin.Forms.SaveOpenPDFPackage" />
-    <None Remove="MimeTypesMap" />
-    <None Remove="Enums\" />
-    <None Remove="Models\3D\" />
-    <None Remove="System.IO.Compression" />
-    <None Remove="protobuf-net" />
-    <None Remove="CjClutter.ObjLoader" />
-    <None Remove="Unofficial.OpenTK" />
-    <None Remove="Xam.Plugin.Media" />
+    <PackageReference Include="Grpc.Tools" Version="2.23.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />
