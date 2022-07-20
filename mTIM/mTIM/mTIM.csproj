@@ -100,6 +100,37 @@
     <Compile Remove="Models\3D\ProtoClasses.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Images\badge.png" />
+    <EmbeddedResource Include="Images\icons8_document.png" />
+    <EmbeddedResource Include="Images\icon_back.png" />
+    <EmbeddedResource Include="Images\icon_barcode.png" />
+    <EmbeddedResource Include="Images\icon_black_close.png" />
+    <EmbeddedResource Include="Images\icon_camera.png" />
+    <EmbeddedResource Include="Images\icon_checked.png" />
+    <EmbeddedResource Include="Images\icon_close.png" />
+    <EmbeddedResource Include="Images\icon_delete.png" />
+    <EmbeddedResource Include="Images\icon_document.png" />
+    <EmbeddedResource Include="Images\icon_download.png" />
+    <EmbeddedResource Include="Images\icon_edit.png" />
+    <EmbeddedResource Include="Images\icon_eye.png" />
+    <EmbeddedResource Include="Images\icon_forword.png" />
+    <EmbeddedResource Include="Images\icon_gallery.png" />
+    <EmbeddedResource Include="Images\icon_gray_info.png" />
+    <EmbeddedResource Include="Images\icon_info.png" />
+    <EmbeddedResource Include="Images\icon_menu.png" />
+    <EmbeddedResource Include="Images\icon_message.png" />
+    <EmbeddedResource Include="Images\icon_minus.png" />
+    <EmbeddedResource Include="Images\icon_plus.png" />
+    <EmbeddedResource Include="Images\icon_refresh.png" />
+    <EmbeddedResource Include="Images\icon_setting.png" />
+    <EmbeddedResource Include="Images\icon_unchecked.png" />
+    <EmbeddedResource Include="Images\language_de.jpg" />
+    <EmbeddedResource Include="Images\language_en.jpg" />
+    <EmbeddedResource Include="Images\language_ru.jpg" />
+    <EmbeddedResource Include="Images\language_zh.jpg" />
+    <EmbeddedResource Include="Images\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Resources\AppResources.Designer.cs">
       <DependentUpon>AppResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>

@@ -6,12 +6,13 @@
     xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
     xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
     ios:Page.UseSafeArea="True"
+    xmlns:local="clr-namespace:mTIM;assembly=mTIM"
     x:Class="mTIM.SettingsPage">
     <Grid BackgroundColor="White">
         <StackLayout Orientation="Vertical" HorizontalOptions="Fill" Padding="10">
             <StackLayout x:Name="stackHeader" HeightRequest="60" Orientation="Horizontal" VerticalOptions="Center">
                 <Label x:Name="lblTittle" Text="{Binding LabelSettings}" TextColor="Black" FontSize="Title" HorizontalTextAlignment="Center" HorizontalOptions="StartAndExpand" VerticalOptions="Center" FontAttributes="Bold"/>
-                <ImageButton x:Name="btnClose" BackgroundColor="Transparent" Source="icon_black_close" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" HorizontalOptions="EndAndExpand"/>
+                <ImageButton x:Name="btnClose" BackgroundColor="Transparent" Source="{local:ImageResource mTIM.Images.icon_black_close.png}" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" HorizontalOptions="EndAndExpand"/>
             </StackLayout>
             <ScrollView Orientation="Vertical">
             <StackLayout Orientation="Vertical">
@@ -32,28 +33,28 @@
                          touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                          touch:TouchEff.CommandParameter="de"
                          Orientation="Vertical" Grid.Row="0" Grid.Column="0">
-                    <Image Source="language_de.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Image Source="{local:ImageResource mTIM.Images.language_de.jpg}" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="deutsch" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
                         <StackLayout x:Name="stackEN" BackgroundColor="{Binding ENLangugaeBackground}"
                          touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                          touch:TouchEff.CommandParameter="en"
                          Orientation="Vertical" Grid.Row="0" Grid.Column="1">
-                    <Image Source="language_en.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Image Source="{local:ImageResource mTIM.Images.language_en.jpg}" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="english" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
                 <StackLayout  x:Name="stackZH" BackgroundColor="{Binding ZHLangugaeBackground}"
                     touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                     touch:TouchEff.CommandParameter="zh-Hant"
                     Orientation="Vertical" Grid.Row="1" Grid.Column="0">
-                    <Image Source="language_zh.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Image Source="{local:ImageResource mTIM.Images.language_zh.jpg}" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="中文" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
                 <StackLayout  x:Name="stackRU" BackgroundColor="{Binding RULangugaeBackground}"
                     touch:TouchEff.Command="{Binding SelectedLanguageItemCommand}"
                     touch:TouchEff.CommandParameter="ru"
                     Orientation="Vertical" Grid.Row="1" Grid.Column="1">
-                    <Image Source="language_ru.jpg" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Image Source="{local:ImageResource mTIM.Images.language_ru.jpg}" BackgroundColor="Transparent" HeightRequest="75" WidthRequest="100" HorizontalOptions="Center" VerticalOptions="Center"/>
                     <Label Text="русский" FontSize="Medium" TextColor="Black" HorizontalOptions="Center"/>
                 </StackLayout>
             </Grid>
@@ -63,15 +64,11 @@
                             <Label Text="{Binding StringSyncTime}" TextColor="Black" FontSize="Medium"/>
                     </StackLayout>
                     <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" HeightRequest="50">
-                        <ImageButton Source="icon_minus" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"
-                            IsVisible="{Binding IsDecrementIocnVisible}"
-                            touch:TouchEff.Command="{Binding IncrementORDecrementCommand}"
-                            touch:TouchEff.CommandParameter="dc"/>
+                            <ImageButton Source="{local:ImageResource mTIM.Images.icon_minus.png}" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"
+                            IsVisible="{Binding IsDecrementIocnVisible}" Command="{Binding IncrementORDecrementCommand}" CommandParameter="dc"/>
                         <Label Text="{Binding SyncMinites}" Margin="10,0,10,0" VerticalOptions="CenterAndExpand" FontSize="Title" FontAttributes="Bold" TextColor="Black"/>
-                        <ImageButton Source="icon_plus" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"
-                            IsVisible="{Binding IsIncrementIocnVisible}"
-                            touch:TouchEff.Command="{Binding IncrementORDecrementCommand}"
-                            touch:TouchEff.CommandParameter="in"/>
+                            <ImageButton Source="{local:ImageResource mTIM.Images.icon_plus.png}" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" BackgroundColor="Transparent"
+                            IsVisible="{Binding IsIncrementIocnVisible}" Command="{Binding IncrementORDecrementCommand}" CommandParameter="in"/>
                     </StackLayout>
                 </StackLayout>
             </StackLayout>

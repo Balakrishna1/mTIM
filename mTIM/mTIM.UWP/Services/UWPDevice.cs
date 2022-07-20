@@ -21,24 +21,6 @@ namespace mTIM.UWP.Services
 
                 try
                 {
-                    if (ApiInformation.IsTypePresent("Windows.System.Profile.SystemIdentification"))
-                    {
-                        var systemId = SystemIdentification.GetSystemIdForPublisher();
-
-                        // Make sure this device can generate the IDs
-                        if (systemId.Source != SystemIdentificationSource.None)
-                        {
-                            // The Id property has a buffer with the unique ID
-                            var hardwareId = systemId.Id;
-                            var dataReader = Windows.Storage.Streams.DataReader.FromBuffer(hardwareId);
-
-                            var bytes = new byte[hardwareId.Length];
-                            dataReader.ReadBytes(bytes);
-
-                            id = Convert.ToBase64String(bytes);
-                        }
-                    }
-
                     if (id == null && ApiInformation.IsTypePresent("Windows.System.Profile.HardwareIdentification"))
                     {
                         var token = HardwareIdentification.GetPackageSpecificToken(null);
@@ -87,7 +69,25 @@ namespace mTIM.UWP.Services
 
         public string GetUniqueID()
         {
-            return Id;
+            string uniqueID = string.Empty;
+            if (ApiInformation.IsTypePresent("Windows.System.Profile.SystemIdentification"))
+            {
+                var systemId = SystemIdentification.GetSystemIdForPublisher();
+
+                // Make sure this device can generate the IDs
+                if (systemId.Source != SystemIdentificationSource.None)
+                {
+                    // The Id property has a buffer with the unique ID
+                    var hardwareId = systemId.Id;
+                    var dataReader = Windows.Storage.Streams.DataReader.FromBuffer(hardwareId);
+
+                    var bytes = new byte[hardwareId.Length];
+                    dataReader.ReadBytes(bytes);
+
+                    uniqueID = Convert.ToBase64String(bytes);
+                }
+            }
+            return uniqueID;
         }
     }
 }

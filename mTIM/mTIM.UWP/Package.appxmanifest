@@ -6,16 +6,16 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   IgnorableNamespaces="uap mp">
 
-  <Identity
-    Name="9cca527c-97df-4328-9d04-6b774024e639"
-    Publisher="CN=da7542d0-388f-4692-a2f0-88910196a69d"
+ <Identity
+	  Name="3c0371a2-235e-4e27-807a-abae1d377762"
+	  Publisher="CN=b04741dc-9839-4fc5-9ea7-12efc69a5b46"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>mTIM.UWP</DisplayName>
-    <PublisherDisplayName>da7542d0-388f-4692-a2f0-88910196a69d</PublisherDisplayName>
+    <PublisherDisplayName>b04741dc-9839-4fc5-9ea7-12efc69a5b46</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -33,18 +33,18 @@
       EntryPoint="mTIM.UWP.App">
       <uap:VisualElements
         DisplayName="mTIM.UWP"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
+        Square150x150Logo="Assets\icon.png"
+        Square44x44Logo="Assets\icon.png"
         Description="mTIM.UWP"
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\icon.png" Square71x71Logo="Assets\SmallTile.png">
           <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo" />
             <uap:ShowOn Tile="wide310x150Logo" />
             <uap:ShowOn Tile="square310x310Logo" />
+            <uap:ShowOn Tile="square150x150Logo"/>
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:SplashScreen Image="Assets\icon.png" />
       </uap:VisualElements>
     </Application>
   </Applications>

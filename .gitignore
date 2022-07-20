@@ -9,3 +9,6 @@
 /mTIM/mTIM.UWP/bin/x86/Debug
 /mTIM/mTIM.UWP/obj
 /mTIM/BottomSheet/obj
+/mTIM/BottomSheet/bin/Debug/netstandard2.0
+/mTIM/mTIM.Android/bin/Debug
+/mTIM/mTIM.UWP/bin/x64/Debug
