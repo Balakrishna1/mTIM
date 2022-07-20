@@ -757,7 +757,6 @@ namespace mTIM.ViewModels
         private async void BarcodeClickCommandExecute()
         {
             //IsOpenBarcodeView = true;
-            IsScanning = true;
             //#if __ANDROID__
             //            // Initialize the scanner first so it can track the current context
             //            MobileBarcodeScanner.Initialize (Application);
@@ -767,7 +766,11 @@ namespace mTIM.ViewModels
             //            var result = await scanner.Scan();
 
             //            HandleResult(result);
-            await Navigation.PushModalAsync(new NavigationPage(new BarcodeContentPage(this)), true);
+            if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.Android || Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS)
+            {
+                IsScanning = true;
+                await Navigation.PushModalAsync(new NavigationPage(new BarcodeContentPage(this)), true);
+            }
         }
 
         public ICommand MessageClickCommand => new Command(MessageClickCommandExecute);

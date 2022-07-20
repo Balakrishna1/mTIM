@@ -131,19 +131,21 @@
             </local:UrhoView>
         </StackLayout>
     </StackLayout>
+
+
     <local:BottomMenuContentView
         x:Name="CustomBottomSheet"
         IsOpen="{Binding IsOpenMenuOptions}"
         ContentPosition="Bottom"
         Movement="BottomUp"/>
-
-     <local:BottomUpdateAppInfoContentView
+        
+    <local:BottomUpdateAppInfoContentView
         x:Name="AppUpdateBottomSheet"
         IsOpen="{Binding IsOpenUpdateOptions}"
+        IsVisible="{Binding IsOpenUpdateOptions}"
         ContentPosition="Bottom"
         Movement="BottomUp"/>
-        
-    <!--<local:BarcodeContentView
+        <!--<local:BarcodeContentView
         x:Name="BarcodeView"
         IsVisible="false"
         IsOpen="{Binding IsOpenBarcodeView}"

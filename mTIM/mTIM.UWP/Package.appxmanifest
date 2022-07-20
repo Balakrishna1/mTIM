@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="3c0371a2-235e-4e27-807a-abae1d377762"
-    Publisher="CN=b04741dc-9839-4fc5-9ea7-12efc69a5b46"
+    Name="9cca527c-97df-4328-9d04-6b774024e639"
+    Publisher="CN=da7542d0-388f-4692-a2f0-88910196a69d"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>mTIM.UWP</DisplayName>
-    <PublisherDisplayName>b04741dc-9839-4fc5-9ea7-12efc69a5b46</PublisherDisplayName>
+    <PublisherDisplayName>da7542d0-388f-4692-a2f0-88910196a69d</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

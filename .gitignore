@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/mTIM/mTIM/bin/Debug/netstandard2.0
+/mTIM/mTIM/obj
+/mTIM/mTIM.Android/obj
+/mTIM/mTIM.iOS/obj
+/mTIM/mTIM.UWP/bin/x86/Debug
+/mTIM/mTIM.UWP/obj
+/mTIM/BottomSheet/obj

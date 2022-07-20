@@ -351,17 +351,22 @@ namespace mTIM
                 this.width = width;
                 this.height = height;
                 //reconfigure layout
+                UpdateLayout();
             }
+        }
+
+        private void UpdateLayout()
+        {
             ViewModel.IsScanning = false;
             ViewModel.IsOpenBarcodeView = false;
             if (!CustomBottomSheet.IsInitiated)
             {
-                CustomBottomSheet.Init(height, width);
+                CustomBottomSheet.InvokeView(height, width);
             }
             CustomBottomSheet.InvokeView(height, width);
             if (!AppUpdateBottomSheet.IsInitiated)
             {
-                AppUpdateBottomSheet.Init(height, width);
+                AppUpdateBottomSheet.InvokeView(height, width);
             }
             AppUpdateBottomSheet.InvokeView(height, width);
             if (height > width)

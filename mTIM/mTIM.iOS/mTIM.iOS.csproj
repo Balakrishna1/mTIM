@@ -30,7 +30,8 @@
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchFastDev>true</MtouchFastDev>
     <MtouchExtraArgs>--interpreter</MtouchExtraArgs>
-    <CodesignProvision></CodesignProvision>
+    <CodesignProvision>
+    </CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -196,10 +197,18 @@
     <ImageAsset Include="Assets.xcassets\icon_minus.imageset\icon_minus.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\icon_back.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\icon_gray_info.png" />
-    <ImageAsset Include="Assets.xcassets\icon_back.imageset\icon_back.png" />
+    <ImageAsset Include="Assets.xcassets\icon_back.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\icon_gray_info.imageset\icon_gray_info.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\icon_back.imageset\icon_back.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>

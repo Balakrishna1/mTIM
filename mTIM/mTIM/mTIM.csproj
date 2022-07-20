@@ -59,7 +59,6 @@
     <Folder Include="Enums\" />
     <Folder Include="Properties\" />
     <Folder Include="Pages\" />
-    <Folder Include="Views\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Enums\" />
     <Folder Include="Models\3D\" />
