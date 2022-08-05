@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:syncfusion="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
+             xmlns:local="clr-namespace:mTIM"
              x:Class="mTIM.ElementViewCell">
   <ViewCell.View>
 	  <StackLayout x:Name="rootView" Padding="0,0,0,5">
@@ -23,28 +24,28 @@
           <Label x:Name="lblName" TextColor="Black" Padding="10,0,10,0" HorizontalOptions="StartAndExpand"  VerticalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0"  Text="sample text" FontSize="Medium"/>
 		  <StackLayout x:Name="stackInfo" Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
 			  <Label x:Name="lblTime" VerticalOptions="Center" TextColor="Black" HorizontalOptions="EndAndExpand" FontSize="Small" Margin="0,0,15,0"/>
-			  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" HorizontalOptions="EndAndExpand" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="30" HeightRequest="30"  Margin="0,0,15,0"/>
+			  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" HorizontalOptions="EndAndExpand" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="35" HeightRequest="30"  Margin="0,0,15,0"/>
 		  </StackLayout>
 		  <StackLayout x:Name="absContent" HorizontalOptions="EndAndExpand" VerticalOptions="EndAndExpand" Padding="0,0,10,0" Grid.Row="0" Grid.Column="1">
-			  <StackLayout x:Name="stackValue" Margin="0,0,0,10" BackgroundColor="LightGray" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
+			  <StackLayout x:Name="stackValue" Margin="0,0,0,10" BackgroundColor="Gray" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
 				<StackLayout.GestureRecognizers>
 					<TapGestureRecognizer Tapped="OnTapped"/>
 				</StackLayout.GestureRecognizers>
 				<Label x:Name="lblValue" HeightRequest="30" MaxLines="1" WidthRequest="80" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="Medium" />
-				<Image Source="icon_document" VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="0,0,10,0"/>
+                        <Image Source="{local:ImageResource mTIM.Images.icon_document.png}" VerticalOptions="Center" HorizontalOptions="EndAndExpand" Margin="0,0,10,0"/>
 			  </StackLayout>
 			  <StackLayout x:Name="stackCheckBox" Margin="0,0,0,10" IsVisible="false" Orientation="Horizontal" HorizontalOptions="EndAndExpand" VerticalOptions="Center">
 				  <StackLayout.GestureRecognizers>
 					<TapGestureRecognizer Tapped="OnCheckBoxTapped"/>
 				</StackLayout.GestureRecognizers>
-				  <Image x:Name="chbValue" HeightRequest="35" WidthRequest="35" Source="icon_unchecked" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Image x:Name="chbValue" HeightRequest="35" WidthRequest="35" Source="{local:ImageResource mTIM.Images.icon_unchecked.png}" HorizontalOptions="Center" VerticalOptions="Center"/>
 			  </StackLayout>
 			  <StackLayout x:Name="stackDocument" Orientation="Vertical" Padding="5,5,5,5" Margin="0,10,0,10" IsVisible="false" HorizontalOptions="EndAndExpand" VerticalOptions="EndAndExpand">
 				<StackLayout.GestureRecognizers>
 					<TapGestureRecognizer Tapped="OnDocumentTapped"/>
 				</StackLayout.GestureRecognizers>
-				<Image Source="icons8_document" HeightRequest="35" WidthRequest="35" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
-				<Label x:Name="lblDocValue" HorizontalTextAlignment="Center" VerticalTextAlignment="Start" FontSize="Small"/>
+                     <Image Source="{local:ImageResource mTIM.Images.icons8_document.png}" HeightRequest="35" WidthRequest="35" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+					<Label x:Name="lblDocValue" HorizontalTextAlignment="Center" VerticalTextAlignment="Start" FontSize="12"/>
 			  </StackLayout>
 		  </StackLayout>
       </Grid>

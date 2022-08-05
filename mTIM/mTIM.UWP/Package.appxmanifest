@@ -51,5 +51,11 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="internetClientServer"/>
+    <uap:Capability Name="phoneCall"/>
+    <uap:Capability Name="picturesLibrary"/>
+    <Capability Name="privateNetworkClientServer"/>
+    <DeviceCapability Name="location"/>
+    <DeviceCapability Name="webcam"/>
   </Capabilities>
 </Package>

@@ -36,15 +36,6 @@ namespace mTIM
             //BarcodeView.SetBindingViewModel(ViewModel);
             projectFontSize = lblTittle.FontSize;
             projectSubtextFontSize = lblSubtext.FontSize;
-            var customCell = new DataTemplate(typeof(ElementViewCell));
-            customCell.SetBinding(ElementViewCell.IdProperty, "Id");
-            customCell.SetBinding(ElementViewCell.NameProperty, "Name");
-            customCell.SetBinding(ElementViewCell.TypeProperty, "Type");
-            customCell.SetBinding(ElementViewCell.ColorProperty, "Color");
-            customCell.SetBinding(ElementViewCell.LevelProperty, "Level");
-            customCell.SetBinding(ElementViewCell.ValueProperty, "Value");
-            customCell.SetBinding(ElementViewCell.HasChildsProperty, "HasChilds");
-            customCell.SetBinding(ElementViewCell.IsSelectedProperty, "IsSelected");
 
             ElementViewCell.ActionRightIconClicked -= RightIconClicked;
             ElementViewCell.ActionRightIconClicked += RightIconClicked;
@@ -52,8 +43,6 @@ namespace mTIM
             ElementViewCell.ActionValueClicked += ValueClicked;
             ElementViewCell.ActionItemClicked -= ItemClicked;
             ElementViewCell.ActionItemClicked += ItemClicked;
-            listView.SelectionMode = ListViewSelectionMode.Single;
-            listView.ItemTemplate = customCell;
             listView.ItemsSource = ViewModel.SelectedItemList;
             ViewModel.SelectedItemList.CollectionChanged += SelectedItemList_CollectionChanged;
             ViewModel.LstValues.CollectionChanged += LstValues_CollectionChanged;
@@ -65,8 +54,7 @@ namespace mTIM
             ViewModel.UpdateDrawing += UpdateDrawing;
             ViewModel.UpdateListSelection -= UpdateListSelection;
             ViewModel.UpdateListSelection += UpdateListSelection;
-
-            Task.Run(async () =>
+            Device.BeginInvokeOnMainThread(async () =>
             {
                 if (!await GetPermissions())
                 {
@@ -193,6 +181,8 @@ namespace mTIM
         private void LstValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             lstValues.SelectedItem = null;
+            lstValues.ItemsSource = null;
+            lstValues.ItemsSource = ViewModel.LstValues;
         }
 
         /// <summary>
@@ -339,6 +329,8 @@ namespace mTIM
         private void SelectedItemList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             listView.SelectedItem = null;
+            listView.ItemsSource = null;
+            listView.ItemsSource = ViewModel.SelectedItemList;
         }
 
         private double width = 0;
@@ -357,62 +349,65 @@ namespace mTIM
 
         private void UpdateLayout()
         {
-            ViewModel.IsScanning = false;
-            ViewModel.IsOpenBarcodeView = false;
-            if (!CustomBottomSheet.IsInitiated)
+            Device.BeginInvokeOnMainThread(() =>
             {
+                ViewModel.IsScanning = false;
+                ViewModel.IsOpenBarcodeView = false;
+                if (!CustomBottomSheet.IsInitiated)
+                {
+                    CustomBottomSheet.InvokeView(height, width);
+                }
                 CustomBottomSheet.InvokeView(height, width);
-            }
-            CustomBottomSheet.InvokeView(height, width);
-            if (!AppUpdateBottomSheet.IsInitiated)
-            {
+                if (!AppUpdateBottomSheet.IsInitiated)
+                {
+                    AppUpdateBottomSheet.InvokeView(height, width);
+                }
                 AppUpdateBottomSheet.InvokeView(height, width);
-            }
-            AppUpdateBottomSheet.InvokeView(height, width);
-            if (height > width)
-            {
-                TimTaskListHelper.GetTotalList()?.ToList()?.ForEach(x => x.IsSelected = false);
-                //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
-                GlobalConstants.IsLandscape = false;
-                stackHeader.Orientation = StackOrientation.Vertical;
-                stackHeader.HorizontalOptions = LayoutOptions.EndAndExpand;
-                stackHeader.FlowDirection = FlowDirection.LeftToRight;
-                stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
-                stackList.Orientation = StackOrientation.Vertical;
-                listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = width;
-                listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
-                stopUrhoView();
-                glBuilding.IsVisible = false;
-                isLoaded = false;
-            }
-            else
-            {
-                //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
-                //ListWidthInLandscape = (width / 4) * 1.5;
-                GlobalConstants.IsLandscape = true;
-                glBuilding.IsVisible = true;
-                stackHeader.Orientation = StackOrientation.Horizontal;
-                stackHeader.HorizontalOptions = LayoutOptions.EndAndExpand;
-                stackHeader.FlowDirection = FlowDirection.RightToLeft;
-                stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
-                stackList.Orientation = StackOrientation.Horizontal;
-                listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = ListWidthInLandscape;
-                listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
-                glBuilding.WidthRequest = width - ListWidthInLandscape;
-                glBuilding.HeightRequest = height - frameHeader.Height;
-                //glBuilding.BackgroundColor = Color.White;
-                loadUrhoView();
-            }
+                if (height > width)
+                {
+                    TimTaskListHelper.GetTotalList()?.ToList()?.ForEach(x => x.IsSelected = false);
+                    //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
+                    GlobalConstants.IsLandscape = false;
+                    stackHeader.Orientation = StackOrientation.Vertical;
+                    stackHeader.HorizontalOptions = LayoutOptions.EndAndExpand;
+                    stackHeader.FlowDirection = FlowDirection.LeftToRight;
+                    stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
+                    stackList.Orientation = StackOrientation.Vertical;
+                    listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = width;
+                    listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
+                    stopUrhoView();
+                    glBuilding.IsVisible = false;
+                    isLoaded = false;
+                }
+                else
+                {
+                    //Xamarin.Forms.PlatformConfiguration.iOSSpecific.Page.SetUseSafeArea(On<Xamarin.Forms.PlatformConfiguration.iOS>(), true);
+                    //ListWidthInLandscape = (width / 4) * 1.5;
+                    GlobalConstants.IsLandscape = true;
+                    glBuilding.IsVisible = true;
+                    stackHeader.Orientation = StackOrientation.Horizontal;
+                    stackHeader.HorizontalOptions = LayoutOptions.EndAndExpand;
+                    stackHeader.FlowDirection = FlowDirection.RightToLeft;
+                    stackMenuOptions.FlowDirection = FlowDirection.LeftToRight;
+                    stackList.Orientation = StackOrientation.Horizontal;
+                    listView.WidthRequest = lstValues.WidthRequest = lstDocuments.WidthRequest = stackStringType.WidthRequest = ListWidthInLandscape;
+                    listView.HeightRequest = lstValues.HeightRequest = lstDocuments.HeightRequest = stackStringType.HeightRequest = height - frameHeader.Height;
+                    glBuilding.WidthRequest = width - ListWidthInLandscape;
+                    glBuilding.HeightRequest = height - frameHeader.Height;
+                    //glBuilding.BackgroundColor = Color.White;
+                    loadUrhoView();
+                }
 
-            if (Device.RuntimePlatform.Equals(Device.iOS))
-            {
-                var safeInsets = On<iOS>().SafeAreaInsets();
-                safeInsets.Right = 0;
-                safeInsets.Left = GlobalConstants.IsLandscape ? 40 : 0;
-                safeInsets.Top = GlobalConstants.IsLandscape ? 0 : 40;
-                safeInsets.Bottom = 0;
-                Padding = safeInsets;
-            }
+                if (Device.RuntimePlatform.Equals(Device.iOS))
+                {
+                    var safeInsets = On<iOS>().SafeAreaInsets();
+                    safeInsets.Right = 0;
+                    safeInsets.Left = GlobalConstants.IsLandscape ? 40 : 0;
+                    safeInsets.Top = GlobalConstants.IsLandscape ? 0 : 40;
+                    safeInsets.Bottom = 0;
+                    Padding = safeInsets;
+                }
+            });
         }
 
         /// <summary>
@@ -663,12 +658,11 @@ namespace mTIM
         {
             if (!isLoaded)
             {
-                //Device.StartTimer(TimeSpan.FromMilliseconds(300), () =>
-                //{
-                await glBuilding.StartUrhoApp();
-                isLoaded = true;
-                //    return true;
-                //});
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await glBuilding.StartUrhoApp();
+                    isLoaded = true;
+                });
             }
         }
 
@@ -680,8 +674,11 @@ namespace mTIM
         {
             if (isLoaded)
             {
-                await glBuilding.ResetUrhoApp();
-                isLoaded = false;
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await glBuilding.ResetUrhoApp();
+                    isLoaded = false;
+                });
             }
         }
 

@@ -41,11 +41,14 @@ namespace mTIM
 
         public void ScaleTo1x(Image image)
         {
-            var a = new Animation();
-            a.Add(0,0.5,new Animation(v => image.Scale = v, 0.7, 1.2, Easing.CubicInOut));
-            a.Add(0.5, 1, new Animation(v => image.Scale = v, 1.2, 0.7, Easing.CubicIn));
-            a.Commit(this, "animation", length: 1000,
-                finished: (v, c) => image.Scale = 0.7, repeat: () => true);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                var a = new Animation();
+                a.Add(0, 0.5, new Animation(v => image.Scale = v, 0.7, 1.2, Easing.CubicInOut));
+                a.Add(0.5, 1, new Animation(v => image.Scale = v, 1.2, 0.7, Easing.CubicIn));
+                a.Commit(this, "animation", length: 1000,
+                    finished: (v, c) => image.Scale = 0.7, repeat: () => true);
+            });
         }
     }
 }

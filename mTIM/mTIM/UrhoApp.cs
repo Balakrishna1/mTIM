@@ -73,8 +73,8 @@ namespace mTIM
             AddStuff();
 
             CreateText();
-            Input.TouchBegin += Input_TouchBegin;
-            Input.TouchEnd += Input_TouchEnd;
+            this.Input.TouchBegin += Input_TouchBegin;
+            this.Input.TouchEnd += Input_TouchEnd;
         }
 
         #region Initialisation
@@ -350,7 +350,10 @@ namespace mTIM
             if (!TimTaskListHelper.IsParent(id))
             {
                 UpdateElements(TouchedNode.Name);
-                ViewModel.SlectedElementPositionIn3D(id);
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                {
+                    ViewModel.SlectedElementPositionIn3D(id);
+                });
             }
             TouchedNode = null;
         }
@@ -397,7 +400,7 @@ namespace mTIM
             try
             {
                 //Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
-                Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
+                Ray cameraRay = Camera.GetScreenRay((float)Calculate(obj.X) / Graphics.Width, (float)(obj.Y-55) / Graphics.Height);
                 var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
                 if (result != null)
                 {
@@ -419,6 +422,10 @@ namespace mTIM
             {
                 Debug.WriteLine($"Touch_Exception: { ex.Message}");
             }
+        }
+        private double Calculate(double X)
+        {
+            return (X * ((X / 100) * .1 + (X < 450 ? 0.12 : 0.18)));
         }
     }
 

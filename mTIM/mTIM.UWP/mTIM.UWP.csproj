@@ -12,7 +12,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
@@ -99,6 +99,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\mtimservices\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -140,6 +145,52 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <None Include="Connected Services\mtimservices\configuration91.svcinfo" />
+    <None Include="Connected Services\mtimservices\configuration.svcinfo" />
+    <None Include="Connected Services\mtimservices\External.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\External1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\External2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\External3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\External4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\External5.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\External6.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\External7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.FileInformation1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.StateInformation1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.TimTask1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.TupleOfstringbase64Binary1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.VersionUpdateInformation1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\mtimservices\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\mtimservices\External.disco" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +204,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Plugin.Permissions">
+      <Version>6.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Rg.Plugins.Popup">
+      <Version>2.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.CommunityToolkit">
+      <Version>2.0.4</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="UrhoSharp.Forms">
       <Version>1.9.67</Version>
@@ -168,6 +228,16 @@
       <Project>{EF085A02-8403-4254-87ED-2E4E1DFCA940}</Project>
       <Name>mTIM</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\mtimservices\MobileTimService.wsdl" />
+    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\mtimservices\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

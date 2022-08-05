@@ -20,7 +20,7 @@ namespace mTIM.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        public ObservableCollectionRanged<TimTaskModel> SelectedItemList { get; set; }
+        public ObservableCollectionRanged<TimTaskModel> SelectedItemList { get; set; } = new ObservableCollectionRanged<TimTaskModel>();
         public ObservableCollectionRanged<Value> LstValues { get; set; } = new ObservableCollectionRanged<Value>();
         public ObservableCollectionRanged<FileInfo> LstFiles { get; set; } = new ObservableCollectionRanged<FileInfo>();
 
@@ -39,7 +39,6 @@ namespace mTIM.ViewModels
         {
             this.Navigation = navigation;
             Device = DependencyService.Get<IDevice>();
-            SelectedItemList = new ObservableCollectionRanged<TimTaskModel>();
             FileInfoHelper.Instance.LoadFileList();
             FileInfoHelper.Instance.LoadExtensions();
             FileInfoHelper.Instance.FileUploadCompleted -= FileUploadCompleted;
@@ -49,7 +48,6 @@ namespace mTIM.ViewModels
             FileInfoHelper.Instance.CommentUpdatedCompleted += EditCommentCompleted;
             Webservice.GraphicsDownloadedCallBack += GraphicsDownloadedCallBack;
             UploadOfflineFilesIntoServer();
-            LoadMesh();
         }
 
         private void GraphicsDownloadedCallBack(bool isDownloaded)
@@ -148,6 +146,10 @@ namespace mTIM.ViewModels
                     MediaPickerOptions option = new MediaPickerOptions();
                     option.Title = "mTIM";
                     var fileinfo = await MediaPicker.CapturePhotoAsync(option);
+                    if(fileinfo == null)
+                    {
+                        return;
+                    }
                     var bytes = LoadPhotoAsync(fileinfo);
                     var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
                     await Task.Delay(500);
@@ -240,6 +242,10 @@ namespace mTIM.ViewModels
                 MediaPickerOptions option = new MediaPickerOptions();
                 option.Title = "mTIM";
                 var fileinfo = await MediaPicker.PickPhotoAsync(option);
+                if(fileinfo == null)
+                {
+                    return;
+                }
                 var bytes = LoadPhotoAsync(fileinfo);
                 var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
                 await Task.Delay(500);
@@ -584,7 +590,6 @@ namespace mTIM.ViewModels
                     headerStrings.RemoveAt(headerStrings.Count - 1);
                     updateHeaderTexts();
                     //SelectedItemText = selectedItem.Name;
-                    SelectedItemList.ToList().ForEach(x => x.IsSelected = false);
                     SelectedItemList.Clear();
                     SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(selectedItem.Parent, selectedItem.Level));
                     var item = SelectedItemList.Where(x => x.IsSelected == true).FirstOrDefault();
@@ -869,6 +874,7 @@ namespace mTIM.ViewModels
                     {
                         list.UpdateList();
                         RefreshData();
+                        LoadMesh();
                     }
                 }
             }

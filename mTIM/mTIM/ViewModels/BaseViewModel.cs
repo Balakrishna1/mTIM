@@ -198,31 +198,34 @@ namespace mTIM.ViewModels
 
         public void UploadOfflineFilesIntoServer()
         {
-            if (IsNetworkConnected)
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
-                var list = FileInfoHelper.Instance.TotalFilesList;
-                if (list?.Count > 0)
+                if (IsNetworkConnected)
                 {
-                    foreach (var item in list)
+                    var list = FileInfoHelper.Instance.TotalFilesList;
+                    if (list?.Count > 0)
                     {
-                        var offlineItems = item.Values.Where(x => x.IsOffline.Equals(true)).ToList();
-                        var editedItems = item.Values.Where(x => x.IsCommentEdited.Equals(true)).ToList();
-                        var deletedItems = item.Values.Where(x => x.IsDeleted.Equals(true)).ToList();
-                        if (offlineItems != null && offlineItems.Count > 0)
+                        foreach (var item in list)
                         {
-                            UploadOfflineFiles(item.Key, offlineItems);
-                        }
-                        if (editedItems != null && editedItems.Count > 0)
-                        {
-                            UploadOfflineCommentFiles(item.Key, editedItems);
-                        }
-                        if (deletedItems != null && deletedItems.Count > 0)
-                        {
-                            UploadOfflineDeletedFiles(item.Key, deletedItems);
+                            var offlineItems = item.Values.Where(x => x.IsOffline.Equals(true)).ToList();
+                            var editedItems = item.Values.Where(x => x.IsCommentEdited.Equals(true)).ToList();
+                            var deletedItems = item.Values.Where(x => x.IsDeleted.Equals(true)).ToList();
+                            if (offlineItems != null && offlineItems.Count > 0)
+                            {
+                                UploadOfflineFiles(item.Key, offlineItems);
+                            }
+                            if (editedItems != null && editedItems.Count > 0)
+                            {
+                                UploadOfflineCommentFiles(item.Key, editedItems);
+                            }
+                            if (deletedItems != null && deletedItems.Count > 0)
+                            {
+                                UploadOfflineDeletedFiles(item.Key, deletedItems);
+                            }
                         }
                     }
                 }
-            }
+            });
         }
 
         private void UploadOfflineFiles(int taskId, List<FileInfo> items)

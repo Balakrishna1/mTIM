@@ -15,6 +15,14 @@ namespace mTIM.Models
 
     public class FileInfo
     {
+        public FileInfo()
+        {
+        }
+        public FileInfo(string comment, int fileId)
+        {
+            FileID = fileId;
+            Comment = comment;
+        }
         public string Comment { get; set; }
         public int FileID { get; set; }
         public bool FileIDSpecified { get; set; }

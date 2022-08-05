@@ -7,7 +7,7 @@ using Xamarin.Forms.Xaml;
 namespace mTIM
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ElementViewCell : ViewCell
+    partial class ElementViewCell : ViewCell
     {
         public ElementViewCell()
         {
@@ -19,7 +19,7 @@ namespace mTIM
         public static Action<int> ActionItemClicked;
 
         public static readonly BindableProperty IdProperty =
-            BindableProperty.Create("ID", typeof(int), typeof(ElementViewCell), 0);
+            BindableProperty.Create("Id", typeof(int), typeof(ElementViewCell), 0);
         public static readonly BindableProperty NameProperty =
             BindableProperty.Create("Name", typeof(string), typeof(ElementViewCell), "Name");
         public static readonly BindableProperty TypeProperty =
@@ -31,11 +31,11 @@ namespace mTIM
         public static readonly BindableProperty ValueProperty =
             BindableProperty.Create("Value", typeof(string), typeof(ElementViewCell), "Value", propertyChanged: HandleValueChangesPropertyChanged);
         public static readonly BindableProperty HasChildsProperty =
-            BindableProperty.Create("HasChilds", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay);
+            BindableProperty.Create("HasChilds", typeof(bool), typeof(ElementViewCell), false);
         public static readonly BindableProperty IsSelectedProperty =
             BindableProperty.Create("IsSelected", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay, propertyChanged: HandleSelectionChangesPropertyChanged);
 
-        public int ID
+        public int Id
         {
             get { return (int)GetValue(IdProperty); }
             set { SetValue(IdProperty, value); }
@@ -85,145 +85,179 @@ namespace mTIM
 
         private static void HandleSelectionChangesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            ElementViewCell targetView;
-            targetView = (ElementViewCell)bindable;
-            if (targetView != null)
-                targetView.rootView.BackgroundColor = ((bool)newValue) ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.White;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                ElementViewCell targetView;
+                targetView = (ElementViewCell)bindable;
+                if (targetView != null)
+                    targetView.rootView.BackgroundColor = ((bool)newValue) ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.White;
+            });
+        }
+
+        private static void HandleHasChaildPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                ElementViewCell targetView;
+                targetView = (ElementViewCell)bindable;
+                if (targetView != null)
+                   targetView.UpdateChaild((bool)newValue);
+            });
         }
 
         private static void HandleValueChangesPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            ElementViewCell targetView;
-            targetView = (ElementViewCell)bindable;
-            if (targetView != null)
-                targetView.UpdateValue((string)newValue);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                ElementViewCell targetView;
+                targetView = (ElementViewCell)bindable;
+                if (targetView != null)
+                    targetView.UpdateValue((string)newValue);
+            });
+        }
+
+        private void UpdateChaild(bool hasChilds)
+        {
+            if (hasChilds)
+            {
+                imgInfoButton.Source = ImageSourceHelper.GetImageSource("icon_forword.png");
+                imgInfoButton.Clicked -= ImgInfoButton_Clicked;
+                imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                absContent.IsVisible = false;
+            }
         }
 
         private void UpdateValue(string Value)
         {
-            switch (Type)
-            {
-                case DataType.Int:
-                case DataType.String:
-                case DataType.Float:
-                    lblValue.Text = Value;
-                    break;
-                case DataType.Bool:
-                    chbValue.Source = ImageSource.FromFile(Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
-                    break;
-                case DataType.Aktion:
-                case DataType.Aktion2:
+                switch (Type)
+                {
+                    case DataType.Int:
+                    case DataType.String:
+                    case DataType.Float:
+                        lblValue.Text = Value;
+                        break;
+                    case DataType.Bool:
+                        chbValue.Source = ImageSourceHelper.GetImageSource(Convert.ToBoolean(Value) ? "icon_checked.png" : "icon_unchecked.png");
+                        break;
+                    case DataType.Aktion:
+                    case DataType.Aktion2:
+                    lblTime.IsVisible = true;
                     lblTime.Text = Value;
-                    break;
-                default:
-                    break;
-            }
+                        break;
+                    default:
+                        break;
+                }
         }
 
 
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
-            var maxLength = GlobalConstants.IsLandscape ? 12 : 40;
-            if (Name.Length > maxLength)
+            Device.BeginInvokeOnMainThread(() =>
             {
-                lblName.FontSize = (int)lblName.FontSize - 4;
-            }
-            lblName.Text = Name;
-            rootView.BackgroundColor = IsSelected ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
-            if (HasChilds)
-            {
-                absContent.IsVisible = false;
-                imgInfoButton.Source = ImageSource.FromFile("icon_forword.png");
-                imgInfoButton.Clicked -= ImgInfoButton_Clicked;
-                imgInfoButton.Clicked += ImgInfoButton_Clicked;
-            }
-            else
-            {
-                switch (Type)
+                var maxLength = GlobalConstants.IsLandscape ? 12 : 40;
+                if (Name.Length > maxLength)
                 {
-                    case DataType.Int:
-                    case DataType.String:
-                    case DataType.Float:
-                        stackInfo.IsVisible = false;
-                        lblValue.Text = Value;
-                        stackValue.IsVisible = true;
-                        break;
-                    case DataType.Bool:
-                        stackInfo.IsVisible = false;
-                        chbValue.Source = ImageSource.FromFile(Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
-                        stackCheckBox.IsVisible = true;
-                        break;
-                    case DataType.Doc:
-                        stackInfo.IsVisible = false;
-                        int count = FileInfoHelper.Instance.GetCount(ID);
-                        lblDocValue.Text = count <= 0 ? string.Empty : count.ToString() + (count == 1 ? "Document" : "Documemts");
-                        stackDocument.IsVisible = true;
-                        break;
-                    case DataType.Prjladen:
-                    case DataType.Prjladen2:
-                        stackInfo.IsVisible = true;
-                        absContent.IsVisible = false;
-                        imgInfoButton.IsEnabled = true;
-                        imgInfoButton.Source = ImageSource.FromFile("icon_download.png");
-                        imgInfoButton.Clicked -= ImgInfoButton_Clicked;
-                        imgInfoButton.Clicked += ImgInfoButton_Clicked;
-                        break;
-                    case DataType.Aktion:
-                    case DataType.Aktion2:
-                        stackInfo.IsVisible = true;
-                        absContent.IsVisible = false;
-                        lblTime.Text = Value;
-                        imgInfoButton.IsEnabled = true;
-                        imgInfoButton.Source = ImageSource.FromFile("icon_edit.png");
-                        imgInfoButton.Clicked -= ImgInfoButton_Clicked;
-                        imgInfoButton.Clicked += ImgInfoButton_Clicked;
-                        break;
-                    case DataType.None:
-                    case DataType.Referenz:
-                    case DataType.Count:
-                    default:
-                        rootView.IsEnabled = false;
-                        rootView.BackgroundColor = Xamarin.Forms.Color.GhostWhite;
-                        stackInfo.IsVisible = true;
-                        absContent.IsVisible = false;
-                        imgInfoButton.IsEnabled = false;
-                        imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
-                        break;
+                    lblName.FontSize = (int)lblName.FontSize - 4;
                 }
-            }
+                lblTime.IsVisible = false;
+                lblName.Text = Name;
+                rootView.BackgroundColor = IsSelected ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
+                if (HasChilds)
+                {
+                    imgInfoButton.Source = ImageSourceHelper.GetImageSource("icon_forword.png");
+                    imgInfoButton.Clicked -= ImgInfoButton_Clicked;
+                    imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                    absContent.IsVisible = false;
+                }
+                else
+                {
+                    switch (Type)
+                    {
+                        case DataType.Int:
+                        case DataType.String:
+                        case DataType.Float:
+                            stackInfo.IsVisible = false;
+                            lblValue.Text = Value;
+                            stackValue.IsVisible = true;
+                            break;
+                        case DataType.Bool:
+                            stackInfo.IsVisible = false;
+                            chbValue.Source = ImageSourceHelper.GetImageSource(Convert.ToBoolean(Value) ? "icon_checked.png" : "icon_unchecked.png");
+                            stackCheckBox.IsVisible = true;
+                            break;
+                        case DataType.Doc:
+                            stackInfo.IsVisible = false;
+                            int count = FileInfoHelper.Instance.GetCount(Id);
+                            lblDocValue.Text = count <= 0 ? string.Empty : count.ToString() + (count == 1 ? "Document" : "Documemts");
+                            stackDocument.IsVisible = true;
+                            break;
+                        case DataType.Prjladen:
+                        case DataType.Prjladen2:
+                            stackInfo.IsVisible = true;
+                            absContent.IsVisible = false;
+                            imgInfoButton.IsEnabled = true;
+                            imgInfoButton.Source = ImageSourceHelper.GetImageSource("icon_download.png");
+                            imgInfoButton.Clicked -= ImgInfoButton_Clicked;
+                            imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                            break;
+                        case DataType.Aktion:
+                        case DataType.Aktion2:
+                            stackInfo.IsVisible = true;
+                            absContent.IsVisible = false;
+                            lblTime.IsVisible = true;
+                            lblTime.Text = Value;
+                            imgInfoButton.IsEnabled = true;
+                            imgInfoButton.Source = ImageSourceHelper.GetImageSource("icon_edit.png");
+                            imgInfoButton.Clicked -= ImgInfoButton_Clicked;
+                            imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                            break;
+                        case DataType.None:
+                        case DataType.Referenz:
+                        case DataType.Count:
+                        default:
+                            rootView.IsEnabled = false;
+                            rootView.BackgroundColor = Xamarin.Forms.Color.GhostWhite;
+                            stackInfo.IsVisible = true;
+                            absContent.IsVisible = false;
+                            imgInfoButton.IsEnabled = false;
+                            imgInfoButton.Source = ImageSourceHelper.GetImageSource("icon_gray_info.png");
+                            break;
+                    }
+                }
+            });
         }
 
         async void OnTapped(object sender, EventArgs e)
         {
-            await TouchHelper.Instance.TouchEffectsWithActionStruct<int>(stackValue, 0.9, 100, ID, ActionValueClicked);
+            await TouchHelper.Instance.TouchEffectsWithActionStruct<int>(stackValue, 0.9, 100, Id, ActionValueClicked);
         }
 
         private async void ImgInfoButton_Clicked(object sender, EventArgs e)
         {
-            await TouchHelper.Instance.TouchEffectsWithActionStruct(imgInfoButton, 0.9, 100, ID, ActionRightIconClicked);
+            await TouchHelper.Instance.TouchEffectsWithActionStruct(imgInfoButton, 0.9, 100, Id, ActionRightIconClicked);
         }
 
         async void OnCheckBoxTapped(object sender, EventArgs e)
         {
-            chbValue.Source = ImageSource.FromFile(!Convert.ToBoolean(Value) ? "icon_checked" : "icon_unchecked");
-            await TouchHelper.Instance.TouchEffectsWithActionStruct(chbValue, 0.9, 100, ID, ActionValueClicked);
+            chbValue.Source = ImageSourceHelper.GetImageSource(!Convert.ToBoolean(Value) ? "icon_checked.png" : "icon_unchecked.png");
+            await TouchHelper.Instance.TouchEffectsWithActionStruct(chbValue, 0.9, 100, Id, ActionValueClicked);
         }
 
         async void OnDocumentTapped(object sender, EventArgs e)
         {
-            await TouchHelper.Instance.TouchEffectsWithActionStruct(stackDocument, 0.9, 100, ID, ActionValueClicked);
+            await TouchHelper.Instance.TouchEffectsWithActionStruct(stackDocument, 0.9, 100, Id, ActionValueClicked);
         }
 
         async void OnItemTapped(object sender, EventArgs e)
         {
             if (!GlobalConstants.IsLandscape && HasChilds)
             {
-                await TouchHelper.Instance.TouchEffectsWithActionStruct(rootView, 0.95, 100, ID, ActionItemClicked);
+                await TouchHelper.Instance.TouchEffectsWithActionStruct(rootView, 0.95, 100, Id, ActionItemClicked);
             }
             else
             {
-                ActionItemClicked?.Invoke(ID);
+                ActionItemClicked?.Invoke(Id);
             }
         }
     }
