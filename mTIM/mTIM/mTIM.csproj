@@ -28,26 +28,26 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Plugin.Multilingual" Version="1.0.2" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
     <PackageReference Include="Plugin.Permissions" Version="6.0.1" />
     <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.759" />
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2125" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />
     <PackageReference Include="TouchView" Version="4.1.100" />
     <PackageReference Include="ZXing.Net.Mobile" Version="3.1.0-beta2" />
     <PackageReference Include="ZXing.Net.Mobile.Forms" Version="3.1.0-beta2" />
-    <PackageReference Include="Google.Protobuf" Version="3.9.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.21.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Acr.UserDialogs" Version="7.1.0.514" />
-    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.0-preview.140" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.0" />
     <PackageReference Include="UrhoSharp.Forms" Version="1.9.67" />
     <PackageReference Include="System.IO" Version="4.3.0" />
-    <PackageReference Include="Rg.Plugins.Popup" Version="2.0.0.14" />
-    <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="19.3.0.47" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="2.1.0" />
+    <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="20.2.0.43" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-    <PackageReference Include="protobuf-net" Version="3.0.101" />
+    <PackageReference Include="protobuf-net" Version="3.1.17" />
     <PackageReference Include="CjClutter.ObjLoader" Version="1.0.0" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
-    <PackageReference Include="Grpc.Tools" Version="2.23.0">
+    <PackageReference Include="Grpc.Tools" Version="2.47.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -129,6 +129,18 @@
     <EmbeddedResource Include="Images\language_ru.jpg" />
     <EmbeddedResource Include="Images\language_zh.jpg" />
     <EmbeddedResource Include="Images\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Windows.Foundation.FoundationContract">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Windows Kits\10\References\10.0.22000.0\Windows.Foundation.FoundationContract\4.0.0.0\Windows.Foundation.FoundationContract.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+    <Reference Include="Windows.Foundation.UniversalApiContract">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Windows Kits\10\References\10.0.22000.0\Windows.Foundation.UniversalApiContract\14.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\AppResources.Designer.cs">

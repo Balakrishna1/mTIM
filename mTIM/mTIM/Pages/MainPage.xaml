@@ -118,12 +118,12 @@
 		                                    <Grid.ColumnDefinitions>
 			                                    <ColumnDefinition Width="7*"></ColumnDefinition>
 			                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                                <ColumnDefinition Width="0.2*"></ColumnDefinition>
-			                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                <ColumnDefinition Width="1*"></ColumnDefinition>
+			                                    <ColumnDefinition Width="1*"></ColumnDefinition>
 		                                    </Grid.ColumnDefinitions>
                                                 <Button BackgroundColor="Transparent" TextTransform="None" TextColor="{Binding TextColor}" Clicked="CommentClicked" Text="{Binding Comment}" CommandParameter="{Binding .}" FontSize="Medium" VerticalOptions="Fill" Grid.Column="0" HorizontalOptions="StartAndExpand"/>
-                                                <ImageButton BackgroundColor="Transparent" IsVisible="{Binding IsShowDeleteIcon}" Clicked="OnDeleteClicked" CommandParameter="{Binding .}" x:Name="imgDelete" Grid.Column="1"  Source="icon_delete" Aspect="AspectFit" Padding="0,0,8,0" HeightRequest="50" WidthRequest="50" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
-                                                <ImageButton BackgroundColor="Transparent" Clicked="OnEyeClicked" CommandParameter="{Binding .}" x:Name="imgEye" Grid.Column="3" Source="{local:ImageResource mTIM.Images.icon_eye.png}" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+                                                    <ImageButton BackgroundColor="Transparent" IsVisible="{Binding IsShowDeleteIcon}" Clicked="OnDeleteClicked" CommandParameter="{Binding .}" x:Name="imgDelete" Grid.Column="1"  Source="{local:ImageResource mTIM.Images.icon_delete.png}" Aspect="AspectFit" Padding="5" HeightRequest="40" WidthRequest="40" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
+                                                <ImageButton BackgroundColor="Transparent" Clicked="OnEyeClicked" CommandParameter="{Binding .}" x:Name="imgEye" Grid.Column="3" Source="{local:ImageResource mTIM.Images.icon_eye.png}" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
                                         </Grid>
                                     </StackLayout>
                                 </ViewCell>
@@ -135,8 +135,8 @@
                     <StackLayout  BackgroundColor="LightGray" Orientation="Vertical" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                         <Editor TextTransform="None" Text="{Binding InputText}" MaxLength="500" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" TextColor="Black" BackgroundColor="LightGray" HeightRequest="150"/>
                         <StackLayout Orientation="Horizontal" VerticalOptions="End" HorizontalOptions="CenterAndExpand">
-                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Cancel" HorizontalOptions="Start" VerticalOptions="End" Command="{Binding CancelButtonCommand}" Padding="10" Margin="0,0,30,0" />
-                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Save" HorizontalOptions="End" VerticalOptions="End" Command="{Binding OkButtonCommand}" Padding="10" Margin="30,0,0,0" />
+                                    <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Cancel" HorizontalOptions="Start" VerticalOptions="CenterAndExpand" Command="{Binding CancelButtonCommand}" Margin="0,0,30,0" />
+                            <Button BackgroundColor="Black" TextColor="White" HeightRequest="35" Text="Save" HorizontalOptions="End" VerticalOptions="CenterAndExpand" Command="{Binding OkButtonCommand}" Margin="30,0,0,0" />
                         </StackLayout>
                     </StackLayout>
                </StackLayout>

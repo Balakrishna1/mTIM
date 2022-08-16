@@ -4,12 +4,15 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  IgnorableNamespaces="uap mp">
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
+  xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6"
+  IgnorableNamespaces="uap mp rescap iot uap6">
 
  <Identity
 	  Name="3c0371a2-235e-4e27-807a-abae1d377762"
 	  Publisher="CN=b04741dc-9839-4fc5-9ea7-12efc69a5b46"
-    Version="1.0.0.0" />
+    Version="1.74.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -50,12 +53,16 @@
   </Applications>
 
   <Capabilities>
+	<rescap:Capability Name="broadFileSystemAccess" />
     <Capability Name="internetClient" />
     <Capability Name="internetClientServer"/>
-    <uap:Capability Name="phoneCall"/>
     <uap:Capability Name="picturesLibrary"/>
     <Capability Name="privateNetworkClientServer"/>
+	<uap:Capability Name="musicLibrary"/>
+	<uap:Capability Name="videosLibrary"/>
+	<uap6:Capability Name="graphicsCapture"/>
     <DeviceCapability Name="location"/>
     <DeviceCapability Name="webcam"/>
+	<DeviceCapability Name="microphone"/>
   </Capabilities>
 </Package>

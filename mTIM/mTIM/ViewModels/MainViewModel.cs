@@ -102,11 +102,11 @@ namespace mTIM.ViewModels
         /// <param name="UploadFileSpecified"></param>
         private void FileUploadCompleted(int taskId, int postId, int UploadFileId, bool UploadFileSpecified)
         {
-            var item = LstFiles.Where(x => x.FileID.Equals(UploadFileId)).FirstOrDefault();
+            var item = LstFiles.Where(x => x.FileId.Equals(UploadFileId)).FirstOrDefault();
             if (item != null)
             {
                 var index = LstFiles.IndexOf(item);
-                item.FileID = UploadFileId;
+                item.FileId = UploadFileId;
                 item.FileIDSpecified = UploadFileSpecified;
                 item.IsOffline = false;
                 if (index >= 0)
@@ -121,7 +121,7 @@ namespace mTIM.ViewModels
         /// <param name="fileId"></param>
         private void EditCommentCompleted(int taskId, int fileId)
         {
-            var item = LstFiles.Where(x => x.FileID.Equals(fileId)).FirstOrDefault();
+            var item = LstFiles.Where(x => x.FileId.Equals(fileId)).FirstOrDefault();
             if (item != null)
             {
                 var index = LstFiles.IndexOf(item);
@@ -150,7 +150,7 @@ namespace mTIM.ViewModels
                     {
                         return;
                     }
-                    var bytes = LoadPhotoAsync(fileinfo);
+                    var bytes = await LoadPhotoAsync(fileinfo);
                     var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
                     await Task.Delay(500);
 
@@ -169,7 +169,7 @@ namespace mTIM.ViewModels
                         bool uploadFileResultSpecified = false;
                         FileInfo info = new FileInfo();
                         List<FileInfo> infos = new List<FileInfo>();
-                        info.FileID = postId;
+                        info.FileId = postId;
                         info.Comment = string.IsNullOrEmpty(result.Text) ? postId.ToString() : result.Text;
                         info.IsOffline = true;
                         info.OfflineFilePath = fileinfo.FullPath;
@@ -189,7 +189,7 @@ namespace mTIM.ViewModels
                                 if (uploadFileResult > 0)
                                 {
                                     var indx = LstFiles.IndexOf(info);
-                                    info.FileID = uploadFileResult;
+                                    info.FileId = uploadFileResult;
                                     info.FileIDSpecified = uploadFileResultSpecified;
                                     info.IsOffline = false;
                                     if (index >= 0)
@@ -213,19 +213,17 @@ namespace mTIM.ViewModels
         /// </summary>
         /// <param name="photo"></param>
         /// <returns></returns>
-        byte[] LoadPhotoAsync(FileResult photo)
+        async Task<byte[]> LoadPhotoAsync(FileResult photo)
         {
             byte[] photoBytes = null;
             // canceled
             if (photo != null)
             {
-                System.IO.FileStream stream1 = System.IO.File.OpenRead(photo.FullPath);
-
+                var stream1 = await photo.OpenReadAsync();
+                //System.IO.FileStream stream1 = System.IO.File.OpenRead(@photo.FullPath);
                 var b = new byte[stream1.Length];
-
                 stream1.Read(b, 0, b.Length);
                 photoBytes = ImageCompressionService.CompressImageBytes(b, 30);
-
             }
             return photoBytes;
         }
@@ -246,7 +244,7 @@ namespace mTIM.ViewModels
                 {
                     return;
                 }
-                var bytes = LoadPhotoAsync(fileinfo);
+                var bytes = await LoadPhotoAsync(fileinfo);
                 var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
                 await Task.Delay(500);
                 PromptConfig config = new PromptConfig();
@@ -265,7 +263,7 @@ namespace mTIM.ViewModels
 
                     FileInfo info = new FileInfo();
                     List<FileInfo> infos = new List<FileInfo>();
-                    info.FileID = postId;
+                    info.FileId = postId;
                     info.Comment = string.IsNullOrEmpty(result.Text) ? postId.ToString() : result.Text;
                     info.IsOffline = true;
                     info.OfflineFilePath = fileinfo.FullPath;
@@ -283,11 +281,16 @@ namespace mTIM.ViewModels
                             if (uploadFileResult > 0)
                             {
                                 var index = LstFiles.IndexOf(info);
-                                info.FileID = uploadFileResult;
+                                info.FileId = uploadFileResult;
                                 info.FileIDSpecified = uploadFileResultSpecified;
                                 info.IsOffline = false;
                                 if (index >= 0)
-                                    LstFiles.ReplaceItem(index, info);
+                                {
+                                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                                    {
+                                        LstFiles.ReplaceItem(index, info);
+                                    });
+                                }
                                 updateSelectedItem();
                             }
                         }
@@ -302,8 +305,11 @@ namespace mTIM.ViewModels
         /// </summary>
         private void updateSelectedItem()
         {
-            int index = SelectedItemList.IndexOf(SelectedModel);
-            SelectedItemList.ReplaceItem(index, SelectedModel);
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                int index = SelectedItemList.IndexOf(SelectedModel);
+                SelectedItemList.ReplaceItem(index, SelectedModel);
+            });
         }
 
         #endregion
@@ -691,7 +697,7 @@ namespace mTIM.ViewModels
                 else
                 {
                     Webservice.ViewModel = this;
-                    Webservice.OpenFile(Math.Abs(file.FileID), file.FileIDSpecified);
+                    Webservice.OpenFile(Math.Abs(file.FileId), file.FileIDSpecified);
                 }
             }
         }
@@ -928,7 +934,7 @@ namespace mTIM.ViewModels
             if (result.Ok)
             {
                 var index = LstFiles.IndexOf(selectedItem);
-                selectedItem.Comment = string.IsNullOrEmpty(result.Text) ? selectedItem.FileID.ToString() : result.Text;
+                selectedItem.Comment = string.IsNullOrEmpty(result.Text) ? selectedItem.FileId.ToString() : result.Text;
                 if (selectedItem.IsOffline)
                 {
                     FileInfoHelper.Instance.UpdateFileInfo(SelectedModel.Id, index, selectedItem);
@@ -941,7 +947,7 @@ namespace mTIM.ViewModels
                     LstFiles.ReplaceItem(index, selectedItem);
                     if (IsNetworkConnected && !selectedItem.IsOffline)
                     {
-                        Webservice.ChangeFileComment(SelectedModel.Id, selectedItem.FileID, selectedItem.FileIDSpecified, selectedItem.Comment);
+                        Webservice.ChangeFileComment(SelectedModel.Id, selectedItem.FileId, selectedItem.FileIDSpecified, selectedItem.Comment);
                     }
                 }
             }
@@ -961,7 +967,7 @@ namespace mTIM.ViewModels
             {
                 if (IsNetworkConnected)
                 {
-                    Webservice.DeleteFile(SelectedModel.Id, selectedItem.FileID, selectedItem.FileIDSpecified);
+                    Webservice.DeleteFile(SelectedModel.Id, selectedItem.FileId, selectedItem.FileIDSpecified);
                     FileInfoHelper.Instance.DeleteValueInList(SelectedModel.Id, selectedItem);
                 }
                 else

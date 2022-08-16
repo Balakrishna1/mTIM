@@ -232,7 +232,7 @@ namespace mTIM.ViewModels
         {
             foreach (var file in items)
             {
-                Task.Run(() => Webservice.UploadFileAsync(true, taskId, file.FileID, file.FileIDSpecified, GetBytesFromPath(file.OfflineFilePath), System.IO.Path.GetExtension(file.OfflineFilePath), null, file.Comment, DateTime.Now, true));
+                Task.Run(() => Webservice.UploadFileAsync(true, taskId, file.FileId, file.FileIDSpecified, GetBytesFromPath(file.OfflineFilePath), System.IO.Path.GetExtension(file.OfflineFilePath), null, file.Comment, DateTime.Now, true));
             }
         }
 
@@ -240,7 +240,7 @@ namespace mTIM.ViewModels
         {
             foreach (var file in items)
             {
-                Task.Run(() => Webservice.ChangeFileComment(taskId, file.FileID, file.FileIDSpecified, file.Comment));
+                Task.Run(() => Webservice.ChangeFileComment(taskId, file.FileId, file.FileIDSpecified, file.Comment));
             }
         }
 
@@ -248,7 +248,7 @@ namespace mTIM.ViewModels
         {
             foreach (var file in items)
             {
-                Task.Run(() => Webservice.DeleteFile(taskId, file.FileID, file.FileIDSpecified));
+                Task.Run(() => Webservice.DeleteFile(taskId, file.FileId, file.FileIDSpecified));
             }
         }
 

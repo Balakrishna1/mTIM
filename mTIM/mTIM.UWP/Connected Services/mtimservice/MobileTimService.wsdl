@@ -1,0 +1,1022 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MobileTimService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:import namespace="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v1_2.External" />
+      <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xs:import namespace="http://schemas.datacontract.org/2004/07/mTim.Contracts.DataContracts.v1_0" />
+      <xs:import namespace="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" />
+      <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xs:import namespace="http://schemas.datacontract.org/2004/07/System" />
+      <xs:element name="GetTaskListIdForDay">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="year" type="xs:int" />
+            <xs:element minOccurs="0" name="month" type="xs:int" />
+            <xs:element minOccurs="0" name="day" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetTaskListIdForDayResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetTaskListIdForDayResult" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetTaskList">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetTaskListResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v1_2.External" minOccurs="0" name="GetTaskListResult" nillable="true" type="q1:ArrayOfTimTask" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetTaskListAsCsv">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetTaskListAsCsvResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetTaskListAsCsvResult" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetTaskListAsCsvGZipped">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetTaskListAsCsvGZippedResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetTaskListAsCsvGZippedResult" nillable="true" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetGraphicsBlobProtobufGZipped">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetGraphicsBlobProtobufGZippedResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetGraphicsBlobProtobufGZippedResult" nillable="true" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetStatus">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+            <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="configurationTimestamp" type="q2:guid" />
+            <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="elementsTimestamp" type="q3:guid" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetStatusResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/mTim.Contracts.DataContracts.v1_0" minOccurs="0" name="GetStatusResult" nillable="true" type="q4:StateInformation" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PostResponses">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" minOccurs="0" name="results" nillable="true" type="q5:ArrayOfTaskResult" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PostResponsesResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PostResponsesAsCsv">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="results" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PostResponsesAsCsvResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PostResponsesAsCsvGZipped">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="results" nillable="true" type="xs:base64Binary" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PostResponsesAsCsvGZippedResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetServerTime">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetServerTimeResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="GetServerTimeResult" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QueryAppUpdate">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="currentVersion" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QueryAppUpdateResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" minOccurs="0" name="QueryAppUpdateResult" nillable="true" type="q6:VersionUpdateInformation" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UploadFile">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+            <xs:element minOccurs="0" name="posId" type="xs:int" />
+            <xs:element minOccurs="0" name="fileContent" nillable="true" type="xs:base64Binary" />
+            <xs:element minOccurs="0" name="fileExtension" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="gps" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="comment" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="time" type="xs:dateTime" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="UploadFileResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="UploadFileResult" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ChangeFileComment">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="fileID" type="xs:int" />
+            <xs:element minOccurs="0" name="comment" nillable="true" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ChangeFileCommentResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="ChangeFileCommentResult" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeleteFile">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="fileID" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DeleteFileResponse">
+        <xs:complexType>
+          <xs:sequence />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetFileIDs">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetFileIDsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetFileIDsResult" nillable="true" type="q7:ArrayOfKeyValueOfintArrayOfintty7Ep6D1" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetFilesInformation">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="taskListId" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetFilesInformationResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetFilesInformationResult" nillable="true" type="q8:ArrayOfKeyValueOfintArrayOfFileInformationaUFBlTcN" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetFile">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="mobileId" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="version" nillable="true" type="xs:string" />
+            <xs:element minOccurs="0" name="fileID" type="xs:int" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="GetFileResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="GetFileResult" nillable="true" type="q9:TupleOfstringbase64Binary" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="anyType" nillable="true" type="xs:anyType" />
+      <xs:element name="anyURI" nillable="true" type="xs:anyURI" />
+      <xs:element name="base64Binary" nillable="true" type="xs:base64Binary" />
+      <xs:element name="boolean" nillable="true" type="xs:boolean" />
+      <xs:element name="byte" nillable="true" type="xs:byte" />
+      <xs:element name="dateTime" nillable="true" type="xs:dateTime" />
+      <xs:element name="decimal" nillable="true" type="xs:decimal" />
+      <xs:element name="double" nillable="true" type="xs:double" />
+      <xs:element name="float" nillable="true" type="xs:float" />
+      <xs:element name="int" nillable="true" type="xs:int" />
+      <xs:element name="long" nillable="true" type="xs:long" />
+      <xs:element name="QName" nillable="true" type="xs:QName" />
+      <xs:element name="short" nillable="true" type="xs:short" />
+      <xs:element name="string" nillable="true" type="xs:string" />
+      <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte" />
+      <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt" />
+      <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong" />
+      <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort" />
+      <xs:element name="char" nillable="true" type="tns:char" />
+      <xs:simpleType name="char">
+        <xs:restriction base="xs:int" />
+      </xs:simpleType>
+      <xs:element name="duration" nillable="true" type="tns:duration" />
+      <xs:simpleType name="duration">
+        <xs:restriction base="xs:duration">
+          <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?" />
+          <xs:minInclusive value="-P10675199DT2H48M5.4775808S" />
+          <xs:maxInclusive value="P10675199DT2H48M5.4775807S" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="guid" nillable="true" type="tns:guid" />
+      <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:attribute name="FactoryType" type="xs:QName" />
+      <xs:attribute name="Id" type="xs:ID" />
+      <xs:attribute name="Ref" type="xs:IDREF" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="FaultDetails">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ErrorCode" type="tns:FailureReason" />
+          <xs:element minOccurs="0" name="ErrorMessage" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="FaultDetails" nillable="true" type="tns:FaultDetails" />
+      <xs:simpleType name="FailureReason">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="INVALID_MOBILE_ID" />
+          <xs:enumeration value="TEAM_INACTIVE" />
+          <xs:enumeration value="NO_TASKLIST_FOR_DAY" />
+          <xs:enumeration value="INVALID_TASKLIST_ID" />
+          <xs:enumeration value="INVALID_DATE_STRING" />
+          <xs:enumeration value="INVALID_GPS_STRING" />
+          <xs:enumeration value="STRING_TOO_LONG" />
+          <xs:enumeration value="TRANSIENT_ERROR_TRY_AGAIN_LATER" />
+          <xs:enumeration value="VERSION_TOO_OLD" />
+          <xs:enumeration value="INTERNAL_SERVER_ERROR" />
+          <xs:enumeration value="NULL_PARAMETER" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="FailureReason" nillable="true" type="tns:FailureReason" />
+      <xs:complexType name="ArrayOfTaskResult">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="TaskResult" nillable="true" type="tns:TaskResult" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfTaskResult" nillable="true" type="tns:ArrayOfTaskResult" />
+      <xs:complexType name="TaskResult">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Gps" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="PosId" type="xs:int" />
+          <xs:element minOccurs="0" name="TaskId" type="xs:int" />
+          <xs:element minOccurs="0" name="Time" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="TaskResult" nillable="true" type="tns:TaskResult" />
+      <xs:complexType name="VersionUpdateInformation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Url" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Version" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="VersionUpdateInformation" nillable="true" type="tns:VersionUpdateInformation" />
+    </xs:schema>
+    <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v1_2.External" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v1_2.External" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xs:complexType name="ArrayOfTimTask">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="TimTask" nillable="true" type="tns:TimTask" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfTimTask" nillable="true" type="tns:ArrayOfTimTask" />
+      <xs:complexType name="TimTask">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Action" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Color" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="EvaluationType" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ExternId" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ForSubLevel" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="HasGPS" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Id" type="xs:int" />
+          <xs:element minOccurs="0" name="Level" type="xs:int" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ObjectId" type="ser:guid" />
+          <xs:element minOccurs="0" name="Parent" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="Path" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Range" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="ShowInList" type="xs:boolean" />
+          <xs:element minOccurs="0" name="SortNr" nillable="true" type="xs:int" />
+          <xs:element minOccurs="0" name="SplitGraphic" type="xs:boolean" />
+          <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Value" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="TimTask" nillable="true" type="tns:TimTask" />
+    </xs:schema>
+    <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/mTim.Contracts.DataContracts.v1_0" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/mTim.Contracts.DataContracts.v1_0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xs:complexType name="StateInformation">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Configuration" nillable="true" type="tns:StatusConfiguration" />
+          <xs:element minOccurs="0" name="State" nillable="true" type="tns:CurrentElementsState" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="StateInformation" nillable="true" type="tns:StateInformation" />
+      <xs:complexType name="StatusConfiguration">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Actions" nillable="true" type="tns:ArrayOfStatusAction" />
+          <xs:element minOccurs="0" name="Conditions" nillable="true" type="tns:ArrayOfStatusCondition" />
+          <xs:element minOccurs="0" name="States" nillable="true" type="tns:ArrayOfStatus" />
+          <xs:element minOccurs="0" name="Timestamp" type="ser:guid" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="StatusConfiguration" nillable="true" type="tns:StatusConfiguration" />
+      <xs:complexType name="ArrayOfStatusAction">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="StatusAction" nillable="true" type="tns:StatusAction" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfStatusAction" nillable="true" type="tns:ArrayOfStatusAction" />
+      <xs:complexType name="StatusAction">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="NegativePreconditions" nillable="true" type="q1:ArrayOfstring" />
+          <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PositivePreconditions" nillable="true" type="q2:ArrayOfstring" />
+          <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ResetConditions" nillable="true" type="q3:ArrayOfstring" />
+          <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="SetConditions" nillable="true" type="q4:ArrayOfstring" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="StatusAction" nillable="true" type="tns:StatusAction" />
+      <xs:complexType name="ArrayOfStatusCondition">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="StatusCondition" nillable="true" type="tns:StatusCondition" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfStatusCondition" nillable="true" type="tns:ArrayOfStatusCondition" />
+      <xs:complexType name="StatusCondition">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="StatusCondition" nillable="true" type="tns:StatusCondition" />
+      <xs:complexType name="ArrayOfStatus">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="Status" nillable="true" type="tns:Status" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfStatus" nillable="true" type="tns:ArrayOfStatus" />
+      <xs:complexType name="Status">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Color" nillable="true" type="xs:string" />
+          <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Conditions" nillable="true" type="q5:ArrayOfstring" />
+          <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Sequence" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Status" nillable="true" type="tns:Status" />
+      <xs:complexType name="CurrentElementsState">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Elements" nillable="true" type="tns:ArrayOfElementState" />
+          <xs:element minOccurs="0" name="Timestamp" type="ser:guid" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="CurrentElementsState" nillable="true" type="tns:CurrentElementsState" />
+      <xs:complexType name="ArrayOfElementState">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="ElementState" nillable="true" type="tns:ElementState" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfElementState" nillable="true" type="tns:ArrayOfElementState" />
+      <xs:complexType name="ElementState">
+        <xs:sequence>
+          <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Conditions" nillable="true" type="q6:ArrayOfstring" />
+          <xs:element minOccurs="0" name="ObjectID" type="ser:guid" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ElementState" nillable="true" type="tns:ElementState" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:import namespace="http://schemas.datacontract.org/2004/07/mTim.ServiceContracts.v1_1.External" />
+      <xs:complexType name="ArrayOfstring">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring" />
+      <xs:complexType name="ArrayOfKeyValueOfintArrayOfintty7Ep6D1">
+        <xs:annotation>
+          <xs:appinfo>
+            <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfintArrayOfintty7Ep6D1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Key" type="xs:int" />
+                <xs:element name="Value" nillable="true" type="tns:ArrayOfint" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfKeyValueOfintArrayOfintty7Ep6D1" nillable="true" type="tns:ArrayOfKeyValueOfintArrayOfintty7Ep6D1" />
+      <xs:complexType name="ArrayOfint">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="int" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfint" nillable="true" type="tns:ArrayOfint" />
+      <xs:complexType name="ArrayOfKeyValueOfintArrayOfFileInformationaUFBlTcN">
+        <xs:annotation>
+          <xs:appinfo>
+            <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfintArrayOfFileInformationaUFBlTcN">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Key" type="xs:int" />
+                <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/mTim.ServiceContracts.v1_1.External" name="Value" nillable="true" type="q1:ArrayOfFileInformation" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfKeyValueOfintArrayOfFileInformationaUFBlTcN" nillable="true" type="tns:ArrayOfKeyValueOfintArrayOfFileInformationaUFBlTcN" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/mTim.ServiceContracts.v1_1.External" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/mTim.ServiceContracts.v1_1.External" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xs:complexType name="ArrayOfFileInformation">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="FileInformation" type="tns:FileInformation" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="ArrayOfFileInformation" nillable="true" type="tns:ArrayOfFileInformation" />
+      <xs:complexType name="FileInformation">
+        <xs:annotation>
+          <xs:appinfo>
+            <IsValueType xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsValueType>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="FileID" type="xs:int" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="FileInformation" nillable="true" type="tns:FileInformation" />
+    </xs:schema>
+    <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/System" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/System" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="TupleOfstringbase64Binary">
+        <xs:annotation>
+          <xs:appinfo>
+            <GenericType Name="TupleOf{0}{1}{#}" Namespace="http://schemas.datacontract.org/2004/07/System" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+              <GenericParameter Name="string" Namespace="http://www.w3.org/2001/XMLSchema" />
+              <GenericParameter Name="base64Binary" Namespace="http://www.w3.org/2001/XMLSchema" />
+            </GenericType>
+          </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="m_Item1" nillable="true" type="xs:string" />
+          <xs:element name="m_Item2" nillable="true" type="xs:base64Binary" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="TupleOfstringbase64Binary" nillable="true" type="tns:TupleOfstringbase64Binary" />
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="IMobileTim_GetTaskListIdForDay_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskListIdForDay" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListIdForDay_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskListIdForDayResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListIdForDay_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q1:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskList" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskList_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q2:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListAsCsv_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskListAsCsv" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListAsCsv_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskListAsCsvResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListAsCsv_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q3:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListAsCsvGZipped_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskListAsCsvGZipped" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListAsCsvGZipped_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTaskListAsCsvGZippedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetTaskListAsCsvGZipped_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q4:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetGraphicsBlobProtobufGZipped_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGraphicsBlobProtobufGZipped" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetGraphicsBlobProtobufGZipped_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGraphicsBlobProtobufGZippedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetGraphicsBlobProtobufGZipped_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q5:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatus" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetStatus_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q6:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponses_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostResponses" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponses_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostResponsesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponses_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q7:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponsesAsCsv_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostResponsesAsCsv" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponsesAsCsv_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostResponsesAsCsvResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponsesAsCsv_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q8:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponsesAsCsvGZipped_InputMessage">
+    <wsdl:part name="parameters" element="tns:PostResponsesAsCsvGZipped" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponsesAsCsvGZipped_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PostResponsesAsCsvGZippedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_PostResponsesAsCsvGZipped_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q9:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetServerTime_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetServerTime" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetServerTime_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetServerTimeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_QueryAppUpdate_InputMessage">
+    <wsdl:part name="parameters" element="tns:QueryAppUpdate" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_QueryAppUpdate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:QueryAppUpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_QueryAppUpdate_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q10="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q10:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_UploadFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:UploadFile" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_UploadFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UploadFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_UploadFile_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q11="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q11:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_ChangeFileComment_InputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeFileComment" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_ChangeFileComment_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeFileCommentResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_ChangeFileComment_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q12="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q12:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_DeleteFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteFile" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_DeleteFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_DeleteFile_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q13="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q13:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFileIDs_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileIDs" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFileIDs_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileIDsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFileIDs_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q14="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q14:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFilesInformation_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilesInformation" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFilesInformation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFilesInformationResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFilesInformation_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q15="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q15:FaultDetails" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetFile" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMobileTim_GetFile_FaultDetailsFault_FaultMessage">
+    <wsdl:part xmlns:q16="http://schemas.datacontract.org/2004/07/mTim.DataContracts.v0_6.External" name="detail" element="q16:FaultDetails" />
+  </wsdl:message>
+  <wsdl:portType name="IMobileTim">
+    <wsdl:operation name="GetTaskListIdForDay">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListIdForDay" message="tns:IMobileTim_GetTaskListIdForDay_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListIdForDayResponse" message="tns:IMobileTim_GetTaskListIdForDay_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListIdForDayFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetTaskListIdForDay_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTaskList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetTaskList" message="tns:IMobileTim_GetTaskList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListResponse" message="tns:IMobileTim_GetTaskList_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetTaskList_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTaskListAsCsv">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListAsCsv" message="tns:IMobileTim_GetTaskListAsCsv_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListAsCsvResponse" message="tns:IMobileTim_GetTaskListAsCsv_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListAsCsvFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetTaskListAsCsv_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTaskListAsCsvGZipped">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListAsCsvGZipped" message="tns:IMobileTim_GetTaskListAsCsvGZipped_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListAsCsvGZippedResponse" message="tns:IMobileTim_GetTaskListAsCsvGZipped_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetTaskListAsCsvGZippedFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetTaskListAsCsvGZipped_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGraphicsBlobProtobufGZipped">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetGraphicsBlobProtobufGZipped" message="tns:IMobileTim_GetGraphicsBlobProtobufGZipped_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetGraphicsBlobProtobufGZippedResponse" message="tns:IMobileTim_GetGraphicsBlobProtobufGZipped_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetGraphicsBlobProtobufGZippedFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetGraphicsBlobProtobufGZipped_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetStatus" message="tns:IMobileTim_GetStatus_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetStatusResponse" message="tns:IMobileTim_GetStatus_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetStatusFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetStatus_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostResponses">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/PostResponses" message="tns:IMobileTim_PostResponses_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesResponse" message="tns:IMobileTim_PostResponses_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_PostResponses_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostResponsesAsCsv">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesAsCsv" message="tns:IMobileTim_PostResponsesAsCsv_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesAsCsvResponse" message="tns:IMobileTim_PostResponsesAsCsv_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesAsCsvFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_PostResponsesAsCsv_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PostResponsesAsCsvGZipped">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesAsCsvGZipped" message="tns:IMobileTim_PostResponsesAsCsvGZipped_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesAsCsvGZippedResponse" message="tns:IMobileTim_PostResponsesAsCsvGZipped_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/PostResponsesAsCsvGZippedFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_PostResponsesAsCsvGZipped_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetServerTime">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetServerTime" message="tns:IMobileTim_GetServerTime_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetServerTimeResponse" message="tns:IMobileTim_GetServerTime_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="QueryAppUpdate">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/QueryAppUpdate" message="tns:IMobileTim_QueryAppUpdate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/QueryAppUpdateResponse" message="tns:IMobileTim_QueryAppUpdate_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/QueryAppUpdateFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_QueryAppUpdate_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UploadFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/UploadFile" message="tns:IMobileTim_UploadFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/UploadFileResponse" message="tns:IMobileTim_UploadFile_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/UploadFileFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_UploadFile_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeFileComment">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/ChangeFileComment" message="tns:IMobileTim_ChangeFileComment_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/ChangeFileCommentResponse" message="tns:IMobileTim_ChangeFileComment_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/ChangeFileCommentFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_ChangeFileComment_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/DeleteFile" message="tns:IMobileTim_DeleteFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/DeleteFileResponse" message="tns:IMobileTim_DeleteFile_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/DeleteFileFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_DeleteFile_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFileIDs">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetFileIDs" message="tns:IMobileTim_GetFileIDs_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetFileIDsResponse" message="tns:IMobileTim_GetFileIDs_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetFileIDsFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetFileIDs_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFilesInformation">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetFilesInformation" message="tns:IMobileTim_GetFilesInformation_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetFilesInformationResponse" message="tns:IMobileTim_GetFilesInformation_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetFilesInformationFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetFilesInformation_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMobileTim/GetFile" message="tns:IMobileTim_GetFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMobileTim/GetFileResponse" message="tns:IMobileTim_GetFile_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/IMobileTim/GetFileFaultDetailsFault" name="FaultDetailsFault" message="tns:IMobileTim_GetFile_FaultDetailsFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IMobileTim" type="tns:IMobileTim">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetTaskListIdForDay">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetTaskListIdForDay" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetTaskList">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetTaskList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetTaskListAsCsv">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetTaskListAsCsv" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetTaskListAsCsvGZipped">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetTaskListAsCsvGZipped" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetGraphicsBlobProtobufGZipped">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetGraphicsBlobProtobufGZipped" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetStatus">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="PostResponses">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/PostResponses" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="PostResponsesAsCsv">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/PostResponsesAsCsv" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="PostResponsesAsCsvGZipped">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/PostResponsesAsCsvGZipped" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetServerTime">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetServerTime" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="QueryAppUpdate">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/QueryAppUpdate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UploadFile">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/UploadFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeFileComment">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/ChangeFileComment" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteFile">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/DeleteFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFileIDs">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetFileIDs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFilesInformation">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetFilesInformation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetFile">
+      <soap:operation soapAction="http://tempuri.org/IMobileTim/GetFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="FaultDetailsFault">
+        <soap:fault use="literal" name="FaultDetailsFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MobileTimService">
+    <wsdl:port name="BasicHttpBinding_IMobileTim" binding="tns:BasicHttpBinding_IMobileTim">
+      <soap:address location="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

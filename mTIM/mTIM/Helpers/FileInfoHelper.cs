@@ -122,10 +122,10 @@ namespace mTIM.Helpers
         public async Task UpdateFileInfoInList(int taskId, int postId, int uploadFileId, bool uploadFileSepecified)
         {
             var values = TotalFilesList.Where(x => x.Key.Equals(taskId)).FirstOrDefault()?.Values;
-            var item = values.Where(x => x.FileID.Equals(postId)).FirstOrDefault();
+            var item = values.Where(x => x.FileId.Equals(postId)).FirstOrDefault();
             if (item != null)
             {
-                item.FileID = uploadFileId;
+                item.FileId = uploadFileId;
                 item.FileIDSpecified = uploadFileSepecified;
                 item.IsOffline = false;
             }
@@ -142,7 +142,7 @@ namespace mTIM.Helpers
 
         public async Task UpdateFileComment(int taskId, int fileId, string comment)
         {
-            var file = TotalFilesList.Where(x => x.Key.Equals(taskId)).FirstOrDefault().Values?.Where(x => x.FileID.Equals(fileId)).FirstOrDefault();
+            var file = TotalFilesList.Where(x => x.Key.Equals(taskId)).FirstOrDefault().Values?.Where(x => x.FileId.Equals(fileId)).FirstOrDefault();
             file.IsCommentEdited = false;
             file.Comment = comment;
             await SaveFiles();
@@ -157,7 +157,7 @@ namespace mTIM.Helpers
         public async Task DeleteFileInList(int taskId, int fileId)
         {
             var values = TotalFilesList.Where(x => x.Key.Equals(taskId)).FirstOrDefault()?.Values;
-            values.Remove(values.SingleOrDefault(y => y.FileID.Equals(fileId)));
+            values.Remove(values.SingleOrDefault(y => y.FileId.Equals(fileId)));
             await SaveFiles();
         }
 

@@ -453,10 +453,10 @@ namespace mTIM
 
             var permissionsStartList = new List<Permission>()
             {
+                Permission.Storage,
                 Permission.Phone,
                 Permission.Camera,
-                Permission.LocationWhenInUse,
-                Permission.Storage,
+                Permission.LocationWhenInUse
             };
 
             var permissionsNeededList = new List<Permission>();

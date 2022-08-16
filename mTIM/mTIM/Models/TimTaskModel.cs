@@ -43,8 +43,11 @@ namespace mTIM.Models.D
             get { return value; }
             set
             {
-                this.value = value;
-                OnPropertyChanged();
+                if ((object.ReferenceEquals(this.value, value) != true))
+                {
+                    this.value = value;
+                    RaisePropertyChanged("Value");
+                }
             }
         }
 
@@ -67,7 +70,16 @@ namespace mTIM.Models.D
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        [JsonIgnore]
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+    [JsonIgnore]
         public bool HasChilds => Childrens?.Count() > 0;
 
         [JsonIgnore]
@@ -81,10 +93,10 @@ namespace mTIM.Models.D
             }
             set
             {
-                if (_isSelected != value)
+                if ((this._isSelected.Equals(value) != true))
                 {
-                    _isSelected = value;
-                    OnPropertyChanged();
+                    this._isSelected = value;
+                    this.RaisePropertyChanged("IsSelected");
                 }
             }
         }

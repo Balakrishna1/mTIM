@@ -1,8 +1,9 @@
 ﻿using Acr.UserDialogs;
+using HeyRed.Mime;
 using mTIM.Helpers;
 using mTIM.Interfaces;
 using mTIM.Models;
-using mTIM.UWP.mtimservices;
+using mTIM.UWP.mtimservice;
 using mTIM.UWP.Services;
 using mTIM.ViewModels;
 using Newtonsoft.Json;
@@ -11,8 +12,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Xamarin.Essentials;
 using Xamarin.Forms;
-using static mTIM.UWP.mtimservices.MobileTimClient;
+using static mTIM.UWP.mtimservice.MobileTimClient;
 
 [assembly: Xamarin.Forms.Dependency(typeof(WebSevice))]
 namespace mTIM.UWP.Services
@@ -29,15 +32,27 @@ namespace mTIM.UWP.Services
         private void Intialize()
         {
             if (mobileTimClient == null)
-                mobileTimClient = new MobileTimClient();
+                mobileTimClient = new MobileTimClient( EndpointConfiguration.BasicHttpBinding_IMobileTim, GlobalConstants.GetAppURL());
         }
 
         public async Task ChangeFileComment(int taskId, int fileId, bool fileIdSpecified, string comment)
         {
+            Intialize();
+            int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
+            var result = await mobileTimClient.ChangeFileCommentAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, comment);
+            if (result)
+            {
+                await FileInfoHelper.Instance.UpdateFileComment(taskId, fileId, comment);
+                FileInfoHelper.Instance.CommentUpdatedCompleted?.Invoke(taskId, fileId);
+            }
         }
 
         public async Task DeleteFile(int taskId, int fileId, bool fileIdSpecified)
         {
+            Intialize();
+            await mobileTimClient.DeleteFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId);
+            await FileInfoHelper.Instance.DeleteFileInList(taskId, fileId);
+            FileInfoHelper.Instance.DeleteCompleted?.Invoke(taskId, fileId);
         }
 
         private bool fromAutoSync;
@@ -111,15 +126,15 @@ namespace mTIM.UWP.Services
                         Debug.WriteLine(String.Format("File information: {0}", json));
                         DownloadList = new List<Task>();
                         UserDialogs.Instance.ShowLoading("Downloading files.", MaskType.Gradient);
-                        foreach (var item in files)
+                        foreach (var item in fileInfoModel)
                         {
-                            if (item.Value.Count > 0)
+                            if (item.Values.Count() > 0)
                             {
-                                foreach (var value in item.Value)
+                                foreach (var value in item.Values)
                                 {
                                     if (DownloadList.Count > 50)
                                         return;
-                                    DownloadList.Add(Task.Run(() => DownloadFile(value.FileID, true)));
+                                    DownloadList.Add(Task.Run(() => DownloadFile(value.FileId, true)));
                                 }
                             }
                         }
@@ -152,7 +167,7 @@ namespace mTIM.UWP.Services
         {
             try
             {
-                MobileTimClient service = new MobileTimClient();
+                MobileTimClient service = new MobileTimClient(EndpointConfiguration.BasicHttpBinding_IMobileTim, GlobalConstants.GetAppURL());
                 var result = await service.GetFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId);
                 FileCompletedEvent(result, fileId);
             }
@@ -186,28 +201,122 @@ namespace mTIM.UWP.Services
                 }
             }
         }
-    
+
 
         public async Task OpenFile(int fileId, bool fileIdSpecified)
         {
+                string fileName = String.Format("{0}{1}", fileId, FileInfoHelper.Instance.GetExtension(fileId));
+                var mime = MimeTypesMap.GetMimeType(fileName);
+                Debug.WriteLine(mime);
+            if (FileHelper.IsFileExists(fileName))
+            {
+                var filepath = FileHelper.GetFilePath(fileName);
+                filepath = filepath.Replace('/', '\\');
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(@filepath, mime)
+                });
+            }
+            else
+            {
+                DownloadAndOpenFile(fileId, fileIdSpecified);
+            }
+        }
+        /// <summary>
+        /// This is used the download the project files data.
+        /// </summary>
+        /// <param name="fileId"></param>
+        /// <param name="fileIdSpecified"></param>
+        public async void DownloadAndOpenFile(int fileId, bool fileIdSpecified)
+        {
+            try
+            {
+                UserDialogs.Instance.ShowLoading("Downloading file.", MaskType.Gradient);
+                var service = new MobileTimClient(EndpointConfiguration.BasicHttpBinding_IMobileTim, GlobalConstants.GetAppURL());
+                var result = await service.GetFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId);
+                if (result != null && result.m_Item2.Length > 0)
+                {
+                    string fileName = String.Format("{0}{1}", fileId, result.m_Item1);
+                    Debug.WriteLine("File saving: " + fileName);
+                    Debug.WriteLine("File saving with this extension: " + result.m_Item1);
+                    FileInfoHelper.Instance.AddExtesion(fileId, result.m_Item1);
+                    await FileHelper.WriteAllBytesAsync(fileName, result.m_Item2);
+                    var json = JsonConvert.SerializeObject(FileInfoHelper.Instance.GetExtensionList());
+                    FileHelper.WriteTextAsync(GlobalConstants.FileExtesons, json);
+                    var mime = MimeTypesMap.GetMimeType(result.m_Item1);
+                    Debug.WriteLine(mime);
+                    var filepath = FileHelper.GetFilePath(fileName);
+                    filepath = filepath.Replace('/', '\\');
+                    await Launcher.OpenAsync(new OpenFileRequest
+                    {
+                        File = new ReadOnlyFile(filepath, mime)
+                    });
+                }
+                UserDialogs.Instance.HideLoading();
+            }
+            catch (Exception ex)
+            {
+                UserDialogs.Instance.HideLoading();
+                Debug.WriteLine(string.Format("Error in DownloadAndOpenFile: {0}", ex?.Message));
+            }
         }
 
         public async Task QueryAppUpdate(Action<string> actionAppUpdate)
         {
+            //try
+            //{
+            //    Intialize();
+            //    var result = mobileTimClient.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
+            //    if (result != null)
+            //    {
+            //        string json = JsonConvert.SerializeObject(result);
+            //        Debug.WriteLine("App Data: " + json);
+            //        actionAppUpdate?.Invoke(json);
+            //    }
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine(string.Format("Error in QueryAppUpdate: {0}", ex?.Message));
+            //}
         }
 
         public async Task SyncTaskList(string taskListJson, bool isFromAutoSync = false)
         {
+            try
+            {
+                var list = JsonConvert.DeserializeObject<List<TaskResult>>(taskListJson);
+                if (list != null && list.Count > 0)
+                {
+                    mobileTimClient.PostResponsesAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, list);
+                }
+                GetTasksListIDsFortheData(isFromAutoSync);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("Error in SyncTaskList: {0}", ex?.Message));
+            }
         }
 
         public void UploadFile(bool taskListIdSpecified, int taskId, int posId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified)
         {
-            UploadFileResult = 0;
+            Intialize();
+            int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
+            var result = mobileTimClient.UploadFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, posId, fileContent, extension, gps, comment, time);
+            UploadFileResult = result.Result;
             UploadFileResultSpecified = true;
         }
 
         public async Task UploadFileAsync(bool taskListIdSpecified, int taskId, int posId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, DateTime time, bool timeSpecified)
         {
+            Intialize();
+            int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
+           var result = await mobileTimClient.UploadFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, posId, fileContent, extension, gps, comment, time);
+            if (result > 0)
+            {
+                await FileInfoHelper.Instance.UpdateFileInfoInList(taskId, posId, result, true);
+                FileInfoHelper.Instance.FileUploadCompleted?.Invoke(taskId, posId, result, true);
+            }
         }
     }
 }

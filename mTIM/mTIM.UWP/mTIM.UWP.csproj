@@ -11,8 +11,8 @@
     <AssemblyName>mTIM.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.22000.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
@@ -99,7 +99,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Connected Services\mtimservices\Reference.cs">
+    <Compile Include="Connected Services\mtimservice\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -108,6 +108,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ImageCompressionService.cs" />
     <Compile Include="Services\UWPDevice.cs" />
     <Compile Include="Services\WebSevice.cs" />
   </ItemGroup>
@@ -145,53 +146,29 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
-    <None Include="Connected Services\mtimservices\configuration91.svcinfo" />
-    <None Include="Connected Services\mtimservices\configuration.svcinfo" />
-    <None Include="Connected Services\mtimservices\External.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\External1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\External2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\External3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\External4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\External5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\External6.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\External7.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.FileInformation1.datasource">
+    <None Include="Connected Services\mtimservice\configuration91.svcinfo" />
+    <None Include="Connected Services\mtimservice\configuration.svcinfo" />
+    <None Include="Connected Services\mtimservice\mTIM.UWP.mtimservice.FileInformation.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.StateInformation1.datasource">
+    <None Include="Connected Services\mtimservice\mTIM.UWP.mtimservice.StateInformation.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.TimTask1.datasource">
+    <None Include="Connected Services\mtimservice\mTIM.UWP.mtimservice.TimTask.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.TupleOfstringbase64Binary1.datasource">
+    <None Include="Connected Services\mtimservice\mTIM.UWP.mtimservice.TupleOfstringbase64Binary.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\mtimservices\mTIM.UWP.mtimservices.VersionUpdateInformation1.datasource">
+    <None Include="Connected Services\mtimservice\mTIM.UWP.mtimservice.VersionUpdateInformation.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\mtimservices\Reference.svcmap">
+    <None Include="Connected Services\mtimservice\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Connected Services\mtimservices\External.disco" />
     <Content Include="Properties\Default.rd.xml" />
+    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -213,15 +190,15 @@
     <PackageReference Include="Xamarin.CommunityToolkit">
       <Version>2.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />
     <PackageReference Include="UrhoSharp.Forms">
       <Version>1.9.67</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Legacy.OpenTK">
       <Version>1.0.2</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.12" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.14" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mTIM\mTIM.csproj">
@@ -233,11 +210,15 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Connected Services\mtimservices\MobileTimService.wsdl" />
-    <None Include="Properties\ServiceReferences.Designer.ClientConfig" />
+    <None Include="Connected Services\mtimservice\MobileTimService.wsdl" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Connected Services\mtimservices\" />
+    <WCFMetadataStorage Include="Connected Services\mtimservice\" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Microsoft.Midi.GmDls, Version=10.0.19041.0">
+      <Name>Microsoft General MIDI DLS for Universal Windows Apps</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
