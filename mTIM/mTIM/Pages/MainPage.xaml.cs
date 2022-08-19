@@ -36,15 +36,6 @@ namespace mTIM
             //BarcodeView.SetBindingViewModel(ViewModel);
             projectFontSize = lblTittle.FontSize;
             projectSubtextFontSize = lblSubtext.FontSize;
-            var customCell = new DataTemplate(typeof(ElementViewCell));
-            customCell.SetBinding(ElementViewCell.IdProperty, "Id");
-            customCell.SetBinding(ElementViewCell.NameProperty, "Name");
-            customCell.SetBinding(ElementViewCell.TypeProperty, "Type");
-            customCell.SetBinding(ElementViewCell.ColorProperty, "Color");
-            customCell.SetBinding(ElementViewCell.LevelProperty, "Level");
-            customCell.SetBinding(ElementViewCell.ValueProperty, "Value");
-            customCell.SetBinding(ElementViewCell.HasChildsProperty, "HasChilds");
-            customCell.SetBinding(ElementViewCell.IsSelectedProperty, "IsSelected");
 
             ElementViewCell.ActionRightIconClicked -= RightIconClicked;
             ElementViewCell.ActionRightIconClicked += RightIconClicked;
@@ -52,9 +43,6 @@ namespace mTIM
             ElementViewCell.ActionValueClicked += ValueClicked;
             ElementViewCell.ActionItemClicked -= ItemClicked;
             ElementViewCell.ActionItemClicked += ItemClicked;
-            listView.SelectionMode = ListViewSelectionMode.Single;
-            listView.ItemTemplate = customCell;
-            listView.ItemsSource = ViewModel.SelectedItemList;
             ViewModel.SelectedItemList.CollectionChanged += SelectedItemList_CollectionChanged;
             ViewModel.LstValues.CollectionChanged += LstValues_CollectionChanged;
             frameHeader.SizeChanged -= FrameHeader_SizeChanged;
@@ -162,7 +150,7 @@ namespace mTIM
                     {
                         if (glBuilding.App != null && glBuilding.App.IsElementAvailable(id) && !TimTaskListHelper.IsParent(id))
                         {
-                                glBuilding.App?.UpdateElements(id.ToString());
+                            glBuilding.App?.UpdateElements(id.ToString());
                         }
                         else
                         {
@@ -399,13 +387,14 @@ namespace mTIM
                 loadUrhoView();
             }
 
-
+#if __iOS__
             var safeInsets = On<iOS>().SafeAreaInsets();
             safeInsets.Right = 0;
             safeInsets.Left = GlobalConstants.IsLandscape ? 40 : 0;
             safeInsets.Top = GlobalConstants.IsLandscape ? 0 : 40;
             safeInsets.Bottom = 0;
             Padding = safeInsets;
+#endif
         }
 
         /// <summary>
@@ -427,7 +416,7 @@ namespace mTIM
             ViewModel.OnAppearing();
             base.OnAppearing();
 
-            if(GlobalConstants.IsLandscape && Device.RuntimePlatform.Equals(Device.iOS))
+            if (GlobalConstants.IsLandscape && Device.RuntimePlatform.Equals(Device.iOS))
             {
                 loadUrhoView();
             }

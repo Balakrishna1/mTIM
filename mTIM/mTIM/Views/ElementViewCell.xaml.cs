@@ -18,7 +18,7 @@ namespace mTIM
         public static Action<int> ActionValueClicked;
         public static Action<int> ActionItemClicked;
 
-        public static readonly BindableProperty IdProperty =
+        public static readonly BindableProperty IDProperty =
             BindableProperty.Create("ID", typeof(int), typeof(ElementViewCell), 0);
         public static readonly BindableProperty NameProperty =
             BindableProperty.Create("Name", typeof(string), typeof(ElementViewCell), "Name");
@@ -37,8 +37,8 @@ namespace mTIM
 
         public int ID
         {
-            get { return (int)GetValue(IdProperty); }
-            set { SetValue(IdProperty, value); }
+            get { return (int)GetValue(IDProperty); }
+            set { SetValue(IDProperty, value); }
         }
 
         public string Name

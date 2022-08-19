@@ -65,7 +65,21 @@
         </Frame>
         <StackLayout x:Name="stackList" Orientation="Vertical" BackgroundColor="White">
             <AbsoluteLayout x:Name="absListView">
-                <ListView  x:Name="listView" IsVisible="{Binding IsTaskListVisible}" HasUnevenRows="True" SelectionMode="Single" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"/>
+                 <ListView  x:Name="listView" ItemsSource="{Binding SelectedItemList}" IsVisible="{Binding IsTaskListVisible}" HasUnevenRows="True" SelectionMode="Single" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <local:ElementViewCell
+                                ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                IsSelected="{Binding IsSelected, Mode=OneWay}"
+                                Value="{Binding Value, Mode=TwoWay}"
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
                 <ListView x:Name="lstValues" ItemsSource="{Binding LstValues}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                 <ListView.ItemTemplate>
                     <DataTemplate>
