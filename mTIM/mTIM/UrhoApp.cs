@@ -45,8 +45,8 @@ namespace mTIM
         {
             _scene = null;
         }
-        
-		/// <summary>
+
+        /// <summary>
         /// This is used to reset the window. 
         /// </summary>
         public void Reset()
@@ -130,7 +130,7 @@ namespace mTIM
         {
             if (Xamarin.Forms.Device.RuntimePlatform == Xamarin.Forms.Device.iOS)
             {
-                fontSize = (fontSize/2 + 1);
+                fontSize = (fontSize / 2 + 1);
             }
             return fontSize;
         }
@@ -151,7 +151,7 @@ namespace mTIM
         /// <param name="e"></param>
         private void UrhoViewApp_UnhandledException(object sender, Urho.UnhandledExceptionEventArgs e)
         {
-        	Debug.WriteLine("UnhandledException: " + e.Exception.Message);
+            Debug.WriteLine("UnhandledException: " + e.Exception.Message);
             e.Handled = true;
         }
 
@@ -163,7 +163,7 @@ namespace mTIM
             if (this.IsActive)
                 Renderer.DrawDebugGeometry(false);
         }
-        
+
         /// <summary>
         /// Intialize the Scene and also creating the component and rootnode.
         /// </summary>
@@ -173,7 +173,7 @@ namespace mTIM
             _octree = _scene.CreateComponent<Octree>();
             _rootNode = _scene.CreateChild("rootNode");
         }
-        
+
         /// <summary>
         /// To Clear and Add the intial nodes.
         /// </summary>
@@ -210,7 +210,7 @@ namespace mTIM
         {
             try
             {
-                if (mesh != null)
+                if (mesh != null && !mesh.IsLoaded)
                 {
                     linesModel = this.AddChild<ObjectModel>("linesModel");
                     linesModel.LoadLinesMesh(mesh, true);
@@ -222,7 +222,7 @@ namespace mTIM
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// To update the Selected/Active elements in the model window.
         /// </summary>
         /// <param name="mesh"></param>
@@ -247,19 +247,20 @@ namespace mTIM
                 Debug.WriteLine(ex.Message);
             }
         }
-        
+
         /// <summary>
         /// To load the each element mesh
         /// </summary>
         /// <param name="mesh"></param>
         /// <param name="isActive"></param>
         /// <param name="skipElements"></param>
-        public void LoadEelementsDrawing(TimMesh mesh, bool isActive, int skipElements = 0)
+        public void LoadEelementsDrawing(TimMesh mesh, bool isActive, int skipElements = 0, bool isParent = false)
         {
             try
             {
                 if (mesh != null)
                 {
+                    mesh.IsLoaded = true;
                     var elements = mesh.elementMeshes.Skip(skipElements);
                     foreach (var element in elements)
                     {
@@ -269,7 +270,7 @@ namespace mTIM
                             var objectModel = (ObjectModel)node?.Components?.FirstOrDefault();
                             if (objectModel != null)
                             {
-                                objectModel.UpdateMaterial(element.listId > 1);
+                                objectModel.UpdateMaterial(isParent ? true : !TimTaskListHelper.IsParent(element.listId));
                             }
                             //UpdateElements(element.listId.ToString());
                         }

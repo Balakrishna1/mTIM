@@ -101,12 +101,15 @@ namespace mTIM
             {
                 if (glBuilding.App != null && CurrentMesh != null)
                 {
-                    glBuilding.App.Reset();
-                    glBuilding.App.AddStuff();
                     if (TimTaskListHelper.IsParent(id))
                     {
+                        if (!CurrentMesh.IsLoaded)
+                        {
+                            glBuilding.App.Reset();
+                            glBuilding.App.AddStuff();
+                        }
                         glBuilding.App.LoadLinesDrawing(CurrentMesh);
-                        glBuilding.App.LoadEelementsDrawing(CurrentMesh, true);
+                        glBuilding.App.LoadEelementsDrawing(CurrentMesh, true, isParent: true);
                     }
                     else
                     {
@@ -154,7 +157,12 @@ namespace mTIM
                         }
                         else
                         {
-                            CurrentMesh = ViewModel.Meshes.Where(x => x.ProjectId == item.ProjectId).FirstOrDefault();
+                            var mesh = ViewModel.Meshes.Where(x => x.ProjectId == item.ProjectId).FirstOrDefault();
+                            if (CurrentMesh.ProjectId != mesh.ProjectId)
+                            {
+                                CurrentMesh.IsLoaded = false;
+                            }
+                            CurrentMesh = mesh;
                             Update3dDrawing(id);
                         }
                         ViewModel.UpdateIndexSelection(id);

@@ -16,6 +16,7 @@ namespace mTIM.Models.D
         public List<int> lineIndices { get; set; }
         public Urho.Model model { get; set; }
         public int ProjectId { get; set; }
+        public bool IsLoaded { get; set; }
 
         public TimMesh()
         {
