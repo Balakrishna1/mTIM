@@ -10,6 +10,7 @@ using mTIM.Models.D;
 using mTIM.ViewModels;
 using Urho;
 using Urho.Gui;
+using static mTIM.Components.WorldInputHandler;
 
 namespace mTIM
 {
@@ -57,7 +58,7 @@ namespace mTIM
             TouchedNode = null;
             _rootNode.RemoveAllChildren();
             _rootNode.SetWorldRotation(Quaternion.Identity);
-            //_camera.Zoom = 1.1f;
+            _camera.Zoom = 1f;
         }
 
         protected override void Start()
@@ -249,7 +250,7 @@ namespace mTIM
         }
 
         /// <summary>
-        /// To load the each element mesh
+        /// To load the each element from mesh
         /// </summary>
         /// <param name="mesh"></param>
         /// <param name="isActive"></param>
@@ -344,54 +345,7 @@ namespace mTIM
         }
 
         #endregion Initialisation
-
-        private void Input_TouchEnd(TouchEndEventArgs obj)
-        {
-            int id = TryGetNumber(TouchedNode?.Name);
-            if (!TimTaskListHelper.IsParent(id))
-            {
-                UpdateElements(TouchedNode.Name);
-                ViewModel.SlectedElementPositionIn3D(id);
-            }
-            TouchedNode = null;
-        }
-
-        /// <summary>
-        /// Updating the drawing file based on touch selection without refreshing the entire model.
-        /// </summary>
-
-        public void UpdateElements(string touchNodeName)
-        {
-            foreach (var element in _rootNode.Children)
-            {
-                Debug.WriteLine(element.Name);
-                var elementID = TryGetNumber(element.Name);
-                if (elementID > 0)
-                {
-                    var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
-                    if (objectModel != null)
-                    {
-                        //Debug.WriteLine($"Updated Node name: " + element.Name);
-                        objectModel.UpdateMaterial(element.Name == touchNodeName && elementID > 1);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// This is used to get int from string.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private int TryGetNumber(string id)
-        {
-            int elementId;
-            bool success = int.TryParse(id, out elementId);
-            if (success)
-                return elementId;
-            else
-                return -1;
-        }
+        #region Input Touches
 
         private void Input_TouchBegin(TouchBeginEventArgs obj)
         {
@@ -420,6 +374,150 @@ namespace mTIM
             {
                 Debug.WriteLine($"Touch_Exception: { ex.Message}");
             }
+        }
+
+        private void Input_TouchEnd(TouchEndEventArgs obj)
+        {
+            int id = TryGetNumber(TouchedNode?.Name);
+            if (!TimTaskListHelper.IsParent(id))
+            {
+                UpdateElements(TouchedNode.Name);
+                ViewModel.SlectedElementPositionIn3D(id);
+                ZoomIn(obj.X, obj.Y);
+            }
+            TouchedNode = null;
+        }
+
+        #endregion
+
+        private const float _zoomInFactor = 1.1f;
+        private const float _zoomOutFactor = (float)(1.0 / _zoomInFactor);
+        private const float _zoomInFactorSmall = 1.02f;
+        private const float _zoomOutFactorSmall = (float)(1.0 / _zoomInFactorSmall);
+        public void Zoom(ZoomDirection dir, bool animate = false)
+        {
+            if (animate)
+            {
+                var factor = (dir == ZoomDirection.In) ? _zoomInFactor : _zoomOutFactor;
+
+                ValueAnimation zoomAnimation = new ValueAnimation();
+                zoomAnimation.InterpolationMethod = InterpMethod.Linear;
+                zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
+                zoomAnimation.SetKeyFrame(0.3f, Camera.Zoom * factor);
+
+                ObjectAnimation cameraAnimation = new ObjectAnimation();
+                cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 1f);
+                Camera.ObjectAnimation = cameraAnimation;
+            }
+            else
+            {
+                var factor = (dir == ZoomDirection.In) ? _zoomInFactorSmall : _zoomOutFactorSmall;
+
+                Camera.Zoom *= factor;
+            }
+        }
+
+        /// <summary>
+        /// This is used to ZoomOut and ZoomIn the selected position.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        protected void ZoomIn(int x, int y)
+        {
+            ObjectAnimation cameraAnimation = new ObjectAnimation();
+            ObjectAnimation positionAnimation = new ObjectAnimation();
+
+            ValueAnimation zoomAnimation = new ValueAnimation();
+            zoomAnimation.InterpolationMethod = InterpMethod.Linear;
+            zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
+            zoomAnimation.SetKeyFrame(0.3f, 0.5f);
+            zoomAnimation.SetKeyFrame(1f, 2f);
+
+            cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
+            Camera.AnimationEnabled = true;
+            Camera.ObjectAnimation = cameraAnimation;
+
+            Urho.Application.InvokeOnMainAsync(async () =>
+            {
+                MoveToPosition(2000, x, y);
+            });
+        }
+
+        /// <summary>
+        /// Move to the perticular position
+        /// </summary>
+        /// <param name="delta"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        protected void MoveToPosition(int delta, int x, int y)
+        {
+            var viewPort = Renderer.GetViewport(0);
+
+            // 3d mouse location before the zoom
+            var mouseV = viewPort.ScreenToWorldPoint(x, y, CameraPosition.Z);
+
+            Camera.Zoom += delta * 0.001f;
+
+            // zoom out no panning
+            if (delta < 0)
+                return;
+
+            // 3d mouse location after the zoom
+            var mouseV2 = viewPort.ScreenToWorldPoint(x, y, CameraPosition.Z);
+
+            var diff = mouseV2 - mouseV;
+
+            RootNode.Position += diff;
+        }
+
+        /// <summary>
+        /// Updating the drawing file based on touch selection without refreshing the entire model.
+        /// </summary>
+        public void UpdateElements(string touchNodeName)
+        {
+            foreach (var element in _rootNode.Children)
+            {
+                Debug.WriteLine(element.Name);
+                var elementID = TryGetNumber(element.Name);
+                if (elementID > 0)
+                {
+                    var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
+                    if (objectModel != null)
+                    {
+                        //Debug.WriteLine($"Updated Node name: " + element.Name);
+                        if (element.Name == touchNodeName && elementID > 1)
+                        {
+
+                        }
+                        objectModel.UpdateMaterial(element.Name == touchNodeName && elementID > 1);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// To reset the drawing to original position.
+        /// </summary>
+        public void UpdateCameraPosition()
+        {
+            _rootNode.SetWorldRotation(Quaternion.Identity);
+            _rootNode.Position = new Vector3(0, 0, 0);
+            Camera.Zoom = 1f;
+        }
+
+        /// <summary>
+        /// This is used to get int from string.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private int TryGetNumber(string id)
+        {
+            int elementId;
+            bool success = int.TryParse(id, out elementId);
+            if (success)
+                return elementId;
+            else
+                return -1;
         }
     }
 

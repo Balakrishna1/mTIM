@@ -79,6 +79,7 @@ namespace mTIM
             });
             Urho.Application.InvokeOnMain(() =>
             {
+                App?.UpdateCameraPosition();
                 Update3dDrawing(id);
             });
         }

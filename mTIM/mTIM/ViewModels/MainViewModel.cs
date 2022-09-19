@@ -906,6 +906,12 @@ namespace mTIM.ViewModels
         public ICommand OnCommentClickedCommand => new Command(CommentClickExecute);
         private async void CommentClickExecute(object parameter)
         {
+            if(!IsShowGalaryIcon)
+            {
+                var document = parameter as FileInfo;
+                OpenDocument(document);
+                return;
+            }
             var selectedItem = parameter as FileInfo;
             PromptConfig config = new PromptConfig();
             config.Title = "Comment";
