@@ -423,9 +423,18 @@ namespace mTimShared
         /// <param name="UploadFileResultSpecified"></param>
         public void UploadFile(bool taskListIdSpecified, int taskId, int postId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified)
         {
-            timService = new MobileTimService(GlobalConstants.GetAppURL());
-            int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
-            timService.UploadFile(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, true, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
+            try
+            {
+                timService = new MobileTimService(GlobalConstants.GetAppURL());
+                int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
+                timService.UploadFile(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, true, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                UploadFileResult = 0;
+                UploadFileResultSpecified = false;
+            }
         }
 
         /// <summary>

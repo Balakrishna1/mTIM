@@ -9,6 +9,7 @@ using mTIM.Interfaces;
 using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.ViewModels;
+using mTIM.Views;
 using Newtonsoft.Json;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
@@ -37,12 +38,12 @@ namespace mTIM
             projectFontSize = lblTittle.FontSize;
             projectSubtextFontSize = lblSubtext.FontSize;
 
-            ElementViewCell.ActionRightIconClicked -= RightIconClicked;
-            ElementViewCell.ActionRightIconClicked += RightIconClicked;
-            ElementViewCell.ActionValueClicked -= ValueClicked;
-            ElementViewCell.ActionValueClicked += ValueClicked;
-            ElementViewCell.ActionItemClicked -= ItemClicked;
-            ElementViewCell.ActionItemClicked += ItemClicked;
+            TimBaseViewCell.ActionRightIconClicked -= RightIconClicked;
+            TimBaseViewCell.ActionRightIconClicked += RightIconClicked;
+            TimBaseViewCell.ActionValueClicked -= ValueClicked;
+            TimBaseViewCell.ActionValueClicked += ValueClicked;
+            TimBaseViewCell.ActionItemClicked -= ItemClicked;
+            TimBaseViewCell.ActionItemClicked += ItemClicked;
             ViewModel.SelectedItemList.CollectionChanged += SelectedItemList_CollectionChanged;
             ViewModel.LstValues.CollectionChanged += LstValues_CollectionChanged;
             frameHeader.SizeChanged -= FrameHeader_SizeChanged;

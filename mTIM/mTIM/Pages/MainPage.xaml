@@ -4,11 +4,74 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:mTIM"
+             xmlns:views="clr-namespace:mTIM.Views"
+             xmlns:template="clr-namespace:mTIM.DataTemplateSelectors"
              xmlns:touch="clr-namespace:TouchEffect;assembly=TouchEffect"
-             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" 
              ios:Page.UseSafeArea="True"
              mc:Ignorable="d"
              x:Class="mTIM.MainPage">
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<DataTemplate x:Key="normalTemplate">
+				<views:mTIMNormalViewCell ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                IsSelected="{Binding IsSelected, Mode=OneWay}"
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+			</DataTemplate>
+			<DataTemplate x:Key="aktionTemplate">
+				<views:mTIMAktionViewCell ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                Value="{Binding Value, Mode=OneWay}"
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+			</DataTemplate>
+            <DataTemplate x:Key="booleanTemplate">
+				<views:mTIMBooleanViewCell ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                Value="{Binding Value, Mode=OneWay}"
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+				
+			</DataTemplate>
+            <DataTemplate x:Key="docTemplate">
+				<views:mTIMDocViewCell ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+				
+			</DataTemplate>
+            <DataTemplate x:Key="prjladenTemplate">
+				<views:mTimPrjladenViewCell ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+				
+			</DataTemplate>
+            <DataTemplate x:Key="valueTemplate">
+				<views:mTIMValueViewCell ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                Value="{Binding Value, Mode=OneWay}"
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+				
+			</DataTemplate>
+			<template:mTImDataTemplateSelector x:Key="mTImDataTemplateSelector" NormalTypeTemplate="{StaticResource normalTemplate}" AktionTypeTemplate="{StaticResource aktionTemplate}" BooleanTypeTemplate="{StaticResource booleanTemplate}" DocumentTypeTemplate="{StaticResource docTemplate}" PrjladenTypeTemplate="{StaticResource prjladenTemplate}" ValueTypeTemplate="{StaticResource valueTemplate}" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
     <Grid>
     <Grid.GestureRecognizers>
         <TapGestureRecognizer Tapped="TapGestureRecognizer" NumberOfTapsRequired="1" />
@@ -65,21 +128,7 @@
         </Frame>
         <StackLayout x:Name="stackList" Orientation="Vertical" BackgroundColor="White">
             <AbsoluteLayout x:Name="absListView">
-                 <ListView  x:Name="listView" ItemsSource="{Binding SelectedItemList}" IsVisible="{Binding IsTaskListVisible}" HasUnevenRows="True" SelectionMode="Single" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <local:ElementViewCell
-                                ID="{Binding Id, Mode=OneWay}"
-                                Name="{Binding Name, Mode=OneWay}"
-                                Type="{Binding Type, Mode=OneWay}"
-                                Color="{Binding Color, Mode=OneWay}"
-                                Level="{Binding Level, Mode=OneWay}"
-                                IsSelected="{Binding IsSelected, Mode=OneWay}"
-                                Value="{Binding Value, Mode=TwoWay}"
-                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                 <ListView  x:Name="listView" ItemsSource="{Binding SelectedItemList}" IsVisible="{Binding IsTaskListVisible}" ItemTemplate="{StaticResource mTImDataTemplateSelector}" HasUnevenRows="True" SelectionMode="Single" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"/>
                 <ListView x:Name="lstValues" ItemsSource="{Binding LstValues}" SelectionMode="Single" IsVisible="{Binding IsValueListVisible}" HasUnevenRows="True" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand">
                 <ListView.ItemTemplate>
                     <DataTemplate>

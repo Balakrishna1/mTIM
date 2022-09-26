@@ -98,6 +98,7 @@
     <None Remove="CjClutter.ObjLoader" />
     <None Remove="Unofficial.OpenTK" />
     <None Remove="Xam.Plugin.Media" />
+    <None Remove="DataTemplateSelectors\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />
@@ -111,6 +112,7 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Enums\" />
     <Folder Include="Models\3D\" />
+    <Folder Include="DataTemplateSelectors\" />
   </ItemGroup>
   <ItemGroup>
     <XliffResource Include="MultilingualResources\mTIM.de.xlf" />

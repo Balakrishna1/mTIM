@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<views:TimBaseViewCell
+    xmlns:views="clr-namespace:mTIM.Views"
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="mTIM.Views.mTIMDocViewCell">
+  <views:TimBaseViewCell.View>
+	  <StackLayout x:Name="rootView" Padding="0,0,0,5">
+      <Grid>
+            <Grid.RowDefinitions>
+			    <RowDefinition Height="65"></RowDefinition>
+			    <RowDefinition Height="*"></RowDefinition>
+		    </Grid.RowDefinitions>
+		    <Grid.ColumnDefinitions>
+			    <ColumnDefinition Width="*"></ColumnDefinition>
+			    <ColumnDefinition Width="125"></ColumnDefinition>
+		    </Grid.ColumnDefinitions>
+          <Label x:Name="lblName" TextColor="Black" Padding="10,0,10,0" HorizontalOptions="StartAndExpand"  VerticalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0"  Text="sample text" FontSize="Medium"/>
+		  <StackLayout x:Name="absContent" HorizontalOptions="EndAndExpand" VerticalOptions="EndAndExpand" Padding="0,0,10,0" Grid.Row="0" Grid.Column="1">
+			  <StackLayout x:Name="stackDocument" Orientation="Vertical" Padding="5,5,5,5" Margin="0,10,0,10" HorizontalOptions="EndAndExpand" VerticalOptions="EndAndExpand">
+				<StackLayout.GestureRecognizers>
+					<TapGestureRecognizer Tapped="OnDocumentTapped"/>
+				</StackLayout.GestureRecognizers>
+				<Image Source="icons8_document" HeightRequest="35" WidthRequest="35" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
+				<Label x:Name="lblDocValue" HorizontalTextAlignment="Center" VerticalTextAlignment="Start" FontSize="Small"/>
+			  </StackLayout>
+		  </StackLayout>
+      </Grid>
+	 </StackLayout>
+  </views:TimBaseViewCell.View>
+</views:TimBaseViewCell>
