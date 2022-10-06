@@ -10,6 +10,7 @@ using mTIM.Models.D;
 using mTIM.ViewModels;
 using Urho;
 using Urho.Gui;
+using Urho.Resources;
 using static mTIM.Components.WorldInputHandler;
 
 namespace mTIM
@@ -24,6 +25,7 @@ namespace mTIM
         public bool IsInitialized => _scene != null;
         public Urho.Node CameraNode => _cameraNode;
         public Urho.Node TouchedNode;
+        private Window window;
 
         private Scene _scene;
         private Octree _octree;
@@ -38,6 +40,7 @@ namespace mTIM
         private ObjectModel linesModel;
 
         public Vector3 CameraPosition => new Vector3(0, 0, 6);
+        private XmlFile style;
 
 
         MainViewModel ViewModel = App.Current.MainPage.BindingContext as MainViewModel;
@@ -73,16 +76,102 @@ namespace mTIM
 
             AddStuff();
 
+            // Load XML file containing default UI style sheet
+            var cache = ResourceCache;
+            style = cache.GetXmlFile("UI/DefaultStyle.xml");
+
+            // Set the loaded style as default style
+            this.UI.Root.SetDefaultStyle(style);
+
             CreateText();
             Input.TouchBegin += Input_TouchBegin;
             Input.TouchEnd += Input_TouchEnd;
         }
 
         #region Initialisation
+        private bool isButtonsActive;
+
+        /// <summary>
+        /// To show the buttons in model window.
+        /// </summary>
+        public void ShowButtonsWindow()
+        {
+            if (isButtonsActive)
+                return;
+            isButtonsActive = true;
+            // Create the Window and add it to the UI's root node
+            window = new Window();
+            this.UI.Root.AddChild(window);
+
+            // Set Window size and layout settings
+            window.SetMinSize(150, 50);
+            window.SetLayout(LayoutMode.Horizontal, 6, new IntRect(6, 6, 6, 6));
+            window.SetAlignment(HorizontalAlignment.Right, VerticalAlignment.Top);
+            window.SetPosition(-60, 30);
+            window.Name = "Window";
+            window.LayoutBorder = new IntRect(4, 4, 4, 4);
+
+            // Create the Window's button1
+            var button1 = new Button();
+            button1.Name = "button1";
+            button1.SetMinSize(90, 70);
+            button1.SetColor(Color.FromHex("#ECEFF0"));
+            var buttonText = new Text();
+            buttonText.Name = "1";
+            buttonText.Value = "1";
+            buttonText.TextEffect = TextEffect.Stroke;
+            buttonText.SetColor(Color.Black);
+            buttonText.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
+            buttonText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+            button1.AddChild(buttonText);
+
+            // Create the Window's  button2
+            Button button2 = new Button();
+            button2.Name = "button2";
+            button2.SetMinSize(90, 70);
+            var button2Text = new Text();
+            button2Text.Name = "2";
+            button2Text.Value = "2";
+            button2Text.TextEffect = TextEffect.Stroke;
+            button2Text.SetColor(Color.Black);
+            button2Text.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
+            button2Text.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+            button2.AddChild(button2Text);
+
+            // Add the controls to the title bar
+            window.AddChild(button1);
+            window.AddChild(button2);
+
+
+            // Apply styles
+            window.SetStyleAuto(null);
+            button1.SetStyle("button1", null);
+            button2.SetStyle("button2", null);
+
+            button1.Released += args =>
+            {
+                button1.SetColor(Color.FromHex("#ECEFF0"));
+                button2.SetColor(Color.White);
+            };
+
+            button2.Released += args =>
+            {
+                button2.SetColor(Color.FromHex("#ECEFF0"));
+                button1.SetColor(Color.White);
+            };
+        }
+
+        /// <summary>
+        /// To hide the buttons
+        /// </summary>
+        public void HideButtonsWindow()
+        {
+            if (window != null)
+                this.UI.Root.RemoveChild(window);
+            isButtonsActive = false;
+        }
 
         Text textElement;
-        UIElement element;
-
         public void CreateText()
         {
             // Create Text Element
@@ -92,39 +181,14 @@ namespace mTIM
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 ClipChildren = true,
-                Enabled = true
+                Enabled = true,
+                LayoutSpacing = 6
             };
             textElement.TextEffect = TextEffect.Stroke;
             textElement.SetColor(Color.Black);
             textElement.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
             // Add to UI Root
             this.UI.Root.AddChild(textElement);
-
-            var text = new Text()
-            {
-                Value = "1",
-                Height = 50,
-                Width = 50,
-                SelectionColor = Color.Gray,
-                EffectColor = Color.Gray,
-                LayoutBorder = new IntRect(5, 5, 5, 5),
-                ClipBorder = new IntRect(5, 5, 5, 5),
-                LayoutMode = LayoutMode.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Position = new IntVector2(-60, 30),
-                ClipChildren = true,
-                Enabled = true
-            };
-            text.TextEffect = TextEffect.Stroke;
-            text.SetColor(Color.Black);
-            text.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: ScaleFontSize(30));
-            //element = new UIElement();
-            //element.AddChild(text);
-            //element.HorizontalAlignment = HorizontalAlignment.Right;
-            //element.VerticalAlignment = VerticalAlignment.Top;
-
-            //this.UI.Root.AddChild(element);
         }
 
         private int ScaleFontSize(int fontSize)
@@ -302,7 +366,6 @@ namespace mTIM
         /// <summary>
         /// To Add the Camera and Light.
         /// </summary>
-
         private void AddCameraAndLight()
         {
             _cameraNode = _scene.CreateChild("cameraNode");
@@ -320,7 +383,6 @@ namespace mTIM
             _light.Range = 100;
             _light.Brightness = 0.9f;
 
-
             _cameraNode.LookAt(Vector3.Zero, Vector3.Down, TransformSpace.World);
         }
 
@@ -333,10 +395,6 @@ namespace mTIM
             Viewport vp = new Viewport(Application.Current.Context, Scene, _camera);
             renderer.SetViewport(0, vp);
             vp.SetClearColor(Color.White);
-
-            //var renderer = Renderer;
-            //renderer.DefaultZone.FogColor = Color.White;
-            //renderer.SetViewport(0, new Viewport(Context, _scene, _camera, null));
 
             UnhandledException += UrhoViewApp_UnhandledException;
 #if DEBUG
@@ -382,6 +440,7 @@ namespace mTIM
             if (!TimTaskListHelper.IsParent(id))
             {
                 UpdateElements(TouchedNode.Name);
+                ShowButtonsWindow();
                 ViewModel.SlectedElementPositionIn3D(id);
                 ZoomIn(obj.X, obj.Y);
             }
@@ -389,33 +448,6 @@ namespace mTIM
         }
 
         #endregion
-
-        private const float _zoomInFactor = 1.1f;
-        private const float _zoomOutFactor = (float)(1.0 / _zoomInFactor);
-        private const float _zoomInFactorSmall = 1.02f;
-        private const float _zoomOutFactorSmall = (float)(1.0 / _zoomInFactorSmall);
-        public void Zoom(ZoomDirection dir, bool animate = false)
-        {
-            if (animate)
-            {
-                var factor = (dir == ZoomDirection.In) ? _zoomInFactor : _zoomOutFactor;
-
-                ValueAnimation zoomAnimation = new ValueAnimation();
-                zoomAnimation.InterpolationMethod = InterpMethod.Linear;
-                zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
-                zoomAnimation.SetKeyFrame(0.3f, Camera.Zoom * factor);
-
-                ObjectAnimation cameraAnimation = new ObjectAnimation();
-                cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 1f);
-                Camera.ObjectAnimation = cameraAnimation;
-            }
-            else
-            {
-                var factor = (dir == ZoomDirection.In) ? _zoomInFactorSmall : _zoomOutFactorSmall;
-
-                Camera.Zoom *= factor;
-            }
-        }
 
         /// <summary>
         /// This is used to ZoomOut and ZoomIn the selected position.

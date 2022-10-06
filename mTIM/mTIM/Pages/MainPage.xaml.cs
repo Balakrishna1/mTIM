@@ -112,9 +112,11 @@ namespace mTIM
                         }
                         glBuilding.App.LoadLinesDrawing(CurrentMesh);
                         glBuilding.App.LoadEelementsDrawing(CurrentMesh, true, isParent: true);
+                        glBuilding.App.HideButtonsWindow();
                     }
                     else
                     {
+                        glBuilding.App.ShowButtonsWindow();
                         glBuilding.App.LoadLinesDrawing(CurrentMesh);
                         glBuilding.App.LoadEelementsDrawing(CurrentMesh, false);
                         TimElementMesh elementsMesh = CurrentMesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();

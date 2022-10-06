@@ -346,6 +346,8 @@
     <Folder Include="Resources\mipmap-xxhdpi\" />
     <Folder Include="Resources\mipmap-xxxhdpi\" />
     <Folder Include="Resources\xml\" />
+    <Folder Include="Assets\Data\" />
+    <Folder Include="Assets\Data\Textures\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References" />
@@ -356,126 +358,11 @@
       <RelPath>Web References\mtimtest.precast_software.com</RelPath>
       <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\mtimtest.precast_software.com</RelPath>
-      <UpdateFromURL>http://mtimtest.precast-software.com:7778/External/v1.2/External.svc?singleWsdl</UpdateFromURL>
-    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Data\UI\DefaultStyle.xml" />
+    <AndroidAsset Include="Assets\Data\Textures\UI.xml" />
+    <AndroidAsset Include="Assets\Data\Textures\UI.png" />
   </ItemGroup>
   <Import Project="..\mTimShared\mTimShared.projitems" Label="Shared" Condition="Exists('..\mTimShared\mTimShared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
