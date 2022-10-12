@@ -116,17 +116,18 @@ namespace mTIM
                     }
                     else
                     {
-                        glBuilding.App.ShowButtonsWindow();
                         glBuilding.App.LoadLinesDrawing(CurrentMesh);
                         glBuilding.App.LoadEelementsDrawing(CurrentMesh, false);
                         TimElementMesh elementsMesh = CurrentMesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
                         if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
                         {
+                            glBuilding.App.ShowButtonsWindow();
                             glBuilding.App.LoadActiveDrawing(CurrentMesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
                         }
                         else
                         {
                             glBuilding.App.LoadEelementsDrawing(CurrentMesh, true, 1);
+                            glBuilding.App.HideButtonsWindow();
                         }
                     }
                 }

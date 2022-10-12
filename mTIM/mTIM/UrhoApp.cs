@@ -11,7 +11,6 @@ using mTIM.ViewModels;
 using Urho;
 using Urho.Gui;
 using Urho.Resources;
-using static mTIM.Components.WorldInputHandler;
 
 namespace mTIM
 {
@@ -38,6 +37,9 @@ namespace mTIM
 
         private ObjectModel model;
         private ObjectModel linesModel;
+
+        private TimMesh timMesh { get; set; }
+        private string selectedNodeName { get; set; }
 
         public Vector3 CameraPosition => new Vector3(0, 0, 6);
         private XmlFile style;
@@ -90,6 +92,7 @@ namespace mTIM
 
         #region Initialisation
         private bool isButtonsActive;
+        private bool optionTwoSelected;
 
         /// <summary>
         /// To show the buttons in model window.
@@ -98,6 +101,7 @@ namespace mTIM
         {
             if (isButtonsActive)
                 return;
+            optionTwoSelected = false;
             isButtonsActive = true;
             // Create the Window and add it to the UI's root node
             window = new Window();
@@ -150,15 +154,48 @@ namespace mTIM
 
             button1.Released += args =>
             {
+                optionTwoSelected = false;
                 button1.SetColor(Color.FromHex("#ECEFF0"));
                 button2.SetColor(Color.White);
+                UpdateElements(selectedNodeName);
+                linesModel?.ApplyColor(Color.Black);
             };
 
             button2.Released += args =>
             {
+                optionTwoSelected = true;
                 button2.SetColor(Color.FromHex("#ECEFF0"));
                 button1.SetColor(Color.White);
+                ShowOnlyActiveElements(selectedNodeName);
+                linesModel?.ApplyColor(Color.Transparent);
             };
+        }
+
+
+        public void ShowOnlyActiveElements(string touchNodeName)
+        {
+            selectedNodeName = touchNodeName;
+            foreach (var element in _rootNode.Children)
+            {
+                Debug.WriteLine(element.Name);
+                var elementID = TryGetNumber(element.Name);
+                if (elementID > 0)
+                {
+                    var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
+                    if (objectModel != null)
+                    {
+                        //Debug.WriteLine($"Updated Node name: " + element.Name);
+                        if (element.Name == touchNodeName && elementID > 1)
+                        {
+                            objectModel.UpdateMaterial(true);
+                        }
+                        else
+                        {
+                            objectModel.ApplyColor(Color.Transparent);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -299,6 +336,7 @@ namespace mTIM
             {
                 if (mesh != null)
                 {
+                    timMesh = mesh;
                     model.LoadMesh(mesh, fromIndex, toIndex);
                     //var bbx = mesh.GetBoundingBox();
                     //var max = new Vector3(bbx.Max.X, bbx.Max.Y, bbx.Max.Z);
@@ -325,6 +363,7 @@ namespace mTIM
             {
                 if (mesh != null)
                 {
+                    timMesh = mesh;
                     mesh.IsLoaded = true;
                     var elements = mesh.elementMeshes.Skip(skipElements);
                     foreach (var element in elements)
@@ -409,6 +448,8 @@ namespace mTIM
         {
             try
             {
+                if (optionTwoSelected)
+                    return;
                 //Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
                 Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
                 var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
@@ -436,9 +477,12 @@ namespace mTIM
 
         private void Input_TouchEnd(TouchEndEventArgs obj)
         {
+            if (optionTwoSelected)
+                return;
             int id = TryGetNumber(TouchedNode?.Name);
             if (!TimTaskListHelper.IsParent(id))
             {
+                ZoomOut();
                 UpdateElements(TouchedNode.Name);
                 ShowButtonsWindow();
                 ViewModel.SlectedElementPositionIn3D(id);
@@ -462,17 +506,31 @@ namespace mTIM
             ValueAnimation zoomAnimation = new ValueAnimation();
             zoomAnimation.InterpolationMethod = InterpMethod.Linear;
             zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
-            zoomAnimation.SetKeyFrame(0.3f, 0.5f);
-            zoomAnimation.SetKeyFrame(1f, 2f);
+            zoomAnimation.SetKeyFrame(0.3f, 0.3f);
+            zoomAnimation.SetKeyFrame(0.7f, 3f);
 
             cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
             Camera.AnimationEnabled = true;
             Camera.ObjectAnimation = cameraAnimation;
 
-            Urho.Application.InvokeOnMainAsync(async () =>
+            Urho.Application.InvokeOnMainAsync(() =>
             {
-                MoveToPosition(2000, x, y);
+                MoveToPosition(3000, x, y);
             });
+        }
+
+        protected void ZoomOut()
+        {
+            ObjectAnimation cameraAnimation = new ObjectAnimation();
+
+            ValueAnimation zoomAnimation = new ValueAnimation();
+            zoomAnimation.InterpolationMethod = InterpMethod.Linear;
+            zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
+            zoomAnimation.SetKeyFrame(0.3f, 1f);
+
+            cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
+            Camera.AnimationEnabled = true;
+            Camera.ObjectAnimation = cameraAnimation;
         }
 
         /// <summary>
@@ -507,6 +565,7 @@ namespace mTIM
         /// </summary>
         public void UpdateElements(string touchNodeName)
         {
+            selectedNodeName = touchNodeName;
             foreach (var element in _rootNode.Children)
             {
                 Debug.WriteLine(element.Name);
@@ -516,12 +575,21 @@ namespace mTIM
                     var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
                     if (objectModel != null)
                     {
-                        //Debug.WriteLine($"Updated Node name: " + element.Name);
-                        if (element.Name == touchNodeName && elementID > 1)
+                        if (optionTwoSelected)
                         {
-
+                            if (element.Name == touchNodeName && elementID > 1)
+                            {
+                                objectModel.UpdateMaterial(true);
+                            }
+                            else
+                            {
+                                objectModel.ApplyColor(Color.Transparent);
+                            }
                         }
-                        objectModel.UpdateMaterial(element.Name == touchNodeName && elementID > 1);
+                        else
+                        {
+                            objectModel.UpdateMaterial(element.Name == touchNodeName && elementID > 1);
+                        }
                     }
                 }
             }
@@ -532,9 +600,11 @@ namespace mTIM
         /// </summary>
         public void UpdateCameraPosition()
         {
+            optionTwoSelected = false;
             _rootNode.SetWorldRotation(Quaternion.Identity);
             _rootNode.Position = new Vector3(0, 0, 0);
-            Camera.Zoom = 1f;
+            if (Camera.Zoom > 1f)
+                ZoomOut();
         }
 
         /// <summary>

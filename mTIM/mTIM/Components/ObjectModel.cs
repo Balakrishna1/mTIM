@@ -11,6 +11,7 @@ namespace mTIM.Components
         public static string NormalColorCode = "#757474";//Gray color
         public static string TransparentColorCode = "#26757474"; //15% transpent gray color.
         public static string SelectionColorCode = "#6495ED"; //Blue color.
+        public static string TransparentColor = "#00000000"; //Transpent color.
 
         public override void OnAttachedToNode(Urho.Node node)
         {
@@ -108,6 +109,23 @@ namespace mTIM.Components
                 inActiveMaterial.FillMode = FillMode.Solid;
                 inActiveMaterial.LineAntiAlias = true;
                 SetMaterial(isActive ? activeMaterial : inActiveMaterial);
+            });
+        }
+
+        /// <summary>
+        /// Apply Color to model.
+        /// </summary>
+        /// <param name="color"></param>
+        public void ApplyColor(Color color)
+        {
+            Urho.Application.InvokeOnMain(() =>
+            {
+                Material material = Material.FromColor(color, true);
+                material.SetTechnique(1, CoreAssets.Techniques.Diff);
+                material.CullMode = CullMode.MaxCullmodes;
+                material.FillMode = FillMode.Solid;
+                material.LineAntiAlias = true;
+                SetMaterial(material);
             });
         }
 
