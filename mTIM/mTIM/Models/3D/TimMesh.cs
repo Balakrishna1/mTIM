@@ -14,6 +14,7 @@ namespace mTIM.Models.D
         public List<Vertex> vertices { get; set; }
         public List<int> indeces { get; set; }
         public List<int> lineIndices { get; set; }
+        public AABB aabb { get; set; }
         public Urho.Model model { get; set; }
         public int ProjectId { get; set; }
         public bool IsLoaded { get; set; }
@@ -26,6 +27,7 @@ namespace mTIM.Models.D
             indeces = new List<int>();
             lineIndices = new List<int>();
             elementMeshes = new List<TimElementMesh>();
+            aabb = new AABB();
         }
 
         public void AddLine(int indexA, int indexB)

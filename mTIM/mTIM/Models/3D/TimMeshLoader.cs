@@ -1,7 +1,5 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Urho;
 
@@ -49,7 +47,7 @@ namespace mTIM.Models.D
                     TimTaskModel taskData = elementsList[iVisu];
                     if (taskData != null && currentProjectId != taskData.ProjectId)
                     {
-                        if(mesh != null)
+                        if (mesh != null)
                         {
                             var meshDataCopy = new TimMesh()
                             {
@@ -73,7 +71,7 @@ namespace mTIM.Models.D
                         {
                             GeometryReference @ref = visu.Geometries[iRef];
                             uint geometryIndex = @ref.GeometryIndex;
-                            float[] m = @ref.Transform.Matrix;
+                            float[] m = @ref.Transform?.Matrix;
                             TriangulatedGeometryData triGeometryData = (TriangulatedGeometryData)result.Geometries[(int)geometryIndex];
 
                             for (int iTriangle = 0; iTriangle < triGeometryData.Triangles.Count(); iTriangle++)
@@ -140,17 +138,24 @@ namespace mTIM.Models.D
                         em.visualizableIndex = iVisu;
                         em.simplificationLevel = 1;
                         em.listId = taskData != null ? taskData.Id : -1;
+                        var aabb = new AABB()
+                        {
+                            Minimum = builder.aabb.Minimum,
+                            Maximum = builder.aabb.Maximum
+                        };
+                        em.aabb = aabb;
                         builder.elementMeshes[builder.elementMeshes.Count - 1] = em;
                     }
                 }
 
                 var meshData = new TimMesh()
                 {
-                    ProjectId= currentProjectId,
+                    ProjectId = currentProjectId,
                     vertices = builder.vertices.GetChunk(0),
                     indeces = builder.indices.GetChunk(0),
                     lineIndices = builder.lineIndices.GetChunk(0),
-                    elementMeshes = builder.elementMeshes.ToList()
+                    elementMeshes = builder.elementMeshes.ToList(),
+                    aabb = builder.aabb
                 };
                 meshes.Add(meshData);
             }

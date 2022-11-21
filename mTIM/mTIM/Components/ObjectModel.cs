@@ -11,7 +11,6 @@ namespace mTIM.Components
         public static string NormalColorCode = "#757474";//Gray color
         public static string TransparentColorCode = "#26757474"; //15% transpent gray color.
         public static string SelectionColorCode = "#6495ED"; //Blue color.
-        public static string TransparentColor = "#00000000"; //Transpent color.
 
         public override void OnAttachedToNode(Urho.Node node)
         {

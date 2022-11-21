@@ -1,12 +1,11 @@
 ﻿using System;
-using ProtoBuf;
 using Urho;
 
 namespace mTIM.Models.D
 {
 	public class AABB
 	{
-	    public Vector3 Minimum;
+		public Vector3 Minimum;
 		public Vector3 Maximum;
 		public AABB()
 		{
@@ -139,7 +138,7 @@ namespace mTIM.Models.D
 		}
 
 
-	static bool Greater(float af, float bf, int maxDiff = 4)
+		static bool Greater(float af, float bf, int maxDiff = 4)
 		{
 			//return (af > bf) && !Equals(af, bf, maxDiff);
 			return Smaller(bf, af, maxDiff);
@@ -159,7 +158,7 @@ namespace mTIM.Models.D
 
 		static int SIGNMASK(int i)
 		{
-			return ((int)(~(((int)(i))>> 31)-1));
+			return ((int)(~(((int)(i)) >> 31) - 1));
 		}
 		public bool Intersects(AABB other)
 		{
@@ -180,10 +179,12 @@ namespace mTIM.Models.D
 
 			return true;
 		}
+
 		public bool Contains(Vector3 p)
 		{
 			return (p.X >= Minimum.X && p.Y >= Minimum.Y && p.Z >= Minimum.Z && p.X <= Maximum.X && p.Y <= Maximum.Y && p.Z <= Maximum.Z);
 		}
+
 		public Vector3 CalcClosestPoint(Vector3 p)
 		{
 			float x = p.X;
@@ -217,6 +218,16 @@ namespace mTIM.Models.D
 			}
 
 			return new Vector3(x, y, z);
+		}
+
+		public Vector3 GetCenter()
+		{
+			return (Minimum + Maximum) * 0.5f;
+		}
+
+		public Vector3 GetDimention()
+		{
+			return Maximum - Minimum;
 		}
 	}
 }

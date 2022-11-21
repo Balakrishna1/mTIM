@@ -205,7 +205,7 @@ namespace mTIM.Models.D
         public void StartElementMesh()
         {
             elementMeshes.Add(new TimElementMesh());
-
+            aabb = new AABB();
             lastIndexCount = indices.Count();
             lastLineIndexCount = lineIndices.Count();
         }
@@ -235,7 +235,6 @@ namespace mTIM.Models.D
             }
             sm.triangleBatch = trianglebatch;
             sm.lineBatch = linebatch;
-            sm.aabb = aabb;
             sm.visible = true;
             sm.opaque = false;
             return sm;

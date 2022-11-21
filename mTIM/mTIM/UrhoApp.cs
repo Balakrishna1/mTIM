@@ -459,7 +459,7 @@ namespace mTIM
                     if (TouchedNode != null)
                     {
                         Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
-                        Debug.WriteLine($"Input Touch Position: {0} {1} {2}" + result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z);
+                        Debug.WriteLine(String.Format("Input Touch Position: {0} {1} {2}", result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z));
                         int value = TryGetNumber(TouchedNode.Name);
                         if (!TimTaskListHelper.IsParent(value))
                         {
@@ -479,14 +479,24 @@ namespace mTIM
         {
             if (optionTwoSelected)
                 return;
+            Debug.WriteLine("TouchPositionX: " + obj.X + "TouchPositionY: " + obj.Y);
             int id = TryGetNumber(TouchedNode?.Name);
             if (!TimTaskListHelper.IsParent(id))
             {
+                //var worldPosition = _camera.ScreenToWorldPoint(TouchedNode.Position);
+                //var screenPosition = _camera.WorldToScreenPoint(TouchedNode.Position);
+                //Debug.WriteLine("World PositionX: " + worldPosition.X + "World PositionY: " + worldPosition.Y);
+                //Debug.WriteLine("Screen PositionX: " + screenPosition.X + "Screen PositionY: " + screenPosition.Y);
+
+                //float xClip = (screenPosition.X + 0.5f) / (Graphics.Width / 2) - 1.0f;
+                //float yClip = 1.0f - (screenPosition.Y + 0.5f) / (Graphics.Height / 2);
+                //Debug.WriteLine("Window PositionX: " + xClip + " Window PositionY: " + yClip);
+
                 ZoomOut();
                 UpdateElements(TouchedNode.Name);
                 ShowButtonsWindow();
                 ViewModel.SlectedElementPositionIn3D(id);
-                ZoomIn(obj.X, obj.Y);
+                MoveToPosition(3000, obj.X, obj.Y);
             }
             TouchedNode = null;
         }
@@ -498,27 +508,27 @@ namespace mTIM
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        protected void ZoomIn(int x, int y)
+        protected void ZoomIn()
         {
-            ObjectAnimation cameraAnimation = new ObjectAnimation();
-            ObjectAnimation positionAnimation = new ObjectAnimation();
-
-            ValueAnimation zoomAnimation = new ValueAnimation();
-            zoomAnimation.InterpolationMethod = InterpMethod.Linear;
-            zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
-            zoomAnimation.SetKeyFrame(0.3f, 0.3f);
-            zoomAnimation.SetKeyFrame(0.7f, 3f);
-
-            cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
-            Camera.AnimationEnabled = true;
-            Camera.ObjectAnimation = cameraAnimation;
-
             Urho.Application.InvokeOnMainAsync(() =>
             {
-                MoveToPosition(3000, x, y);
+                ObjectAnimation cameraAnimation = new ObjectAnimation();
+
+                ValueAnimation zoomAnimation = new ValueAnimation();
+                zoomAnimation.InterpolationMethod = InterpMethod.Linear;
+                zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
+                zoomAnimation.SetKeyFrame(0.3f, 0.3f);
+                zoomAnimation.SetKeyFrame(0.7f, 3f);
+
+                cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
+                Camera.AnimationEnabled = true;
+                Camera.ObjectAnimation = cameraAnimation;
             });
         }
 
+        /// <summary>
+        /// This is used to ZoomOut
+        /// </summary>
         protected void ZoomOut()
         {
             ObjectAnimation cameraAnimation = new ObjectAnimation();
@@ -541,23 +551,28 @@ namespace mTIM
         /// <param name="y"></param>
         protected void MoveToPosition(int delta, int x, int y)
         {
-            var viewPort = Renderer.GetViewport(0);
+            Urho.Application.InvokeOnMainAsync(() =>
+            {
+                var viewPort = Renderer.GetViewport(0);
 
-            // 3d mouse location before the zoom
-            var mouseV = viewPort.ScreenToWorldPoint(x, y, CameraPosition.Z);
+                // 3d mouse location before the zoom
+                var mouseV = viewPort.ScreenToWorldPoint(x, y, CameraPosition.Z);
 
-            Camera.Zoom += delta * 0.001f;
+                Camera.Zoom += delta * 0.003f;
 
-            // zoom out no panning
-            if (delta < 0)
-                return;
+                // zoom out no panning
+                if (delta < 0)
+                    return;
 
-            // 3d mouse location after the zoom
-            var mouseV2 = viewPort.ScreenToWorldPoint(x, y, CameraPosition.Z);
+                // 3d mouse location after the zoom
+                var mouseV2 = viewPort.ScreenToWorldPoint(x, y, CameraPosition.Z);
 
-            var diff = mouseV2 - mouseV;
+                var diff = mouseV2 - mouseV;
 
-            RootNode.Position += diff;
+                RootNode.Position += diff;
+
+                ZoomIn();
+            });
         }
 
         /// <summary>
@@ -572,6 +587,7 @@ namespace mTIM
                 var elementID = TryGetNumber(element.Name);
                 if (elementID > 0)
                 {
+                    var elementMesh = timMesh.elementMeshes?.Where(x => x.listId.Equals(elementID)).FirstOrDefault();
                     var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
                     if (objectModel != null)
                     {
@@ -588,11 +604,44 @@ namespace mTIM
                         }
                         else
                         {
+                            //if (element.Name == touchNodeName && elementID > 1)
+                            //{
+                            //    UpdateSelectedPosition(element);
+                            //}
                             objectModel.UpdateMaterial(element.Name == touchNodeName && elementID > 1);
                         }
                     }
                 }
             }
+        }
+
+        public void UpdateSelectedPosition(Node element)
+        {
+            Urho.Application.InvokeOnMainAsync(() =>
+            {
+                Debug.WriteLine(element.Name);
+                var elementID = TryGetNumber(element.Name);
+                if (elementID > 0)
+                {
+                    Vector2 screenPosition = new Vector2();
+                    var elementMesh = timMesh.elementMeshes?.Where(x => x.listId.Equals(elementID)).FirstOrDefault();
+                    if (elementMesh != null)
+                    {
+                        //Debug.WriteLine(String.Format("{0},{1},{2},{3}", elementMesh?.aabb.Minimum.X, elementMesh?.aabb.Minimum.Y, elementMesh?.aabb.Maximum.X, elementMesh?.aabb.Maximum.Y));
+                        var elementPosition = (Vector3)elementMesh?.aabb.GetCenter();
+                        Debug.WriteLine("PositionX: " + elementPosition.X + " PositionY: " + elementPosition.Y);
+                        screenPosition = _camera.WorldToScreenPoint(elementPosition);
+                    }
+                    var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
+                    if (objectModel != null)
+                    {
+                        ZoomOut();
+                        ShowButtonsWindow();
+                        Debug.WriteLine("PositionX: " + screenPosition.X + " PositionY: " + screenPosition.Y);
+                        MoveToPosition(3000, (int)screenPosition.X, (int)screenPosition.Y);
+                    }
+                }
+            });
         }
 
         /// <summary>

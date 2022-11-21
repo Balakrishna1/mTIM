@@ -1,5 +1,4 @@
-﻿using System;
-using mTIM.Enums;
+﻿using mTIM.Enums;
 using mTIM.Models.D;
 using Xamarin.Forms;
 
