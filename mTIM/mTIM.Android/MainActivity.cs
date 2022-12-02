@@ -4,6 +4,10 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Distribute;
 using Plugin.Permissions;
 using TouchEffect.Android;
 
@@ -21,6 +25,7 @@ namespace mTIM.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             UserDialogs.Init(this);
             TouchEffectPreserver.Preserve();
+            AppCenter.Start("5fab3b86-06fe-4102-8795-96e7e0bac92a", typeof(Analytics), typeof(Crashes));
             LoadApplication(new App());
         }
 

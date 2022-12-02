@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using mTIM.Models.D;
+using mTIM.Helpers;
 using Urho;
 using Urho.Forms;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using mTIM.Managers;
 
 namespace mTIM
 {
@@ -18,6 +22,7 @@ namespace mTIM
 
         private UrhoSurface _urhoSurface;
         private UrhoApp _urhoApp;
+        private readonly string tag = "UrhoView";
 
         public UrhoView()
         {
@@ -58,6 +63,7 @@ namespace mTIM
         {
             try
             {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
                 if (_urhoSurface == null)
                     throw new System.Exception("Urho Surface not defined");
 
@@ -80,6 +86,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -91,6 +98,7 @@ namespace mTIM
         {
             if (_urhoApp != null)
             {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
                 await _urhoApp.Exit();
                 _urhoApp = null;
                 Content = null;
@@ -109,6 +117,50 @@ namespace mTIM
                 await _urhoApp.Exit();
                 _urhoApp = null;
             }
+        }
+
+        /// <summary>
+        /// This is used to update the 3D drawing.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="mesh"></param>
+        internal void Update3dDrawing(int id, TimMesh mesh)
+        {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            Urho.Application.InvokeOnMain(() =>
+            {
+                if (App != null && mesh != null)
+                {
+                    App?.UpdateCameraPosition();
+                    if (Helpers.TimTaskListHelper.IsParent(id))
+                    {
+                        if (!mesh.IsLoaded)
+                        {
+                            App.Reset();
+                            App.AddStuff();
+                        }
+                        App.LoadLinesDrawing(mesh);
+                        App.LoadEelementsDrawing(mesh, true, isParent: true);
+                        App.HideButtonsWindow();
+                    }
+                    else
+                    {
+                        App.LoadLinesDrawing(mesh);
+                        App.LoadEelementsDrawing(mesh, false);
+                        TimElementMesh elementsMesh = mesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
+                        if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
+                        {
+                            App.ShowButtonsWindow();
+                            App.LoadActiveDrawing(mesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
+                        }
+                        else
+                        {
+                            App.LoadEelementsDrawing(mesh, true, 1);
+                            App.HideButtonsWindow();
+                        }
+                    }
+                }
+            });
         }
     }
 }

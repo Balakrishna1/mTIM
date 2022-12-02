@@ -4,8 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using mTIM.Helpers;
 using mTIM.Interfaces;
+using mTIM.Managers;
 using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.ViewModels;
@@ -78,13 +81,13 @@ namespace mTIM
             {
                 listView.ScrollTo(ViewModel.SelectedItemList?.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Center, true);
             });
-            Urho.Application.InvokeOnMain(() =>
-            {
-                App?.UpdateCameraPosition();
-                Update3dDrawing(id);
-            });
+            glBuilding.Update3dDrawing(id, CurrentMesh);
         }
 
+        /// <summary>
+        /// Update the selected item in list.
+        /// </summary>
+        /// <param name="id"></param>
         private void UpdateListSelection(int id)
         {
             if (!GlobalConstants.IsLandscape)
@@ -94,43 +97,6 @@ namespace mTIM
             Device.BeginInvokeOnMainThread(() =>
             {
                 listView.ScrollTo(ViewModel.SelectedItemList?.Where(x => x.Id == id).FirstOrDefault(), ScrollToPosition.Center, true);
-            });
-        }
-
-        private void Update3dDrawing(int id)
-        {
-            Urho.Application.InvokeOnMain(() =>
-            {
-                if (glBuilding.App != null && CurrentMesh != null)
-                {
-                    if (TimTaskListHelper.IsParent(id))
-                    {
-                        if (!CurrentMesh.IsLoaded)
-                        {
-                            glBuilding.App.Reset();
-                            glBuilding.App.AddStuff();
-                        }
-                        glBuilding.App.LoadLinesDrawing(CurrentMesh);
-                        glBuilding.App.LoadEelementsDrawing(CurrentMesh, true, isParent: true);
-                        glBuilding.App.HideButtonsWindow();
-                    }
-                    else
-                    {
-                        glBuilding.App.LoadLinesDrawing(CurrentMesh);
-                        glBuilding.App.LoadEelementsDrawing(CurrentMesh, false);
-                        TimElementMesh elementsMesh = CurrentMesh.elementMeshes.Where(x => x.listId == id).FirstOrDefault();
-                        if (!elementsMesh.Equals(default(TimElementMesh)) && elementsMesh.triangleBatch.numVertices > 0)
-                        {
-                            glBuilding.App.ShowButtonsWindow();
-                            glBuilding.App.LoadActiveDrawing(CurrentMesh, elementsMesh.triangleBatch.startIndex, elementsMesh.triangleBatch.primitiveCount);
-                        }
-                        else
-                        {
-                            glBuilding.App.LoadEelementsDrawing(CurrentMesh, true, 1);
-                            glBuilding.App.HideButtonsWindow();
-                        }
-                    }
-                }
             });
         }
 
@@ -151,6 +117,7 @@ namespace mTIM
         {
             try
             {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name,  AnalyticsType.ClickorSelected);
                 var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
                 if (GlobalConstants.IsLandscape)
                 {
@@ -168,7 +135,7 @@ namespace mTIM
                                 CurrentMesh.IsLoaded = false;
                             }
                             CurrentMesh = mesh;
-                            Update3dDrawing(id);
+                            glBuilding.Update3dDrawing(id, CurrentMesh);
                         }
                         ViewModel.UpdateIndexSelection(id);
                     }
@@ -183,6 +150,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
         }
 
@@ -203,6 +171,7 @@ namespace mTIM
         /// <param name="e"></param>
         async void CommentClicked(object sender, System.EventArgs e)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             object itemArgs = ((Button)sender).CommandParameter;
             var selectedItem = itemArgs as FileInfo;
             await TouchHelper.Instance.TouchEffectsWithCommand((Button)sender, 0.9, 100, ViewModel.OnCommentClickedCommand, selectedItem);
@@ -215,6 +184,7 @@ namespace mTIM
         /// <param name="e"></param>
         async void OnDeleteClicked(object sender, EventArgs e)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             object itemArgs = ((ImageButton)sender).CommandParameter;
             var selectedItem = itemArgs as FileInfo;
             await TouchHelper.Instance.TouchEffectsWithCommand((ImageButton)sender, 0.9, 100, ViewModel.OnDeleteClickedCommand, selectedItem);
@@ -227,6 +197,7 @@ namespace mTIM
         /// <param name="e"></param>
         async void OnEyeClicked(object sender, EventArgs e)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             object itemArgs = ((ImageButton)sender).CommandParameter;
             var selectedItem = itemArgs as FileInfo;
             await TouchHelper.Instance.TouchEffectsWithCommand((ImageButton)sender, 0.9, 100, ViewModel.OnViewClickedCommand, selectedItem);
@@ -239,6 +210,7 @@ namespace mTIM
         /// <param name="e"></param>
         void OnValueTapped(object sender, EventArgs e)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             TappedEventArgs itemArgs = e as TappedEventArgs;
             var selectedItem = itemArgs.Parameter as Value;
             ViewModel.SelectedValue(selectedItem);
@@ -250,6 +222,7 @@ namespace mTIM
         /// <param name="id"></param>
         private void RightIconClicked(int id)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
             if (item != null)
                 ViewModel.SelectedItemIndex(ViewModel.SelectedItemList.IndexOf(item));
@@ -261,6 +234,7 @@ namespace mTIM
         /// <param name="id"></param>
         private void ValueClicked(int id)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
             if (item != null)
                 ViewModel.SelectedValueItem(item);
@@ -317,6 +291,7 @@ namespace mTIM
 
             getLocation();
             ViewModel.UpdateList();
+            Crashes.GenerateTestCrash();
         }
 
         /// <summary>
@@ -324,6 +299,7 @@ namespace mTIM
         /// </summary>
         public async void SaveAppMessage()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
             AndroidMessageModel androidMessage = new AndroidMessageModel();
             androidMessage.Brand = Location.DeviceInfo.Manufacturer;
             androidMessage.Device = Location.DeviceInfo.Model;
@@ -347,6 +323,7 @@ namespace mTIM
         protected override void OnSizeAllocated(double width, double height)
         {
             base.OnSizeAllocated(width, height); //must be called
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             if (this.width != width || this.height != height)
             {
                 this.width = width;
@@ -533,6 +510,7 @@ namespace mTIM
             }
             catch (Exception ex)
             {
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
             return permissionsGranted;
         }
@@ -571,6 +549,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 // Unable to get location
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
         }
 
@@ -582,6 +561,7 @@ namespace mTIM
         {
             try
             {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
                 var request = new Location.GeolocationRequest(Location.GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
                 cts = new CancellationTokenSource();
                 var location = await Location.Geolocation.GetLocationAsync(request, cts.Token);
@@ -607,6 +587,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 // Unable to get location
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
         }
 
@@ -658,12 +639,8 @@ namespace mTIM
         {
             if (!isLoaded)
             {
-                //Device.StartTimer(TimeSpan.FromMilliseconds(300), () =>
-                //{
-                await glBuilding.StartUrhoApp();
+                await glBuilding?.StartUrhoApp();
                 isLoaded = true;
-                //    return true;
-                //});
             }
         }
 
@@ -736,6 +713,7 @@ namespace mTIM
         /// <param name="e"></param>
         void btnCamera_Clicked(System.Object sender, System.EventArgs e)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             ViewModel.CapturePhotoAsync(null);
         }
 
@@ -746,6 +724,7 @@ namespace mTIM
         /// <param name="e"></param>
         void btnGalary_Clicked(System.Object sender, System.EventArgs e)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             ViewModel.PickPhotoAsync(null);
         }
     }

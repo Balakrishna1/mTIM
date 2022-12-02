@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using HeyRed.Mime;
+using mTIM;
+using mTIM.Managers;
 #if __ANDROID__
 using mTIM.Droid.mtimtest.precast_software.com;
 #elif __IOS__
@@ -23,6 +25,7 @@ namespace mTimShared
         public BaseViewModel ViewModel { get; set; }
         public Action<bool> ActionRefreshCallBack { get; set; }
         public Action<bool> GraphicsDownloadedCallBack { get; set; }
+        private readonly string tag = "mTimService";
 
         private static mTimService instance;
 
@@ -48,11 +51,13 @@ namespace mTimShared
         {
             try
             {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
                 timService = new MobileTimService(GlobalConstants.GetAppURL());
                 fromAutoSync = isFromAutoSync;
                 if (!fromAutoSync)
                     UserDialogs.Instance.ShowLoading("Loading list.", MaskType.Gradient);
                 Debug.WriteLine(string.Format("Method Executed: GetTasksListIDsFortheData"));
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
                 timService.GetTaskListIdForDayCompleted -= TimService_GetTaskListIdForDayCompleted;
                 timService.GetTaskListIdForDayCompleted += TimService_GetTaskListIdForDayCompleted;
                 timService.GetTaskListIdForDayAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, DateTime.Now.Year, true, DateTime.Now.Month, true, DateTime.Now.Day, true);
@@ -60,6 +65,7 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in GetTasksListIDsFortheData: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -119,6 +125,7 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in TimService_GetTaskListIdForDayCompleted: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -168,6 +175,7 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in TimService_GetFilesInformationCompleted: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -201,6 +209,7 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in TimService_GetGraphicsBlobProtobufGZippedCompleted: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -232,6 +241,7 @@ namespace mTimShared
         /// <param name="fileIdSpecified"></param>
         public async void OpenFile(int fileId, bool fileIdSpecified)
         {
+            AnalyticsManager.TrackEvent(string.Format("{0} fileId={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, fileId));
             string fileName = String.Format("{0}{1}", fileId, FileInfoHelper.Instance.GetExtension(fileId));
             var mime = MimeTypesMap.GetMimeType(fileName);
             Debug.WriteLine(mime);
@@ -258,6 +268,7 @@ namespace mTimShared
         {
             try
             {
+                AnalyticsManager.TrackEvent(string.Format("{0} fileId={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, fileId));
                 UserDialogs.Instance.ShowLoading("Downloading file.", MaskType.Gradient);
                 var service = new MobileTimService(GlobalConstants.GetAppURL());
                 service.GetFileCompleted += async delegate (object sender, GetFileCompletedEventArgs e)
@@ -288,6 +299,7 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in DownloadAndOpenFile: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -301,6 +313,7 @@ namespace mTimShared
         {
             try
             {
+                AnalyticsManager.TrackEvent(string.Format("{0} fileId={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, fileId));
                 MobileTimService service = new MobileTimService(GlobalConstants.GetAppURL());
                 FileCompletedEvent(service, fileId);
                 service.GetFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);
@@ -308,6 +321,7 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in DownloadFile: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -354,6 +368,7 @@ namespace mTimShared
         {
             try
             {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
                 var list = JsonConvert.DeserializeObject<TaskResult[]>(taskListJson);
                 if (list != null && list.Length > 0)
                 {
@@ -364,6 +379,7 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in SyncTaskList: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -376,15 +392,23 @@ namespace mTimShared
         {
             try
             {
-                timService = new MobileTimService(GlobalConstants.GetAppURL());
-                ActionAppUpdate = actionAppUpdate;
-                timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
-                timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
-                timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
+                if (!string.IsNullOrEmpty(GlobalConstants.AppBaseURL))
+                {
+                    timService = new MobileTimService(GlobalConstants.GetAppURL());
+                    ActionAppUpdate = actionAppUpdate;
+                    timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
+                    timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
+                    timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
+                }
+                else
+                {
+                    AnalyticsManager.TrackEvent("URL shouldn't empty", AnalyticsType.Message);
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in QueryAppUpdate: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -425,6 +449,7 @@ namespace mTimShared
         {
             try
             {
+                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} postId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, postId));
                 timService = new MobileTimService(GlobalConstants.GetAppURL());
                 int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
                 timService.UploadFile(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, true, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
@@ -434,6 +459,7 @@ namespace mTimShared
                 Debug.WriteLine(ex.Message);
                 UploadFileResult = 0;
                 UploadFileResultSpecified = false;
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -452,6 +478,7 @@ namespace mTimShared
         /// <param name="timeSpecified"></param>
         public void UploadFileAsync(bool taskListIdSpecified, int taskId, int postId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified)
         {
+            AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} postId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, postId));
             timService = new MobileTimService(GlobalConstants.GetAppURL());
             int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
             UploadCompleteEvent(taskId, postId);
@@ -467,6 +494,7 @@ namespace mTimShared
         {
             timService.UploadFileCompleted += async (object sender, UploadFileCompletedEventArgs e) =>
             {
+                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} postId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, postId));
                 await FileInfoHelper.Instance.UpdateFileInfoInList(taskId, postId, e.UploadFileResult, e.UploadFileResultSpecified);
                 FileInfoHelper.Instance.FileUploadCompleted?.Invoke(taskId, postId, e.UploadFileResult, e.UploadFileResultSpecified);
             };
@@ -481,6 +509,7 @@ namespace mTimShared
         /// <param name="comment"></param>
         public void ChangeFileComment(int taskId, int fileId, bool fileIdSpecified, string comment)
         {
+            AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, fileId));
             timService = new MobileTimService(GlobalConstants.GetAppURL());
             int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
             ChangeFileCompleteEvent(taskId, fileId, comment);
@@ -497,6 +526,7 @@ namespace mTimShared
         {
             timService.ChangeFileCommentCompleted += async (object sender, ChangeFileCommentCompletedEventArgs e) =>
             {
+                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, fileId));
                 await FileInfoHelper.Instance.UpdateFileComment(taskId, fileId, comment);
                 FileInfoHelper.Instance.CommentUpdatedCompleted?.Invoke(taskId, fileId);
             };
@@ -510,6 +540,7 @@ namespace mTimShared
         /// <param name="fileIdSpecified"></param>
         public void DeleteFile(int taskId, int fileId, bool fileIdSpecified)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
             timService = new MobileTimService(GlobalConstants.GetAppURL());
             DeleteFileCompleteEvent(taskId, fileId);
             timService.DeleteFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);

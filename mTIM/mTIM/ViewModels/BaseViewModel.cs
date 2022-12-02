@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using mTIM.Helpers;
 using mTIM.Interfaces;
+using mTIM.Managers;
 using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.Resources;
@@ -133,6 +134,7 @@ namespace mTIM.ViewModels
 
         public void Refresh()
         {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
             OnSyncCommand();
             SyncTime = SyncMinites * 60;
         }
@@ -276,6 +278,7 @@ namespace mTIM.ViewModels
 
         public virtual void OnSyncCommand(bool isFromAuto = true)
         {
+            AnalyticsManager.TrackEvent(string.Format("{0} isFromAuto={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, isFromAuto));
             SaveTaskList();
             Webservice.ViewModel = this;
             Webservice.SyncTaskList(JsonConvert.SerializeObject(TimTaskListHelper.GetTotalList()), isFromAuto);

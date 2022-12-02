@@ -3,6 +3,7 @@
 #if __ANDROID__
 using System.IO;
 using Android.Graphics;
+using mTIM.Managers;
 #elif __IOS__
 using Foundation;
 using UIKit;
@@ -24,6 +25,7 @@ namespace mTimShared
         /// <returns></returns>
         public static byte[] CompressImageBytes(byte[] imageData, int compressionPercentage)
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
             return GetResizedImage(imageData, compressionPercentage);
         }
 

@@ -51,6 +51,9 @@
     <PackageReference Include="protobuf-net" Version="3.0.101" />
     <PackageReference Include="CjClutter.ObjLoader" Version="1.0.0" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AppCenter.Distribute" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="MultilingualResources\mTIM.de.xlf" />
@@ -99,6 +102,10 @@
     <None Remove="Unofficial.OpenTK" />
     <None Remove="Xam.Plugin.Media" />
     <None Remove="DataTemplateSelectors\" />
+    <None Remove="Microsoft.AppCenter.Analytics" />
+    <None Remove="Microsoft.AppCenter.Crashes" />
+    <None Remove="Microsoft.AppCenter.Distribute" />
+    <None Remove="Managers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />
@@ -113,6 +120,7 @@
     <Folder Include="Enums\" />
     <Folder Include="Models\3D\" />
     <Folder Include="DataTemplateSelectors\" />
+    <Folder Include="Managers\" />
   </ItemGroup>
   <ItemGroup>
     <XliffResource Include="MultilingualResources\mTIM.de.xlf" />

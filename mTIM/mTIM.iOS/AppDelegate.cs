@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Foundation;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Distribute;
 using TouchEffect.iOS;
 using UIKit;
 
@@ -27,6 +30,7 @@ namespace mTIM.iOS
             global::Xamarin.Forms.Forms.Init();
             ZXing.Net.Mobile.Forms.iOS.Platform.Init();
             TouchEffectPreserver.Preserve();
+            AppCenter.Start("{c901a770-ef47-47bc-959a-6dc97eb09ad8}", typeof(Analytics), typeof(Crashes));
             LoadApplication(new App());
             return base.FinishedLaunching(app, options);
         }

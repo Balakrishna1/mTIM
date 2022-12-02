@@ -48,5 +48,14 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>appcenter-${c901a770-ef47-47bc-959a-6dc97eb09ad8}</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

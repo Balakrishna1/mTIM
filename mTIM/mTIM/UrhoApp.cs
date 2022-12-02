@@ -4,8 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using mTIM.Components;
 using mTIM.Helpers;
+using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.ViewModels;
 using Urho;
@@ -44,6 +48,8 @@ namespace mTIM
         public Vector3 CameraPosition => new Vector3(0, 0, 6);
         private XmlFile style;
 
+        private readonly string tag = "UrhoApp";
+
 
         MainViewModel ViewModel = App.Current.MainPage.BindingContext as MainViewModel;
 
@@ -69,7 +75,7 @@ namespace mTIM
         protected override void Start()
         {
             base.Start();
-
+            intializeAppcenter();
             InitScene();
 
             AddCameraAndLight();
@@ -88,6 +94,18 @@ namespace mTIM
             CreateText();
             Input.TouchBegin += Input_TouchBegin;
             Input.TouchEnd += Input_TouchEnd;
+        }
+
+        private void intializeAppcenter()
+        {
+            AppCenter.Configure("android={8a2c28d4-8c5b-40c1-8601-14bd82a1aeee};" +
+                  "uwp={9e9b5e10-0956-4fb5-84de-4df2f3bc3f60};" +
+                  "ios={f28f0f42-4da6-48f0-8826-4bb82f174985};");
+            if (AppCenter.Configured)
+            {
+                AppCenter.Start(typeof(Analytics));
+                AppCenter.Start(typeof(Crashes));
+            }
         }
 
         #region Initialisation
@@ -255,6 +273,7 @@ namespace mTIM
         {
             Debug.WriteLine("UnhandledException: " + e.Exception.Message);
             e.Handled = true;
+            CrashReportManager.ReportError(e.Exception, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
         }
 
         private void Engine_PostRenderUpdate(PostRenderUpdateEventArgs obj)
@@ -321,6 +340,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -348,6 +368,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -389,6 +410,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 
@@ -472,6 +494,7 @@ namespace mTIM
             catch (Exception ex)
             {
                 Debug.WriteLine($"Touch_Exception: { ex.Message}");
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 

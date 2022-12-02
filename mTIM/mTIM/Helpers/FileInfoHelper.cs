@@ -10,6 +10,7 @@ namespace mTIM.Helpers
 {
     public class FileInfoHelper
     {
+        readonly string tag = "FileInfoHelper";
         Dictionary<int, string> FileExtensions = new Dictionary<int, string>();
 
         public List<FileInfoModel> TotalFilesList = new List<FileInfoModel>(); 
@@ -170,7 +171,7 @@ namespace mTIM.Helpers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
 

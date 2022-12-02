@@ -21,6 +21,7 @@ namespace mTIM.Droid.Services
 {
     public class AndroidDevice : IDevice
     {
+        readonly string tag = "AndroidDevice";
         public void CloseApplication()
         {
             MvxAppCompatActivityBase.CurrentActivity?.FinishAffinity();
@@ -82,7 +83,7 @@ namespace mTIM.Droid.Services
                 catch (System.Exception ex)
                 {
                     UserDialogs.Instance.HideLoading();
-                    Log.Debug("Fluchtpunkt", "Download Exception: " + ex.Message);
+                    CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
                 }
             }
         }

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Acr.UserDialogs;
 using HeyRed.Mime;
+using Microsoft.AppCenter.Crashes;
 using mTIM.Enums;
 using mTIM.Helpers;
 using mTIM.Interfaces;
+using mTIM.Managers;
 using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.Resources;
@@ -78,6 +80,7 @@ namespace mTIM.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
         }
 
@@ -202,6 +205,7 @@ namespace mTIM.ViewModels
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex);
+                    CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
                 }
             });
         }
@@ -749,6 +753,7 @@ namespace mTIM.ViewModels
 
         private void MenuClickCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             IsOpenMenuOptions = true;
         }
 
@@ -756,6 +761,7 @@ namespace mTIM.ViewModels
 
         private async void BarcodeClickCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             //IsOpenBarcodeView = true;
             IsScanning = true;
             //#if __ANDROID__
@@ -773,6 +779,7 @@ namespace mTIM.ViewModels
         public ICommand MessageClickCommand => new Command(MessageClickCommandExecute);
         private void MessageClickCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             IsOpenUpdateOptions = true;
             UpdateVersionText = string.Format(AppResources.InstallUpdate, VersionInfo?.Version);
         }
@@ -780,6 +787,7 @@ namespace mTIM.ViewModels
         public ICommand MenuUpdateAppCommand => new Command(MenuUpdateAppCommandExecute);
         private void MenuUpdateAppCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             IsOpenUpdateOptions = false;
             Device.DownloadAndInstallAPK(VersionInfo);
         }
@@ -787,6 +795,7 @@ namespace mTIM.ViewModels
         public ICommand CloseBarcodeCommand => new Command(CloseBarcodeCommandExecute);
         private void CloseBarcodeCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             IsOpenBarcodeView = false;
             IsScanning = false;
         }
@@ -810,6 +819,7 @@ namespace mTIM.ViewModels
         public ICommand MenuSettingsItemCommand => new Command(MenuSettingsCommandExecute);
         private async void MenuSettingsCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             IsOpenMenuOptions = false;
             await Navigation.PushModalAsync(new NavigationPage(new SettingsPage()));
         }
@@ -817,6 +827,7 @@ namespace mTIM.ViewModels
         public ICommand MenuInfoItemCommand => new Command(MenuInfoItemCommandExecute);
         private async void MenuInfoItemCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             IsOpenMenuOptions = false;
             var locationstring = string.Format($"{GlobalConstants.LocationDetails?.Longitude} | {GlobalConstants.LocationDetails?.Latitude}");
             await Application.Current.MainPage.DisplayAlert(LabelInfo, string.Format($"IMEI: {GlobalConstants.IMEINumber}\nDeviceID: {GlobalConstants.IMEINumber}\nUniqueID: {GlobalConstants.UniqueID}\nURL: {GlobalConstants.AppBaseURL}\nVersion: {GlobalConstants.VersionNumber}\nLocation: {locationstring}"), AppResources.Ok);
@@ -825,6 +836,7 @@ namespace mTIM.ViewModels
         public ICommand MenuRefreshItemCommand => new Command(MenuRefreshItemCommandExecute);
         private void MenuRefreshItemCommandExecute()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
             IsOpenMenuOptions = false;
             OnSyncCommand(false);
         }
@@ -834,6 +846,7 @@ namespace mTIM.ViewModels
         /// </summary>
         public override void RefreshData()
         {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
             headerStrings = new List<string>();
             updateHeaderTexts();
             IsDocumentListVisible = IsValueListVisible = IsEditTextVisible = false;
@@ -850,6 +863,7 @@ namespace mTIM.ViewModels
         {
             try
             {
+                Crashes.GenerateTestCrash();
                 SearchForNewApp();
                 if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
                 {
@@ -872,6 +886,7 @@ namespace mTIM.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
             }
         }
 
@@ -879,6 +894,7 @@ namespace mTIM.ViewModels
         {
             if (!string.IsNullOrEmpty(json))
             {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
                 VersionInfo = JsonConvert.DeserializeObject<AppVersionUpdateInfo>(json);
                 IsNotificationVisible = true;
                 NotificationCount = "1";
