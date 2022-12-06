@@ -516,15 +516,34 @@ namespace mTIM
                 //Debug.WriteLine("Window PositionX: " + xClip + " Window PositionY: " + yClip);
 
                 ZoomOut();
-                UpdateElements(TouchedNode.Name);
+                UpdateSelectedElement(TouchedNode.Name);
                 ShowButtonsWindow();
                 ViewModel.SlectedElementPositionIn3D(id);
                 MoveToPosition(3000, obj.X, obj.Y);
             }
             TouchedNode = null;
         }
-
         #endregion
+
+        private ObjectModel slectedNode;
+        private void UpdateSelectedElement(string name)
+        {
+            if (slectedNode == null)
+            {
+                UpdateElements(name);
+            }
+            else
+            {
+                slectedNode.UpdateMaterial(false);
+                var slectedelememt = _rootNode.Children.Where(x => x.Name.Equals(name)).FirstOrDefault();
+                if (slectedelememt != null)
+                {
+                    var objectModel = (ObjectModel)slectedelememt?.Components?.FirstOrDefault();
+                    objectModel?.UpdateMaterial(true);
+                    slectedNode = objectModel;
+                }
+            }
+        }
 
         /// <summary>
         /// This is used to ZoomOut and ZoomIn the selected position.
@@ -552,18 +571,21 @@ namespace mTIM
         /// <summary>
         /// This is used to ZoomOut
         /// </summary>
-        protected void ZoomOut()
+        internal void ZoomOut()
         {
-            ObjectAnimation cameraAnimation = new ObjectAnimation();
+            Urho.Application.InvokeOnMainAsync(() =>
+            {
+                ObjectAnimation cameraAnimation = new ObjectAnimation();
 
-            ValueAnimation zoomAnimation = new ValueAnimation();
-            zoomAnimation.InterpolationMethod = InterpMethod.Linear;
-            zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
-            zoomAnimation.SetKeyFrame(0.3f, 1f);
+                ValueAnimation zoomAnimation = new ValueAnimation();
+                zoomAnimation.InterpolationMethod = InterpMethod.Linear;
+                zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
+                zoomAnimation.SetKeyFrame(0.3f, 1f);
 
-            cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
-            Camera.AnimationEnabled = true;
-            Camera.ObjectAnimation = cameraAnimation;
+                cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
+                Camera.AnimationEnabled = true;
+                Camera.ObjectAnimation = cameraAnimation;
+            });
         }
 
         /// <summary>
@@ -670,13 +692,19 @@ namespace mTIM
         /// <summary>
         /// To reset the drawing to original position.
         /// </summary>
-        public void UpdateCameraPosition()
+        public void UpdateCameraPosition(bool isElementSelected = false)
         {
-            optionTwoSelected = false;
-            _rootNode.SetWorldRotation(Quaternion.Identity);
-            _rootNode.Position = new Vector3(0, 0, 0);
-            if (Camera.Zoom > 1f)
-                ZoomOut();
+            Urho.Application.InvokeOnMainAsync(() =>
+            {
+                optionTwoSelected = isElementSelected;
+                if (_rootNode != null)
+                {
+                    _rootNode.SetWorldRotation(Quaternion.Identity);
+                    _rootNode.Position = new Vector3(0, 0, 0);
+                    if (Camera.Zoom > 1f)
+                        ZoomOut();
+                }
+            });
         }
 
         /// <summary>

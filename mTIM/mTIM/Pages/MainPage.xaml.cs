@@ -123,9 +123,9 @@ namespace mTIM
                 {
                     if (item.HasChilds)
                     {
-                        if (glBuilding.App != null && glBuilding.App.IsElementAvailable(id) && !TimTaskListHelper.IsParent(id))
+                        if (glBuilding != null && glBuilding.App.IsElementAvailable(id) && !TimTaskListHelper.IsParent(id))
                         {
-                            glBuilding.App?.UpdateElements(id.ToString());
+                            glBuilding.UpdateElements(id.ToString());
                         }
                         else
                         {
