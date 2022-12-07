@@ -384,6 +384,7 @@ namespace mTIM
             {
                 if (mesh != null)
                 {
+                    slectedNode = null;
                     timMesh = mesh;
                     mesh.IsLoaded = true;
                     var elements = mesh.elementMeshes.Skip(skipElements);
@@ -526,7 +527,7 @@ namespace mTIM
         #endregion
 
         private ObjectModel slectedNode;
-        private void UpdateSelectedElement(string name)
+        public void UpdateSelectedElement(string name)
         {
             if (slectedNode == null)
             {
@@ -692,11 +693,11 @@ namespace mTIM
         /// <summary>
         /// To reset the drawing to original position.
         /// </summary>
-        public void UpdateCameraPosition(bool isElementSelected = false)
+        public void UpdateCameraPosition()
         {
             Urho.Application.InvokeOnMainAsync(() =>
             {
-                optionTwoSelected = isElementSelected;
+                optionTwoSelected = false;
                 if (_rootNode != null)
                 {
                     _rootNode.SetWorldRotation(Quaternion.Identity);

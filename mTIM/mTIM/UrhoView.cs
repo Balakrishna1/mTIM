@@ -166,8 +166,8 @@ namespace mTIM
         internal void UpdateElements(string id)
         {
             AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
-            App?.UpdateCameraPosition(true);
-            App?.UpdateElements(id);
+            App?.UpdateCameraPosition();
+            App?.UpdateSelectedElement(id);
         }
     }
 }

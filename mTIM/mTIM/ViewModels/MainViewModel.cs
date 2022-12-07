@@ -863,7 +863,6 @@ namespace mTIM.ViewModels
         {
             try
             {
-                Crashes.GenerateTestCrash();
                 SearchForNewApp();
                 if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
                 {
