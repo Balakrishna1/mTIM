@@ -392,18 +392,11 @@ namespace mTimShared
         {
             try
             {
-                if (!string.IsNullOrEmpty(GlobalConstants.AppBaseURL))
-                {
-                    timService = new MobileTimService(GlobalConstants.GetAppURL());
-                    ActionAppUpdate = actionAppUpdate;
-                    timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
-                    timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
-                    timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
-                }
-                else
-                {
-                    AnalyticsManager.TrackEvent("URL shouldn't empty", AnalyticsType.Message);
-                }
+                timService = new MobileTimService(GlobalConstants.GetAppURL());
+                ActionAppUpdate = actionAppUpdate;
+                timService.QueryAppUpdateCompleted -= TimService_QueryAppUpdateCompleted;
+                timService.QueryAppUpdateCompleted += TimService_QueryAppUpdateCompleted;
+                timService.QueryAppUpdateAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber);
             }
             catch (Exception ex)
             {

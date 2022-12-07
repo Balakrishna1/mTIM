@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Acr.UserDialogs;
@@ -15,8 +16,11 @@ using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.Resources;
 using Newtonsoft.Json;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using PermissionStatus = Plugin.Permissions.Abstractions.PermissionStatus;
 
 namespace mTIM.ViewModels
 {
@@ -53,6 +57,342 @@ namespace mTIM.ViewModels
             UploadOfflineFilesIntoServer();
             LoadMesh();
         }
+
+
+
+        #region Intialze the data.
+
+        public void Intialize()
+        {
+            Task.Run(async () =>
+            {
+                if (!await GetPermissions())
+                {
+                    Device.CloseApplication();
+                }
+                else
+                {
+                    InitializeData();
+                }
+            });
+        }
+
+        /// <summary>
+        /// Intialize the data
+        /// </summary>
+        /// <returns></returns>
+        private async Task InitializeData()
+        {
+            try
+            {
+                Task task = Task.Run(async () =>
+                {
+#if DEBUG
+                    GlobalConstants.AppBaseURL = "http://mtimtest.precast-software.com:7778";
+#else
+                    GlobalConstants.AppBaseURL = string.Empty;
+#endif
+                    getLocation();
+                    if (!FileHelper.IsFileExists(GlobalConstants.IMEI_FILE))
+                    {
+                        getVersionInfo();
+                        getDeviceInfo();
+                        SaveAppMessage();
+                    }
+                    else
+                    {
+                        string jsonIMEI = FileHelper.ReadText(GlobalConstants.IMEI_FILE);
+                        Debug.WriteLine("mTIM Device JSON:" + jsonIMEI);
+                        AndroidMessageModel messageModel = JsonConvert.DeserializeObject<AndroidMessageModel>(jsonIMEI);
+                        if (messageModel != null)
+                        {
+                            MessageModel = messageModel;
+                            GlobalConstants.DeviceID = messageModel.DeviceId;
+                            GlobalConstants.IMEINumber = messageModel.IMEI;
+                            GlobalConstants.UniqueID = messageModel.PseudoID;
+                            GlobalConstants.VersionCode = messageModel.VersionCode;
+                            GlobalConstants.VersionNumber = messageModel.VersionName;
+                        }
+                    }
+
+                    if (FileHelper.IsFileExists(GlobalConstants.SETTINGS_FILE))
+                    {
+                        string jsonSettings = FileHelper.ReadText(GlobalConstants.SETTINGS_FILE);
+                        Debug.WriteLine("mTIM Device JSON:" + jsonSettings);
+                        SettingsModel messageModel = JsonConvert.DeserializeObject<SettingsModel>(jsonSettings);
+                        if (messageModel != null)
+                        {
+                            GlobalConstants.SelectedLanguage = messageModel.Language;
+                            SelectedLanguage = messageModel.Language;
+                            UpdateLanguage(SelectedLanguage);
+                            GlobalConstants.AppBaseURL = messageModel.BaseUrl;
+                            GlobalConstants.StatusSyncTime = SyncTime = messageModel.StatusSyncTime;
+                            GlobalConstants.SyncMinutes = SyncMinites = messageModel.StatusSyncMinutes;
+                        }
+                    }
+
+                    SearchForNewApp();
+                    if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
+                    {
+                        Webservice.ViewModel = this;
+                        Webservice.GetTasksListIDsFortheData();
+                    }
+                    else
+                    {
+                        OnSyncCommand(true);
+                        string json = await FileHelper.ReadTextAsync(GlobalConstants.TASKLIST_FILE);
+                        Debug.WriteLine("Task List: " + json);
+                        var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
+                        if (list != null)
+                        {
+                            list.UpdateList();
+                            RefreshData();
+                        }
+                    }
+                });
+                UserDialogs.Instance.ShowLoading("Intializing..", MaskType.Gradient);
+                await Task.WhenAll(task);
+                UserDialogs.Instance.HideLoading();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                UserDialogs.Instance.HideLoading();
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            }
+        }
+
+        /// <summary>
+        /// This method is used to update the app version.
+        /// </summary>
+        private void getVersionInfo()
+        {
+            GlobalConstants.VersionNumber = VersionTracking.CurrentVersion;
+            GlobalConstants.VersionCode = VersionTracking.CurrentBuild;
+        }
+
+        /// <summary>
+        /// this method is used to update the device information.
+        /// </summary>
+        private void getDeviceInfo()
+        {
+            IDevice device = DependencyService.Get<IDevice>();
+            GlobalConstants.DeviceID = device.GetDeviceID();
+            GlobalConstants.IMEINumber = device.GetImeiNumeber();
+            GlobalConstants.UniqueID = device.GetUniqueID();
+        }
+
+        /// <summary>
+        /// To Save device information
+        /// </summary>
+        public async void SaveAppMessage()
+        {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            AndroidMessageModel androidMessage = new AndroidMessageModel();
+            androidMessage.Brand = DeviceInfo.Manufacturer;
+            androidMessage.Device = DeviceInfo.Model;
+            androidMessage.DeviceId = GlobalConstants.DeviceID;
+            androidMessage.IMEI = GlobalConstants.IMEINumber;
+            androidMessage.PseudoID = GlobalConstants.UniqueID;
+            androidMessage.VersionCode = GlobalConstants.VersionCode;
+            androidMessage.VersionName = GlobalConstants.VersionNumber;
+            string content = JsonConvert.SerializeObject(androidMessage);
+            Debug.WriteLine("mTIM Device JSON:" + content);
+            await FileHelper.WriteTextAsync(GlobalConstants.IMEI_FILE, content);
+        }
+
+        #endregion
+
+        #region To get location information
+
+        /// <summary>
+        /// To get the location.
+        /// </summary>
+        private async void getLocation()
+        {
+            try
+            {
+                var location = await Geolocation.GetLastKnownLocationAsync();
+
+                if (location != null)
+                {
+                    fillLocationInfo(location);
+                    Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
+                }
+                else
+                {
+                    await GetCurrentLocation();
+                }
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                // Handle not supported on device exception
+            }
+            catch (FeatureNotEnabledException fneEx)
+            {
+                // Handle not enabled on device exception
+            }
+            catch (PermissionException pEx)
+            {
+                // Handle permission exception
+            }
+            catch (Exception ex)
+            {
+                // Unable to get location
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            }
+        }
+
+        /// <summary>
+        /// To get the current location.
+        /// </summary>
+        CancellationTokenSource cts;
+        private async Task GetCurrentLocation()
+        {
+            try
+            {
+                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
+                var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
+                cts = new CancellationTokenSource();
+                var location = await Geolocation.GetLocationAsync(request, cts.Token);
+
+                if (location != null)
+                {
+                    fillLocationInfo(location);
+                    Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
+                }
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                // Handle not supported on device exception
+            }
+            catch (FeatureNotEnabledException fneEx)
+            {
+                // Handle not enabled on device exception
+            }
+            catch (PermissionException pEx)
+            {
+                // Handle permission exception
+            }
+            catch (Exception ex)
+            {
+                // Unable to get location
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            }
+        }
+
+        /// <summary>
+        /// This is used to update the location information.
+        /// </summary>
+        /// <param name="location"></param>
+        private void fillLocationInfo(Xamarin.Essentials.Location location)
+        {
+            GlobalConstants.LocationDetails = new Models.Location()
+            {
+                Longitude = location.Longitude,
+                Latitude = location.Latitude
+            };
+        }
+        #endregion
+
+
+        #region Permissions
+
+        /// <summary>
+        /// This is used to get the list of permission required for the app.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task<bool> GetPermissions()
+        {
+            bool permissionsGranted = true;
+
+            var permissionsStartList = new List<Permission>()
+            {
+                Permission.Phone,
+                Permission.Camera,
+                Permission.LocationWhenInUse,
+                Permission.Storage,
+            };
+
+            var permissionsNeededList = new List<Permission>();
+            foreach (var permission in permissionsStartList)
+            {
+                PermissionStatus status;
+                switch (permission)
+                {
+                    case Permission.Phone:
+                        status = await CrossPermissions.Current.CheckPermissionStatusAsync<PhonePermission>();
+                        break;
+                    case Permission.Camera:
+                        status = await CrossPermissions.Current.CheckPermissionStatusAsync<CameraPermission>();
+                        break;
+                    case Permission.Storage:
+                        status = await CrossPermissions.Current.CheckPermissionStatusAsync<StoragePermission>();
+                        break;
+                    case Permission.LocationWhenInUse:
+                        status = await CrossPermissions.Current.CheckPermissionStatusAsync<LocationWhenInUsePermission>();
+                        break;
+                    default:
+                        status = PermissionStatus.Unknown;
+                        break;
+
+                }
+                if (status != PermissionStatus.Granted)
+                {
+                    permissionsNeededList.Add(permission);
+                }
+            }
+
+            List<PermissionStatus> permissionsResult = new List<PermissionStatus>();
+
+            foreach (var permission in permissionsNeededList)
+            {
+                PermissionStatus status;
+                switch (permission)
+                {
+                    case Permission.Phone:
+                        status = await CrossPermissions.Current.RequestPermissionAsync<PhonePermission>();
+                        break;
+                    case Permission.Camera:
+                        status = await CrossPermissions.Current.RequestPermissionAsync<CameraPermission>();
+                        break;
+                    case Permission.Storage:
+                        status = await CrossPermissions.Current.RequestPermissionAsync<StoragePermission>();
+                        break;
+                    case Permission.LocationWhenInUse:
+                        //var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.LocationWhenInUse);
+                        //status = results[Permission.LocationWhenInUse];
+                        status = await CrossPermissions.Current.RequestPermissionAsync<LocationAlwaysPermission>();
+                        break;
+                    default:
+                        status = PermissionStatus.Unknown;
+                        break;
+
+                }
+                permissionsResult.Add(status);
+            }
+            try
+            {
+                foreach (var permission in permissionsResult)
+                {
+                    if (permission == PermissionStatus.Granted || permission == PermissionStatus.Unknown)
+                    {
+                        permissionsGranted = true;
+                    }
+                    else
+                    {
+                        permissionsGranted = false;
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
+            }
+            return permissionsGranted;
+        }
+        #endregion
 
         private void GraphicsDownloadedCallBack(bool isDownloaded)
         {
@@ -315,6 +655,8 @@ namespace mTIM.ViewModels
 
         public override void OnDisAppearing()
         {
+            if (cts != null && !cts.IsCancellationRequested)
+                cts.Cancel();
             base.OnDisAppearing();
         }
 
@@ -858,36 +1200,6 @@ namespace mTIM.ViewModels
             IsShowBackButton = false;
             SelectedItemList.Clear();
             SelectedItemList.AddRange(TimTaskListHelper.GetParentsFromChildren(0, 1));
-        }
-
-        public async void UpdateList()
-        {
-            try
-            {
-                SearchForNewApp();
-                if (!FileHelper.IsFileExists(GlobalConstants.TASKLIST_FILE))
-                {
-                    Webservice.ViewModel = this;
-                    Webservice.GetTasksListIDsFortheData();
-                }
-                else
-                {
-                    OnSyncCommand(true);
-                    string json = await FileHelper.ReadTextAsync(GlobalConstants.TASKLIST_FILE);
-                    Debug.WriteLine("Task List: " + json);
-                    var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
-                    if (list != null)
-                    {
-                        list.UpdateList();
-                        RefreshData();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
-            }
         }
 
         private void AppData(string json)

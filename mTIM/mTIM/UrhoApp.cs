@@ -75,7 +75,7 @@ namespace mTIM
         protected override void Start()
         {
             base.Start();
-            intializeAppcenter();
+
             InitScene();
 
             AddCameraAndLight();
@@ -94,18 +94,6 @@ namespace mTIM
             CreateText();
             Input.TouchBegin += Input_TouchBegin;
             Input.TouchEnd += Input_TouchEnd;
-        }
-
-        private void intializeAppcenter()
-        {
-            AppCenter.Configure("android={8a2c28d4-8c5b-40c1-8601-14bd82a1aeee};" +
-                  "uwp={9e9b5e10-0956-4fb5-84de-4df2f3bc3f60};" +
-                  "ios={f28f0f42-4da6-48f0-8826-4bb82f174985};");
-            if (AppCenter.Configured)
-            {
-                AppCenter.Start(typeof(Analytics));
-                AppCenter.Start(typeof(Crashes));
-            }
         }
 
         #region Initialisation
