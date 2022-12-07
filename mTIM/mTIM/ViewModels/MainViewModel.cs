@@ -196,6 +196,7 @@ namespace mTIM.ViewModels
                                     if (index >= 0)
                                         LstFiles.ReplaceItem(index, info);
                                     updateSelectedItem();
+                                    FileInfoHelper.Instance.UpdateFileInfoInList(taskId, postId, uploadFileResult, uploadFileResultSpecified);
                                 }
                             }
                         });
