@@ -362,18 +362,13 @@ namespace mTimShared
         /// <summary>
         /// This is used to sync the local data to server.
         /// </summary>
-        /// <param name="taskListJson"></param>
+        /// <param name="postResultJson"></param>
         /// <param name="isFromAutoSync"></param>
-        public void SyncTaskList(string taskListJson, bool isFromAutoSync = false)
+        public void SyncTaskList(bool isFromAutoSync = false)
         {
             try
             {
                 AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
-                var list = JsonConvert.DeserializeObject<TaskResult[]>(taskListJson);
-                if (list != null && list.Length > 0)
-                {
-                    timService.PostResponsesAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, list);
-                }
                 GetTasksListIDsFortheData(isFromAutoSync);
             }
             catch (Exception ex)
@@ -551,6 +546,27 @@ namespace mTimShared
                 await FileInfoHelper.Instance.DeleteFileInList(taskId, fileId);
                 FileInfoHelper.Instance.DeleteCompleted?.Invoke(taskId, fileId);
             };
+        }
+
+        /// <summary>
+        /// This is used to delete the file from server.
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="fileId"></param>
+        /// <param name="fileIdSpecified"></param>
+        public void PostResultAsync(string taskResultJson)
+        {
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            var list = JsonConvert.DeserializeObject<TaskResult[]>(taskResultJson);
+            timService = new MobileTimService(GlobalConstants.GetAppURL());
+            timService.PostResponsesCompleted += async (object sender, System.ComponentModel.AsyncCompletedEventArgs e) =>
+            {
+                if (e.Error != null || e.Cancelled)
+                {
+                    PostResultHelper.Instance.SaveTaskResults(JsonConvert.DeserializeObject<mTIM.Models.TaskResult[]>(taskResultJson));
+                }
+            };
+            timService.PostResponsesAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, list);
         }
     }
 }

@@ -15,6 +15,8 @@ namespace mTIM.Models
 
     public class FileInfo
     {
+        public int OfflineFileID { get; set; }
+        public int PostId { get; set; }
         public string Comment { get; set; }
         public int FileID { get; set; }
         public bool FileIDSpecified { get; set; }

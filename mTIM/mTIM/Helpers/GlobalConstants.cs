@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Globalization;
 using mTIM.Models;
 
 namespace mTIM.Helpers
@@ -23,6 +25,7 @@ namespace mTIM.Helpers
         public const string FILES_INFO = "filesinformation.json";
         public const string GraphicsBlob_FILE = "model_3d.proto";
         public const string FileExtesons = "file_extesons.json";
+        public const string POST_RESULT = "postresult.json";
         public static  bool IsLandscape = false;
         public static int DefaultSyncMinites { get; set; } = 5;
         public static int SyncMinutes { get; set; }
@@ -34,6 +37,20 @@ namespace mTIM.Helpers
 #else 
             return UniqueID;
 #endif
+        }
+
+        /// <summary>
+        /// This used to get the Task List ID
+        /// </summary>
+        /// <returns></returns>
+        public static int GetTaskId()
+        {
+            int taskListID = 0;
+            if (Xamarin.Forms.Application.Current.Properties.ContainsKey("GetTaskListIdForDayResult"))
+            {
+                taskListID = (int)Xamarin.Forms.Application.Current.Properties["GetTaskListIdForDayResult"];
+            }
+            return taskListID;
         }
 
 
@@ -57,6 +74,11 @@ namespace mTIM.Helpers
             //}
             Debug.WriteLine("App URL:" + baseUrl);
             return baseUrl;
+        }
+
+        public static string GetISODateTime()// ISO 8601
+        {
+            return DateTime.Now.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffzzz", CultureInfo.InvariantCulture);
         }
     }
 }

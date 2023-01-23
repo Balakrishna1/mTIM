@@ -1,6 +1,7 @@
 ﻿using System;
 using mTIM.Interfaces;
 using mTIM.iOS.Services;
+using mTIM.Models;
 using mTIM.ViewModels;
 using mTimShared;
 
@@ -59,10 +60,10 @@ namespace mTIM.iOS.Services
             mTimService.Instance.DownloadFile(fileId, fileIdSpecified);
         }
 
-        public void SyncTaskList(string taskListJson, bool isFromAutoSync = false)
+        public void SyncTaskList(bool isFromAutoSync = false)
         {
             intialize();
-            mTimService.Instance.SyncTaskList(taskListJson, isFromAutoSync);
+            mTimService.Instance.SyncTaskList(isFromAutoSync);
         }
 
         public void QueryAppUpdate(Action<string> actionAppUpdate)
@@ -93,6 +94,12 @@ namespace mTIM.iOS.Services
         {
             intialize();
             mTimService.Instance.DeleteFile(taskId, fileId, fileIdSpecified);
+        }
+
+        public void PostReultAsync(string jsonresult)
+        {
+            intialize();
+            mTimService.Instance.PostResultAsync(jsonresult);
         }
     }
 }

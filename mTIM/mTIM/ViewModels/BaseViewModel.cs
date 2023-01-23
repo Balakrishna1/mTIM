@@ -141,7 +141,6 @@ namespace mTIM.ViewModels
 
         public async void UpdateList(string json)
         {
-            //var json = CsvToJsonConverter.ConvertCsvToJson(csvList);
             if (!string.IsNullOrEmpty(json))
             {
                 await FileHelper.WriteTextAsync(GlobalConstants.TASKLIST_FILE, json);
@@ -183,6 +182,7 @@ namespace mTIM.ViewModels
         {
             CheckNetworkConnection();
             UploadOfflineFilesIntoServer();
+            Task.Run(() => PostOfflineResult());
         }
 
         private void CheckNetworkConnection()
@@ -276,12 +276,28 @@ namespace mTIM.ViewModels
             });
         }
 
-        public virtual void OnSyncCommand(bool isFromAuto = true)
+        public virtual async Task OnSyncCommand(bool isFromAuto = true)
         {
-            AnalyticsManager.TrackEvent(string.Format("{0} isFromAuto={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, isFromAuto));
-            SaveTaskList();
-            Webservice.ViewModel = this;
-            Webservice.SyncTaskList(JsonConvert.SerializeObject(TimTaskListHelper.GetTotalList()), isFromAuto);
+            if (IsNetworkConnected)
+            {
+                await Task.Run(() => PostOfflineResult());
+                Webservice.SyncTaskList(isFromAuto);
+            }
+        }
+
+        private async Task PostOfflineResult()
+        {
+            if (IsNetworkConnected)
+            {
+                AnalyticsManager.TrackEvent(string.Format("{0} isFromAuto={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, isFromAuto));
+                Webservice.ViewModel = this;
+                var list = await PostResultHelper.Instance.GetOfflineResults();
+                if (list?.Count > 0)
+                {
+                    FileHelper.DeleteFile(GlobalConstants.POST_RESULT);
+                    Webservice.PostReultAsync(JsonConvert.SerializeObject(list));
+                }
+            }
         }
 
         public void SaveTaskList()

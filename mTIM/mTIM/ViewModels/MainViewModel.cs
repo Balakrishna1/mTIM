@@ -1010,6 +1010,7 @@ namespace mTIM.ViewModels
             }
             updateTaskListVisibility();
             SaveTaskList();
+            Task.Run(() => PostResult(SelectedModel));
         }
 
 
@@ -1335,6 +1336,7 @@ namespace mTIM.ViewModels
                         break;
                 }
                 SaveTaskList();
+                Task.Run(() => PostResult(SelectedModel));
             }
         }
 
@@ -1352,6 +1354,34 @@ namespace mTIM.ViewModels
             IsEditTextVisible = false;
             updateTaskListVisibility();
             SaveTaskList();
+            Task.Run(() => PostResult(SelectedModel));
+        }
+
+        private async Task PostResult(TimTaskModel item)
+        {
+            var list = await PostResultHelper.Instance.GetOfflineResults();
+            var data = new TaskResult()
+            {
+                Gps = string.Format("{0}|{1}",
+                GlobalConstants.LocationDetails.Latitude,
+                GlobalConstants.LocationDetails.Longitude),
+                PosId = item.Id,
+                PosIdSpecified = true,
+                TaskId = GlobalConstants.GetTaskId(),
+                TaskIdSpecified = true,
+                Value = Convert.ToString(item.Value),
+                Time = GlobalConstants.GetISODateTime()
+            };
+            list.Add(data);
+            if (IsNetworkConnected)
+            {
+                FileHelper.DeleteFile(GlobalConstants.POST_RESULT);
+                Webservice.PostReultAsync(JsonConvert.SerializeObject(list));
+            }
+            else
+            {
+                PostResultHelper.Instance.SaveTaskResults(list.ToArray());
+            }
         }
     }
 }

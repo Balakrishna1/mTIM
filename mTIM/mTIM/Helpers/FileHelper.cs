@@ -129,6 +129,15 @@ namespace mTIM.Helpers
             }
         }
 
+        public static void DeleteFile(string fileName)
+        {
+            string file = Path.Combine(AppDirectory, fileName);
+            if (File.Exists(file))
+            {
+                File.Delete(file);
+            }
+        }
+
         public static int GenerateAndGetOfflineID()
         {
             Random random = new Random();
