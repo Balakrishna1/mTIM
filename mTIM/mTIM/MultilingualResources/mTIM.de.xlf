@@ -8,51 +8,79 @@
       <group id="MTIM/RESOURCES/APPRESOURCES.RESX" datatype="resx">
         <trans-unit id="AppUpdates" translate="yes" xml:space="preserve">
           <source>Search for updates</source>
-          <target state="translated">Nach Updates suchen</target>
+          <target state="final">Nach Updates suchen</target>
         </trans-unit>
         <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">Abbrechen</target>
+          <target state="final" state-qualifier="tm-suggestion">Abbrechen</target>
         </trans-unit>
         <trans-unit id="CheckNewVersion" translate="yes" xml:space="preserve">
           <source>Checking new version</source>
-          <target state="translated">Neue Version prüfen</target>
+          <target state="final">Neue Version prüfen</target>
         </trans-unit>
         <trans-unit id="HintURL" translate="yes" xml:space="preserve">
           <source>Enter URL</source>
-          <target state="translated">URL eingeben</target>
+          <target state="final">URL eingeben</target>
         </trans-unit>
         <trans-unit id="Info" translate="yes" xml:space="preserve">
           <source>Info</source>
-          <target state="translated">Informationen</target>
+          <target state="final">Informationen</target>
         </trans-unit>
         <trans-unit id="InstallUpdate" translate="yes" xml:space="preserve">
           <source>Install Update {0}</source>
-          <target state="translated">Installiere Update {0}</target>
+          <target state="final">Installiere Update {0}</target>
         </trans-unit>
         <trans-unit id="Ok" translate="yes" xml:space="preserve">
           <source>Ok</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">OK</target>
+          <target state="final" state-qualifier="tm-suggestion">OK</target>
         </trans-unit>
         <trans-unit id="Refresh" translate="yes" xml:space="preserve">
           <source>Refresh</source>
-          <target state="translated">Aktualisieren</target>
+          <target state="final">Aktualisieren</target>
         </trans-unit>
         <trans-unit id="Settings" translate="yes" xml:space="preserve">
           <source>Settings</source>
-          <target state="translated">Einstellungen</target>
+          <target state="final">Einstellungen</target>
         </trans-unit>
         <trans-unit id="SyncTime" translate="yes" xml:space="preserve">
           <source>Status sync interval</source>
-          <target state="translated">Statussynchronisierungsintervall</target>
+          <target state="final">Statussynchronisierungsintervall</target>
         </trans-unit>
         <trans-unit id="Url" translate="yes" xml:space="preserve">
           <source>Url</source>
-          <target state="translated">URL</target>
+          <target state="final">URL</target>
         </trans-unit>
         <trans-unit id="LoadTaskList" translate="yes" xml:space="preserve">
           <source>Load task list?</source>
-          <target state="translated">Aufgabenliste laden?</target>
+          <target state="final">Aufgabenliste laden?</target>
+        </trans-unit>
+        <trans-unit id="AddFile" translate="yes" xml:space="preserve">
+          <source>Add File?</source>
+          <target state="final">Datei hinzufügen?</target>
+        </trans-unit>
+        <trans-unit id="Comment" translate="yes" xml:space="preserve">
+          <source>comment</source>
+          <target state="final" state-qualifier="tm-suggestion">Kommentar</target>
+        </trans-unit>
+        <trans-unit id="No" translate="yes" xml:space="preserve">
+          <source>No</source>
+          <target state="final">Nein</target>
+        </trans-unit>
+        <trans-unit id="WantToAddFile" translate="yes" xml:space="preserve">
+          <source>Do you want to add this file?</source>
+          <target state="final">Wollen Sie die Datei hinzufuegen?</target>
+        </trans-unit>
+        <trans-unit id="Yes" translate="yes" xml:space="preserve">
+          <source>Yes</source>
+          <target state="final">Ja</target>
+        </trans-unit>
+        <trans-unit id="FileCommentHeader" translate="yes" xml:space="preserve">
+          <source>Comment</source>
+          <target state="final">Kommentar</target>
+        </trans-unit>
+          <trans-unit id="FileComment" translate="yes" xml:space="preserve">
+          <source>Please edit the comment</source>
+          <target state="final">Bitte editieren Sie das Kommentar</target>
         </trans-unit>
       </group>
     </body>

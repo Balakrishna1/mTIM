@@ -15,10 +15,10 @@ namespace mTIM.Interfaces
         void SyncTaskList(bool isFromAutoSync = false);
         void DownloadFile(int fileId, bool fileIdSpecified);
         void OpenFile(int fileId, bool fileIdSpecified);
-        void UploadFile(bool taskListIdSpecified, int taskId, int posId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified);
-        void UploadFileAsync(bool taskListIdSpecified, int taskId, int posId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified);
-        void ChangeFileComment(int taskId, int fileId, bool fileIdSpecified, string comment);
-        void DeleteFile(int taskId, int fileId, bool fileIdSpecified);
+        void UploadFile(bool taskListIdSpecified, int postId, int fileId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified);
+        void UploadFileAsync(bool taskListIdSpecified, int postId, int fileId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified);
+        void ChangeFileComment(int postId, int fileId, bool fileIdSpecified, string comment);
+        void DeleteFile(int postId, int fileId, bool fileIdSpecified);
         void PostReultAsync(string jsonresult);
     }
 }

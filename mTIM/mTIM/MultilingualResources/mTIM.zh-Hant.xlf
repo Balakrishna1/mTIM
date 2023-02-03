@@ -8,51 +8,79 @@
       <group id="MTIM/RESOURCES/APPRESOURCES.RESX" datatype="resx">
         <trans-unit id="AppUpdates" translate="yes" xml:space="preserve">
           <source>Search for updates</source>
-          <target state="translated">搜索更新</target>
+          <target state="final">搜索更新</target>
         </trans-unit>
         <trans-unit id="CheckNewVersion" translate="yes" xml:space="preserve">
           <source>Checking new version</source>
-          <target state="translated">檢查新版本</target>
+          <target state="final">檢查新版本</target>
         </trans-unit>
         <trans-unit id="HintURL" translate="yes" xml:space="preserve">
           <source>Enter URL</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">輸入 URL:</target>
+          <target state="final">輸入 URL:</target>
         </trans-unit>
         <trans-unit id="Info" translate="yes" xml:space="preserve">
           <source>Info</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">資訊</target>
+          <target state="final">資訊</target>
         </trans-unit>
         <trans-unit id="Refresh" translate="yes" xml:space="preserve">
           <source>Refresh</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">重新整理</target>
+          <target state="final">重新整理</target>
         </trans-unit>
         <trans-unit id="Settings" translate="yes" xml:space="preserve">
           <source>Settings</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">設定</target>
+          <target state="final">設定</target>
         </trans-unit>
         <trans-unit id="SyncTime" translate="yes" xml:space="preserve">
           <source>Status sync interval</source>
-          <target state="translated">狀態同步間隔</target>
+          <target state="final">狀態同步間隔</target>
         </trans-unit>
         <trans-unit id="Url" translate="yes" xml:space="preserve">
           <source>Url</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">URL</target>
+          <target state="final">URL</target>
         </trans-unit>
         <trans-unit id="InstallUpdate" translate="yes" xml:space="preserve">
           <source>Install Update {0}</source>
-          <target state="translated">安裝更新 {0}</target>
+          <target state="final">安裝更新 {0}</target>
         </trans-unit>
         <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">取消</target>
+          <target state="final">取消</target>
         </trans-unit>
         <trans-unit id="Ok" translate="yes" xml:space="preserve">
           <source>Ok</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">確定</target>
+          <target state="final">確定</target>
         </trans-unit>
         <trans-unit id="LoadTaskList" translate="yes" xml:space="preserve">
           <source>Load task list?</source>
-          <target state="translated">狀態同步間隔?</target>
+          <target state="final">狀態同步間隔?</target>
+        </trans-unit>
+        <trans-unit id="AddFile" translate="yes" xml:space="preserve">
+          <source>Add File?</source>
+          <target state="final">新增檔案?</target>
+        </trans-unit>
+        <trans-unit id="Comment" translate="yes" xml:space="preserve">
+          <source>comment</source>
+          <target state="final">註解</target>
+        </trans-unit>
+        <trans-unit id="No" translate="yes" xml:space="preserve">
+          <source>No</source>
+          <target state="final">否</target>
+        </trans-unit>
+        <trans-unit id="WantToAddFile" translate="yes" xml:space="preserve">
+          <source>Do you want to add this file?</source>
+          <target state="final">您要添加文件嗎？</target>
+        </trans-unit>
+        <trans-unit id="Yes" translate="yes" xml:space="preserve">
+          <source>Yes</source>
+          <target state="final">是</target>
+        </trans-unit>
+        <trans-unit id="FileCommentHeader" translate="yes" xml:space="preserve">
+          <source>Comment</source>
+          <target state="needs-review-translation" state-qualifier="tm-suggestion">註解</target>
+        </trans-unit>
+        <trans-unit id="FileComment" translate="yes" xml:space="preserve">
+          <source>Please edit the comment</source>
+          <target state="new">Please edit the comment</target>
         </trans-unit>
       </group>
     </body>

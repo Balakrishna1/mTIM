@@ -19,7 +19,7 @@ namespace mTIM.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class AppResources {
@@ -61,6 +61,15 @@ namespace mTIM.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add File?.
+        /// </summary>
+        public static string AddFile {
+            get {
+                return ResourceManager.GetString("AddFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search for updates.
         /// </summary>
         public static string AppUpdates {
@@ -84,6 +93,33 @@ namespace mTIM.Resources {
         public static string CheckNewVersion {
             get {
                 return ResourceManager.GetString("CheckNewVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to comment.
+        /// </summary>
+        public static string Comment {
+            get {
+                return ResourceManager.GetString("Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please edit the comment.
+        /// </summary>
+        public static string FileComment {
+            get {
+                return ResourceManager.GetString("FileComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        public static string FileCommentHeader {
+            get {
+                return ResourceManager.GetString("FileCommentHeader", resourceCulture);
             }
         }
         
@@ -120,6 +156,15 @@ namespace mTIM.Resources {
         public static string LoadTaskList {
             get {
                 return ResourceManager.GetString("LoadTaskList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string No {
+            get {
+                return ResourceManager.GetString("No", resourceCulture);
             }
         }
         
@@ -165,6 +210,24 @@ namespace mTIM.Resources {
         public static string Url {
             get {
                 return ResourceManager.GetString("Url", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to add this file?.
+        /// </summary>
+        public static string WantToAddFile {
+            get {
+                return ResourceManager.GetString("WantToAddFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
     }

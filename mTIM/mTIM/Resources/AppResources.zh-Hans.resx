@@ -48,4 +48,22 @@
   <data name="LoadTaskList" xml:space="preserve">
     <value>加载任务列表?</value>
   </data>
+  <data name="AddFile" xml:space="preserve">
+    <value>添加文件?</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>注释</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="WantToAddFile" xml:space="preserve">
+    <value>您要添加文件嗎？</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="FileCommentHeader" xml:space="preserve">
+    <value>评论</value>
+  </data>
 </root>

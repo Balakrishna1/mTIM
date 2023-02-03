@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace mTIM.Helpers
 {
-	public class PostResultHelper
-	{
+    public class PostResultHelper
+    {
         readonly string tag = "PostResultHelper";
         public static PostResultHelper _instance;
         public static PostResultHelper Instance
@@ -38,7 +38,9 @@ namespace mTIM.Helpers
         {
             try
             {
-                var json = JsonConvert.SerializeObject(taskResults);
+                var list = await GetOfflineResults();
+                list.AddRange(taskResults);
+                var json = JsonConvert.SerializeObject(list);
                 await FileHelper.WriteTextAsync(GlobalConstants.POST_RESULT, json);
             }
             catch (Exception ex)

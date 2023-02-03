@@ -425,7 +425,7 @@ namespace mTIM
         void btnCamera_Clicked(System.Object sender, System.EventArgs e)
         {
             AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
-            ViewModel.CapturePhotoAsync(null);
+            ViewModel.CapturePhotoAsync();
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace mTIM
         void btnGalary_Clicked(System.Object sender, System.EventArgs e)
         {
             AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
-            ViewModel.PickPhotoAsync(null);
+            ViewModel.PickPhotoAsync();
         }
     }
 }

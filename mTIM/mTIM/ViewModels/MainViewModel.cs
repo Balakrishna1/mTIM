@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Acr.UserDialogs;
 using HeyRed.Mime;
-using Microsoft.AppCenter.Crashes;
 using mTIM.Enums;
 using mTIM.Helpers;
 using mTIM.Interfaces;
@@ -441,13 +440,13 @@ namespace mTIM.ViewModels
         /// <summary>
         /// File upload completed callback.
         /// </summary>
-        /// <param name="taskId"></param>
         /// <param name="postId"></param>
+        /// <param name="fileId"></param>
         /// <param name="UploadFileId"></param>
         /// <param name="UploadFileSpecified"></param>
-        private void FileUploadCompleted(int taskId, int postId, int UploadFileId, bool UploadFileSpecified)
+        private void FileUploadCompleted(int postId, int fileId, int UploadFileId, bool UploadFileSpecified)
         {
-            var item = LstFiles.Where(x => x.FileID.Equals(UploadFileId)).FirstOrDefault();
+            var item = LstFiles.Where(x => x.FileID.Equals(fileId)).FirstOrDefault();
             if (item != null)
             {
                 var index = LstFiles.IndexOf(item);
@@ -462,9 +461,9 @@ namespace mTIM.ViewModels
         /// <summary>
         /// Edit comment completed callback.
         /// </summary>
-        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
         /// <param name="fileId"></param>
-        private void EditCommentCompleted(int taskId, int fileId)
+        private void EditCommentCompleted(int postId, int fileId)
         {
             var item = LstFiles.Where(x => x.FileID.Equals(fileId)).FirstOrDefault();
             if (item != null)
@@ -482,7 +481,7 @@ namespace mTIM.ViewModels
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        public void CapturePhotoAsync(FileInfo file)
+        public void CapturePhotoAsync()
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
@@ -491,56 +490,9 @@ namespace mTIM.ViewModels
                     MediaPickerOptions option = new MediaPickerOptions();
                     option.Title = "mTIM";
                     var fileinfo = await MediaPicker.CapturePhotoAsync(option);
-                    var bytes = LoadPhotoAsync(fileinfo);
-                    var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
-                    await Task.Delay(500);
-
-                    PromptConfig config = new PromptConfig();
-                    config.Title = "Datei hinzufuegen?";
-                    config.InputType = InputType.Name;
-                    config.Message = "Wollen Sie die Datei hinzufuegen?";
-                    config.Placeholder = "Kommentar";
-                    config.OkText = "Ja";
-                    config.CancelText = "Nein";
-                    var result = await UserDialogs.Instance.PromptAsync(config);
-                    if (result.Ok)
+                    if (fileinfo != null)
                     {
-                        int postId = FileHelper.GenerateAndGetOfflineID();
-                        int uploadFileResult;
-                        bool uploadFileResultSpecified = false;
-                        FileInfo info = new FileInfo();
-                        List<FileInfo> infos = new List<FileInfo>();
-                        info.FileID = postId;
-                        info.Comment = string.IsNullOrEmpty(result.Text) ? postId.ToString() : result.Text;
-                        info.IsOffline = true;
-                        info.OfflineFilePath = fileinfo.FullPath;
-                        info.FileIDSpecified = uploadFileResultSpecified;
-                        int taskId = SelectedModel.Id;
-                        FileInfoHelper.Instance.UpdateValueInList(taskId, info);
-                        infos = GetValues(taskId);
-                        int index = SelectedItemList.IndexOf(SelectedModel);
-                        SelectedItemList.ReplaceItem(index, SelectedModel);
-                        LstFiles.Clear();
-                        LstFiles.AddRange(infos);
-                        Task task = new Task(async () =>
-                        {
-                            if (IsNetworkConnected)
-                            {
-                                Webservice.UploadFile(true, SelectedModel.Id, postId, true, bytes, extension, "", result.Text, DateTime.Now, true, out uploadFileResult, out uploadFileResultSpecified);
-                                if (uploadFileResult > 0)
-                                {
-                                    var index = LstFiles.IndexOf(info);
-                                    info.FileID = uploadFileResult;
-                                    info.FileIDSpecified = uploadFileResultSpecified;
-                                    info.IsOffline = false;
-                                    if (index >= 0)
-                                        LstFiles.ReplaceItem(index, info);
-                                    updateSelectedItem();
-                                    FileInfoHelper.Instance.UpdateFileInfoInList(taskId, postId, uploadFileResult, uploadFileResultSpecified);
-                                }
-                            }
-                        });
-                        task.Start();
+                        AddFile(fileinfo);
                     }
                 }
                 catch (Exception ex)
@@ -552,17 +504,44 @@ namespace mTIM.ViewModels
         }
 
         /// <summary>
-        /// To get the bytes from image.
+        /// To select the picture from galary.
         /// </summary>
-        /// <param name="photo"></param>
+        /// <param name="file"></param>
         /// <returns></returns>
-        byte[] LoadPhotoAsync(FileResult photo)
+        public void PickPhotoAsync()
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                try
+                {
+                    MediaPickerOptions option = new MediaPickerOptions();
+                    option.Title = "mTIM";
+                    var fileinfo = await MediaPicker.PickPhotoAsync(option);
+                    if (fileinfo != null)
+                    {
+                        AddFile(fileinfo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                    CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name);
+                }
+            });
+        }
+
+        /// <summary>
+        /// To get the bytes from image path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        byte[] LoadPhotoFromPathAsync(string path)
         {
             byte[] photoBytes = null;
             // canceled
-            if (photo != null)
+            if (path != null)
             {
-                System.IO.FileStream stream1 = System.IO.File.OpenRead(photo.FullPath);
+                System.IO.FileStream stream1 = System.IO.File.OpenRead(path);
 
                 var b = new byte[stream1.Length];
 
@@ -573,67 +552,119 @@ namespace mTIM.ViewModels
             return photoBytes;
         }
 
-        /// <summary>
-        /// To select the picture from galary.
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        public void PickPhotoAsync(FileInfo file)
+        private void AddFile(FileResult fileinfo)
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                MediaPickerOptions option = new MediaPickerOptions();
-                option.Title = "mTIM";
-                var fileinfo = await MediaPicker.PickPhotoAsync(option);
-                var bytes = LoadPhotoAsync(fileinfo);
-                var extension = System.IO.Path.GetExtension(fileinfo.FullPath);
                 await Task.Delay(500);
                 PromptConfig config = new PromptConfig();
-                config.Title = "Datei hinzufuegen?";
+                config.Title = AppResources.AddFile;
                 config.InputType = InputType.Name;
-                config.Message = "Wollen Sie die Datei hinzufuegen?";
-                config.Placeholder = "Kommentar";
-                config.OkText = "Ja";
-                config.CancelText = "Nein";
+                config.Message = AppResources.WantToAddFile;
+                config.Placeholder = AppResources.Comment;
+                config.OkText = AppResources.Yes;
+                config.CancelText = AppResources.No;
                 var result = await UserDialogs.Instance.PromptAsync(config);
                 if (result.Ok)
                 {
-                    int postId = FileHelper.GenerateAndGetOfflineID();
-                    int uploadFileResult;
-                    bool uploadFileResultSpecified = true;
-
+                    int fileId = FileHelper.GenerateAndGetOfflineID();
                     FileInfo info = new FileInfo();
-                    List<FileInfo> infos = new List<FileInfo>();
-                    info.FileID = postId;
-                    info.Comment = string.IsNullOrEmpty(result.Text) ? postId.ToString() : result.Text;
+                    info.FileID = fileId;
+                    info.Comment = string.IsNullOrEmpty(result.Text) ? fileId.ToString() : result.Text;
                     info.IsOffline = true;
                     info.OfflineFilePath = fileinfo.FullPath;
-                    info.FileIDSpecified = uploadFileResultSpecified;
-                    int taskId = SelectedModel.Id;
-                    FileInfoHelper.Instance.UpdateValueInList(taskId, info);
-                    infos = GetValues(taskId);
+                    info.FileIDSpecified = false;
+                    info.ShouldBeDelete = true;
+                    var addfileTask = new Task(async () => await AddOrUpdateFile(info, SelectedModel.Id, string.IsNullOrEmpty(result.Text) ? fileId.ToString() : result.Text, FileType.Add));
+                    addfileTask.Start();
+                }
+            });
+        }
+
+        /// <summary>
+        /// This is used for add or update or delete the file.
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <param name="postId"></param>
+        /// <param name="comment"></param>
+        /// <param name="fileType"></param>
+        /// <returns></returns>
+        private async Task AddOrUpdateFile(FileInfo fileInfo, int postId, string comment, FileType fileType)
+        {
+            switch (fileType)
+            {
+                case FileType.Add:
+                    var bytes = LoadPhotoFromPathAsync(fileInfo.OfflineFilePath);
+                    var extension = System.IO.Path.GetExtension(fileInfo.OfflineFilePath);
+                    int uploadFileResult;
+                    bool uploadFileResultSpecified;
+                    await FileInfoHelper.Instance.UpdateValueInList(postId, fileInfo);
+                    var infos = GetValues(postId);
                     LstFiles.Clear();
-                    LstFiles.AddRange(infos);
-                    Task task = new Task(async () =>
+                    LstFiles.AddRange(infos ?? new List<FileInfo>());
+                    updateSelectedItem();
+                    if (IsNetworkConnected)
+                    {
+                        Webservice.UploadFile(true, SelectedModel.Id, fileInfo.FileID, true, bytes, extension, string.Format("{0}|{1}", GlobalConstants.LocationDetails.Latitude, GlobalConstants.LocationDetails.Longitude), fileInfo.Comment, DateTime.Now, true, out uploadFileResult, out uploadFileResultSpecified);
+                        if (uploadFileResult > 0)
+                        {
+                            var position = LstFiles.IndexOf(fileInfo);
+                            fileInfo.FileID = uploadFileResult;
+                            fileInfo.FileIDSpecified = uploadFileResultSpecified;
+                            fileInfo.IsOffline = false;
+                            if (position >= 0)
+                                LstFiles.ReplaceItem(position, fileInfo);
+                            await FileInfoHelper.Instance.UpdateFileInfoInList(postId, fileInfo.FileID, uploadFileResult, uploadFileResultSpecified);
+                        }
+                    }
+                    break;
+                case FileType.Update:
+                    var index = LstFiles.IndexOf(fileInfo);
+                    fileInfo.Comment = comment;
+                    if (fileInfo.IsOffline)
+                    {
+                        await FileInfoHelper.Instance.UpdateFileInfo(postId, index, fileInfo);
+                        LstFiles.ReplaceItem(index, fileInfo);
+                    }
+                    else
+                    {
+                        fileInfo.IsCommentEdited = true;
+                        await FileInfoHelper.Instance.UpdateFileInfo(postId, index, fileInfo);
+                        LstFiles.ReplaceItem(index, fileInfo);
+                        if (IsNetworkConnected && !fileInfo.IsOffline)
+                        {
+                            Webservice.ChangeFileComment(SelectedModel.Id, fileInfo.FileID, fileInfo.FileIDSpecified, fileInfo.Comment);
+                        }
+                    }
+                    break;
+                case FileType.Delete:
+                    if (fileInfo != null && fileInfo.IsOffline)
+                    {
+                        await FileInfoHelper.Instance.DeleteValueInList(postId, fileInfo);
+                        LstFiles.Remove(fileInfo);
+                    }
+                    else
                     {
                         if (IsNetworkConnected)
                         {
-                            Webservice.UploadFile(true, SelectedModel.Id, postId, true, bytes, extension, "", result.Text, DateTime.Now, true, out uploadFileResult, out uploadFileResultSpecified);
-                            if (uploadFileResult > 0)
-                            {
-                                var index = LstFiles.IndexOf(info);
-                                info.FileID = uploadFileResult;
-                                info.FileIDSpecified = uploadFileResultSpecified;
-                                info.IsOffline = false;
-                                if (index >= 0)
-                                    LstFiles.ReplaceItem(index, info);
-                                updateSelectedItem();
-                            }
+                            Webservice.DeleteFile(postId, fileInfo.FileID, fileInfo.FileIDSpecified);
+                            await FileInfoHelper.Instance.DeleteValueInList(SelectedModel.Id, fileInfo);
                         }
-                    });
-                    task.Start();
-                }
-            });
+                        else
+                        {
+                            var fileIndex = LstFiles.IndexOf(fileInfo);
+                            fileInfo.IsDeleted = true;
+                            await FileInfoHelper.Instance.UpdateFileInfo(postId, fileIndex, fileInfo);
+                        }
+                        var files = GetValues(postId);
+                        LstFiles.Clear();
+                        LstFiles.AddRange(files);
+                    }
+                    updateSelectedItem();
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -903,9 +934,7 @@ namespace mTIM.ViewModels
         /// <returns></returns>
         private List<FileInfo> GetValues(int id)
         {
-            var values = FileInfoHelper.Instance.GetValues(id);
-            values?.ForEach(x => x.IsShowDeleteIcon = IsShowGalaryIcon);
-            return values;
+            return FileInfoHelper.Instance.GetValues(id);
         }
 
         /// <summary>
@@ -1220,7 +1249,7 @@ namespace mTIM.ViewModels
         /// To sync the data to server after time interval completed.
         /// </summary>
         /// <param name="isFromAuto"></param>
-        public override void OnSyncCommand(bool isFromAuto = true)
+        public override async Task OnSyncCommand(bool isFromAuto = true)
         {
             SearchForNewApp();
             base.OnSyncCommand(isFromAuto);
@@ -1235,7 +1264,7 @@ namespace mTIM.ViewModels
         public ICommand OnCommentClickedCommand => new Command(CommentClickExecute);
         private async void CommentClickExecute(object parameter)
         {
-            if(!IsShowGalaryIcon)
+            if (!IsShowGalaryIcon)
             {
                 var document = parameter as FileInfo;
                 OpenDocument(document);
@@ -1243,33 +1272,18 @@ namespace mTIM.ViewModels
             }
             var selectedItem = parameter as FileInfo;
             PromptConfig config = new PromptConfig();
-            config.Title = "Comment";
+            config.Title = AppResources.FileCommentHeader;
             config.InputType = InputType.Name;
-            config.Message = "Please edit you comment.";
-            config.Placeholder = "Kommentar";
+            config.Message = AppResources.FileComment;
+            config.Placeholder = AppResources.Comment;
             config.Text = selectedItem.Comment;
-            config.OkText = "Ok";
-            config.CancelText = "Cancel";
+            config.OkText = AppResources.Ok;
+            config.CancelText = AppResources.Cancel;
             var result = await UserDialogs.Instance.PromptAsync(config);
             if (result.Ok)
             {
-                var index = LstFiles.IndexOf(selectedItem);
-                selectedItem.Comment = string.IsNullOrEmpty(result.Text) ? selectedItem.FileID.ToString() : result.Text;
-                if (selectedItem.IsOffline)
-                {
-                    FileInfoHelper.Instance.UpdateFileInfo(SelectedModel.Id, index, selectedItem);
-                    LstFiles.ReplaceItem(index, selectedItem);
-                }
-                else
-                {
-                    selectedItem.IsCommentEdited = true;
-                    FileInfoHelper.Instance.UpdateFileInfo(SelectedModel.Id, index, selectedItem);
-                    LstFiles.ReplaceItem(index, selectedItem);
-                    if (IsNetworkConnected && !selectedItem.IsOffline)
-                    {
-                        Webservice.ChangeFileComment(SelectedModel.Id, selectedItem.FileID, selectedItem.FileIDSpecified, selectedItem.Comment);
-                    }
-                }
+                var editcommenTask = new Task(async () => await AddOrUpdateFile(selectedItem, SelectedModel.Id, string.IsNullOrEmpty(result.Text) ? selectedItem.FileID.ToString() : result.Text, FileType.Update));
+                editcommenTask.Start();
             }
         }
 
@@ -1277,30 +1291,8 @@ namespace mTIM.ViewModels
         private void DeleteClickExecute(object parameter)
         {
             var selectedItem = parameter as FileInfo;
-            if (selectedItem != null && selectedItem.IsOffline)
-            {
-                FileInfoHelper.Instance.DeleteValueInList(SelectedModel.Id, selectedItem);
-                LstFiles.Remove(selectedItem);
-                updateSelectedItem();
-            }
-            else
-            {
-                if (IsNetworkConnected)
-                {
-                    Webservice.DeleteFile(SelectedModel.Id, selectedItem.FileID, selectedItem.FileIDSpecified);
-                    FileInfoHelper.Instance.DeleteValueInList(SelectedModel.Id, selectedItem);
-                }
-                else
-                {
-                    var index = LstFiles.IndexOf(selectedItem);
-                    selectedItem.IsDeleted = true;
-                    FileInfoHelper.Instance.UpdateFileInfo(SelectedModel.Id, index, selectedItem);
-                }
-                var files = GetValues(SelectedModel.Id);
-                LstFiles.Clear();
-                LstFiles.AddRange(files);
-                updateSelectedItem();
-            }
+            var deleteFileTask = new Task(async ()=> await AddOrUpdateFile(selectedItem, SelectedModel.Id, string.Empty, FileType.Delete));
+            deleteFileTask.Start();
         }
 
         public ICommand OnViewClickedCommand => new Command(ViewClickExecute);
@@ -1367,7 +1359,7 @@ namespace mTIM.ViewModels
                 GlobalConstants.LocationDetails.Longitude),
                 PosId = item.Id,
                 PosIdSpecified = true,
-                TaskId = GlobalConstants.GetTaskId(),
+                TaskId = GlobalConstants.GetTaskListId(),
                 TaskIdSpecified = true,
                 Value = Convert.ToString(item.Value),
                 Time = GlobalConstants.GetISODateTime()

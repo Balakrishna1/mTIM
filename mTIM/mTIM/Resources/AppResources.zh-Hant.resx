@@ -48,4 +48,22 @@
   <data name="LoadTaskList" xml:space="preserve">
     <value>狀態同步間隔?</value>
   </data>
+  <data name="AddFile" xml:space="preserve">
+    <value>新增檔案?</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>註解</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="WantToAddFile" xml:space="preserve">
+    <value>您要添加文件嗎？</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="FileCommentHeader" xml:space="preserve">
+    <value>註解</value>
+  </data>
 </root>

@@ -362,7 +362,6 @@ namespace mTimShared
         /// <summary>
         /// This is used to sync the local data to server.
         /// </summary>
-        /// <param name="postResultJson"></param>
         /// <param name="isFromAutoSync"></param>
         public void SyncTaskList(bool isFromAutoSync = false)
         {
@@ -422,8 +421,8 @@ namespace mTimShared
         /// This is used to upload the file to server.
         /// </summary>
         /// <param name="taskListIdSpecified"></param>
-        /// <param name="taskId"></param>
         /// <param name="postId"></param>
+        /// <param name="fileId"></param>
         /// <param name="posIdSpecified"></param>
         /// <param name="fileContent"></param>
         /// <param name="extension"></param>
@@ -433,14 +432,13 @@ namespace mTimShared
         /// <param name="timeSpecified"></param>
         /// <param name="UploadFileResult"></param>
         /// <param name="UploadFileResultSpecified"></param>
-        public void UploadFile(bool taskListIdSpecified, int taskId, int postId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified)
+        public void UploadFile(bool taskListIdSpecified, int postId, int fileId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified)
         {
             try
             {
-                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} postId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, postId));
+                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} postId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, postId, fileId));
                 timService = new MobileTimService(GlobalConstants.GetAppURL());
-                int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
-                timService.UploadFile(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, true, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
+                timService.UploadFile(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, GlobalConstants.GetTaskListId(), taskListIdSpecified, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
             }
             catch (Exception ex)
             {
@@ -455,8 +453,8 @@ namespace mTimShared
         /// This is used to upload the file to server asynchronously. 
         /// </summary>
         /// <param name="taskListIdSpecified"></param>
-        /// <param name="taskId"></param>
         /// <param name="postId"></param>
+        /// <param name="fileId"></param>
         /// <param name="posIdSpecified"></param>
         /// <param name="fileContent"></param>
         /// <param name="extension"></param>
@@ -464,73 +462,71 @@ namespace mTimShared
         /// <param name="comment"></param>
         /// <param name="time"></param>
         /// <param name="timeSpecified"></param>
-        public void UploadFileAsync(bool taskListIdSpecified, int taskId, int postId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified)
+        public void UploadFileAsync(bool taskListIdSpecified, int postId, int fileId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified)
         {
-            AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} postId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, postId));
+            AnalyticsManager.TrackEvent(string.Format("{0} postId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, postId, fileId));
             timService = new MobileTimService(GlobalConstants.GetAppURL());
-            int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
-            UploadCompleteEvent(taskId, postId);
-            timService.UploadFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, tasksListID, true, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified);
+            UploadCompleteEvent(postId, fileId);
+            timService.UploadFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, GlobalConstants.GetTaskListId(), taskListIdSpecified, postId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified);
         }
 
         /// <summary>
         /// To set UploadFileCompleted callback.
         /// </summary>
-        /// <param name="taskId"></param>
         /// <param name="postId"></param>
-        private void UploadCompleteEvent(int taskId, int postId)
+        /// <param name="fileId"></param>
+        private void UploadCompleteEvent(int postId, int fileId)
         {
             timService.UploadFileCompleted += async (object sender, UploadFileCompletedEventArgs e) =>
             {
-                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} postId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, postId));
-                await FileInfoHelper.Instance.UpdateFileInfoInList(taskId, postId, e.UploadFileResult, e.UploadFileResultSpecified);
-                FileInfoHelper.Instance.FileUploadCompleted?.Invoke(taskId, postId, e.UploadFileResult, e.UploadFileResultSpecified);
+                AnalyticsManager.TrackEvent(string.Format("{0} postId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, postId, postId));
+                FileInfoHelper.Instance.FileUploadCompleted?.Invoke(postId, fileId, e.UploadFileResult, e.UploadFileResultSpecified);
+                await FileInfoHelper.Instance.UpdateFileInfoInList(postId, fileId, e.UploadFileResult, e.UploadFileResultSpecified);
             };
         }
 
         /// <summary>
         /// This is used to post the chnaged File comment to server.
         /// </summary>
-        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
         /// <param name="fileId"></param>
         /// <param name="fileIdSpecified"></param>
         /// <param name="comment"></param>
-        public void ChangeFileComment(int taskId, int fileId, bool fileIdSpecified, string comment)
+        public void ChangeFileComment(int postId, int fileId, bool fileIdSpecified, string comment)
         {
-            AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, fileId));
+            AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, postId, fileId));
             timService = new MobileTimService(GlobalConstants.GetAppURL());
-            int tasksListID = (int)Application.Current.Properties["GetTaskListIdForDayResult"];
-            ChangeFileCompleteEvent(taskId, fileId, comment);
+            ChangeFileCompleteEvent(postId, fileId, comment);
             timService.ChangeFileCommentAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified, comment);
         }
 
         /// <summary>
         /// Callback of ChangeFileComment.
         /// </summary>
-        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
         /// <param name="fileId"></param>
         /// <param name="comment"></param>
-        private void ChangeFileCompleteEvent(int taskId, int fileId, string comment)
+        private void ChangeFileCompleteEvent(int postId, int fileId, string comment)
         {
             timService.ChangeFileCommentCompleted += async (object sender, ChangeFileCommentCompletedEventArgs e) =>
             {
-                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, taskId, fileId));
-                await FileInfoHelper.Instance.UpdateFileComment(taskId, fileId, comment);
-                FileInfoHelper.Instance.CommentUpdatedCompleted?.Invoke(taskId, fileId);
+                AnalyticsManager.TrackEvent(string.Format("{0} taskId={1} fileId = {2}", System.Reflection.MethodBase.GetCurrentMethod().Name, postId, fileId));
+                FileInfoHelper.Instance.CommentUpdatedCompleted?.Invoke(postId, fileId);
+                await FileInfoHelper.Instance.UpdateFileComment(postId, fileId, comment);
             };
         }
 
         /// <summary>
         /// This is used to delete the file from server.
         /// </summary>
-        /// <param name="taskId"></param>
+        /// <param name="postId"></param>
         /// <param name="fileId"></param>
         /// <param name="fileIdSpecified"></param>
-        public void DeleteFile(int taskId, int fileId, bool fileIdSpecified)
+        public void DeleteFile(int postId, int fileId, bool fileIdSpecified)
         {
             AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
             timService = new MobileTimService(GlobalConstants.GetAppURL());
-            DeleteFileCompleteEvent(taskId, fileId);
+            DeleteFileCompleteEvent(postId, fileId);
             timService.DeleteFileAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, fileId, fileIdSpecified);
         }
 
@@ -539,21 +535,19 @@ namespace mTimShared
         /// </summary>
         /// <param name="taskId"></param>
         /// <param name="fileId"></param>
-        private void DeleteFileCompleteEvent(int taskId, int fileId)
+        private void DeleteFileCompleteEvent(int postId, int fileId)
         {
             timService.DeleteFileCompleted += async (object sender, System.ComponentModel.AsyncCompletedEventArgs e) =>
             {
-                await FileInfoHelper.Instance.DeleteFileInList(taskId, fileId);
-                FileInfoHelper.Instance.DeleteCompleted?.Invoke(taskId, fileId);
+                await FileInfoHelper.Instance.DeleteFileInList(postId, fileId);
+                FileInfoHelper.Instance.DeleteCompleted?.Invoke(postId, fileId);
             };
         }
 
         /// <summary>
-        /// This is used to delete the file from server.
+        /// This is used to post the result from server.
         /// </summary>
-        /// <param name="taskId"></param>
-        /// <param name="fileId"></param>
-        /// <param name="fileIdSpecified"></param>
+        /// <param name="taskResultJson"></param>
         public void PostResultAsync(string taskResultJson)
         {
             AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);

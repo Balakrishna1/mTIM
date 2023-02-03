@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddFile" xml:space="preserve">
+    <value>Add File?</value>
+  </data>
   <data name="AppUpdates" xml:space="preserve">
     <value>Search for updates</value>
   </data>
@@ -125,6 +128,15 @@
   </data>
   <data name="CheckNewVersion" xml:space="preserve">
     <value>Checking new version</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>comment</value>
+  </data>
+  <data name="FileComment" xml:space="preserve">
+    <value>Please edit the comment</value>
+  </data>
+  <data name="FileCommentHeader" xml:space="preserve">
+    <value>Comment</value>
   </data>
   <data name="HintURL" xml:space="preserve">
     <value>Enter URL</value>
@@ -137,6 +149,9 @@
   </data>
   <data name="LoadTaskList" xml:space="preserve">
     <value>Load task list?</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
   </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
@@ -152,5 +167,11 @@
   </data>
   <data name="Url" xml:space="preserve">
     <value>Url</value>
+  </data>
+  <data name="WantToAddFile" xml:space="preserve">
+    <value>Do you want to add this file?</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

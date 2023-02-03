@@ -26,7 +26,7 @@ namespace mTIM.Helpers
         public const string GraphicsBlob_FILE = "model_3d.proto";
         public const string FileExtesons = "file_extesons.json";
         public const string POST_RESULT = "postresult.json";
-        public static  bool IsLandscape = false;
+        public static bool IsLandscape = false;
         public static int DefaultSyncMinites { get; set; } = 5;
         public static int SyncMinutes { get; set; }
 
@@ -43,7 +43,7 @@ namespace mTIM.Helpers
         /// This used to get the Task List ID
         /// </summary>
         /// <returns></returns>
-        public static int GetTaskId()
+        public static int GetTaskListId()
         {
             int taskListID = 0;
             if (Xamarin.Forms.Application.Current.Properties.ContainsKey("GetTaskListIdForDayResult"))

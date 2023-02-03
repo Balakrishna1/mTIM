@@ -1,7 +1,6 @@
 ﻿using System;
 using mTIM.Interfaces;
 using mTIM.iOS.Services;
-using mTIM.Models;
 using mTIM.ViewModels;
 using mTimShared;
 
@@ -72,28 +71,28 @@ namespace mTIM.iOS.Services
             mTimService.Instance.QueryAppUpdate(actionAppUpdate);
         }
 
-        public void UploadFile(bool taskListIdSpecified, int taskId, int posId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified)
+        public void UploadFile(bool taskListIdSpecified, int postId, int fileId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, System.DateTime time, bool timeSpecified, out int UploadFileResult, out bool UploadFileResultSpecified)
         {
             intialize();
-            mTimService.Instance.UploadFile(true, taskId, posId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
+            mTimService.Instance.UploadFile(true, postId, fileId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified, out UploadFileResult, out UploadFileResultSpecified);
         }
 
-        public void UploadFileAsync(bool taskListIdSpecified, int taskId, int posId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, DateTime time, bool timeSpecified)
+        public void UploadFileAsync(bool taskListIdSpecified, int postId, int fileId, bool posIdSpecified, byte[] fileContent, string extension, string gps, string comment, DateTime time, bool timeSpecified)
         {
             intialize();
-            mTimService.Instance.UploadFileAsync(true, taskId, posId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified);
+            mTimService.Instance.UploadFileAsync(true, postId, fileId, posIdSpecified, fileContent, extension, gps, comment, time, timeSpecified);
         }
 
-        public void ChangeFileComment(int taskId, int fileId, bool fileIdSpecified, string comment)
+        public void ChangeFileComment(int postId, int fileId, bool fileIdSpecified, string comment)
         {
             intialize();
-            mTimService.Instance.ChangeFileComment(taskId, fileId, fileIdSpecified, comment);
+            mTimService.Instance.ChangeFileComment(postId, fileId, fileIdSpecified, comment);
         }
 
-        public void DeleteFile(int taskId, int fileId, bool fileIdSpecified)
+        public void DeleteFile(int postId, int fileId, bool fileIdSpecified)
         {
             intialize();
-            mTimService.Instance.DeleteFile(taskId, fileId, fileIdSpecified);
+            mTimService.Instance.DeleteFile(postId, fileId, fileIdSpecified);
         }
 
         public void PostReultAsync(string jsonresult)

@@ -134,7 +134,7 @@ namespace mTIM.ViewModels
 
         public void Refresh()
         {
-                AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
+            AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name);
             OnSyncCommand();
             SyncTime = SyncMinites * 60;
         }
@@ -167,8 +167,8 @@ namespace mTIM.ViewModels
             }
             TimerHelper.Instance.Create(CallBack);
             base.OnAppearing();
-            CheckNetworkConnection();
             Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
+            CheckNetworkConnection();
         }
 
         public override void OnDisAppearing()
@@ -227,27 +227,27 @@ namespace mTIM.ViewModels
             }
         }
 
-        private void UploadOfflineFiles(int taskId, List<FileInfo> items)
+        private void UploadOfflineFiles(int postId, List<FileInfo> items)
         {
             foreach (var file in items)
             {
-                Task.Run(() => Webservice.UploadFileAsync(true, taskId, file.FileID, file.FileIDSpecified, GetBytesFromPath(file.OfflineFilePath), System.IO.Path.GetExtension(file.OfflineFilePath), null, file.Comment, DateTime.Now, true));
+                Task.Run(() => Webservice.UploadFileAsync(true, postId, file.FileID, true, GetBytesFromPath(file.OfflineFilePath), System.IO.Path.GetExtension(file.OfflineFilePath), null, file.Comment, DateTime.Now, true));
             }
         }
 
-        private void UploadOfflineCommentFiles(int taskId, List<FileInfo> items)
+        private void UploadOfflineCommentFiles(int postId, List<FileInfo> items)
         {
             foreach (var file in items)
             {
-                Task.Run(() => Webservice.ChangeFileComment(taskId, file.FileID, file.FileIDSpecified, file.Comment));
+                Task.Run(() => Webservice.ChangeFileComment(postId, file.FileID, file.FileIDSpecified, file.Comment));
             }
         }
 
-        private void UploadOfflineDeletedFiles(int taskId, List<FileInfo> items)
+        private void UploadOfflineDeletedFiles(int postId, List<FileInfo> items)
         {
             foreach (var file in items)
             {
-                Task.Run(() => Webservice.DeleteFile(taskId, file.FileID, file.FileIDSpecified));
+                Task.Run(() => Webservice.DeleteFile(postId, file.FileID, file.FileIDSpecified));
             }
         }
 
@@ -280,7 +280,8 @@ namespace mTIM.ViewModels
         {
             if (IsNetworkConnected)
             {
-                await Task.Run(() => PostOfflineResult());
+                AnalyticsManager.TrackEvent(string.Format("{0} isFromAuto={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, isFromAuto));
+                await PostOfflineResult();
                 Webservice.SyncTaskList(isFromAuto);
             }
         }
@@ -289,7 +290,6 @@ namespace mTIM.ViewModels
         {
             if (IsNetworkConnected)
             {
-                AnalyticsManager.TrackEvent(string.Format("{0} isFromAuto={1}", System.Reflection.MethodBase.GetCurrentMethod().Name, isFromAuto));
                 Webservice.ViewModel = this;
                 var list = await PostResultHelper.Instance.GetOfflineResults();
                 if (list?.Count > 0)

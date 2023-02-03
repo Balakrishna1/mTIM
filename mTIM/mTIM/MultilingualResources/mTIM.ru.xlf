@@ -8,51 +8,79 @@
       <group id="MTIM/RESOURCES/APPRESOURCES.RESX" datatype="resx">
         <trans-unit id="AppUpdates" translate="yes" xml:space="preserve">
           <source>Search for updates</source>
-          <target state="translated">Искать обновления</target>
+          <target state="final">Искать обновления</target>
         </trans-unit>
         <trans-unit id="CheckNewVersion" translate="yes" xml:space="preserve">
           <source>Checking new version</source>
-          <target state="translated">Проверка новой версии</target>
+          <target state="final">Проверка новой версии</target>
         </trans-unit>
         <trans-unit id="HintURL" translate="yes" xml:space="preserve">
           <source>Enter URL</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">Укажите URL-адрес</target>
+          <target state="final">Укажите URL-адрес</target>
         </trans-unit>
         <trans-unit id="Info" translate="yes" xml:space="preserve">
           <source>Info</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">Информация</target>
+          <target state="final">Информация</target>
         </trans-unit>
         <trans-unit id="Refresh" translate="yes" xml:space="preserve">
           <source>Refresh</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">Обновить</target>
+          <target state="final">Обновить</target>
         </trans-unit>
         <trans-unit id="Settings" translate="yes" xml:space="preserve">
           <source>Settings</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">параметры</target>
+          <target state="final">параметры</target>
         </trans-unit>
         <trans-unit id="SyncTime" translate="yes" xml:space="preserve">
           <source>Status sync interval</source>
-          <target state="translated">Интервал синхронизации статуса</target>
+          <target state="final">Интервал синхронизации статуса</target>
         </trans-unit>
         <trans-unit id="Url" translate="yes" xml:space="preserve">
           <source>Url</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">URL-адрес</target>
+          <target state="final">URL-адрес</target>
         </trans-unit>
         <trans-unit id="InstallUpdate" translate="yes" xml:space="preserve">
           <source>Install Update {0}</source>
-          <target state="translated">Установить обновление {0}</target>
+          <target state="final">Установить обновление {0}</target>
         </trans-unit>
         <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">Отмена</target>
+          <target state="final">Отмена</target>
         </trans-unit>
         <trans-unit id="Ok" translate="yes" xml:space="preserve">
           <source>Ok</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">ОК</target>
+          <target state="final">ОК</target>
         </trans-unit>
         <trans-unit id="LoadTaskList" translate="yes" xml:space="preserve">
           <source>Load task list?</source>
-          <target state="translated">Загрузить список задач?</target>
+          <target state="final">Загрузить список задач?</target>
+        </trans-unit>
+        <trans-unit id="AddFile" translate="yes" xml:space="preserve">
+          <source>Add File?</source>
+          <target state="final">Добавить файл?</target>
+        </trans-unit>
+        <trans-unit id="Comment" translate="yes" xml:space="preserve">
+          <source>comment</source>
+          <target state="final">комментарий</target>
+        </trans-unit>
+        <trans-unit id="No" translate="yes" xml:space="preserve">
+          <source>No</source>
+          <target state="final">Нет</target>
+        </trans-unit>
+        <trans-unit id="WantToAddFile" translate="yes" xml:space="preserve">
+          <source>Do you want to add this file?</source>
+          <target state="final">Вы хотите добавить файл?</target>
+        </trans-unit>
+        <trans-unit id="Yes" translate="yes" xml:space="preserve">
+          <source>Yes</source>
+          <target state="final">Да</target>
+        </trans-unit>
+        <trans-unit id="FileCommentHeader" translate="yes" xml:space="preserve">
+          <source>Comment</source>
+          <target state="needs-review-translation" state-qualifier="tm-suggestion">Комментарий</target>
+        </trans-unit>
+        <trans-unit id="FileComment" translate="yes" xml:space="preserve">
+          <source>Please edit the comment</source>
+          <target state="new">Please edit the comment</target>
         </trans-unit>
       </group>
     </body>

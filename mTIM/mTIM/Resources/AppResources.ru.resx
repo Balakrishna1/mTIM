@@ -48,4 +48,22 @@
   <data name="LoadTaskList" xml:space="preserve">
     <value>Загрузить список задач?</value>
   </data>
+  <data name="AddFile" xml:space="preserve">
+    <value>Добавить файл?</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>комментарий</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="WantToAddFile" xml:space="preserve">
+    <value>Вы хотите добавить файл?</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="FileCommentHeader" xml:space="preserve">
+    <value>Комментарий</value>
+  </data>
 </root>

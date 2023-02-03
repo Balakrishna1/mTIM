@@ -6,6 +6,7 @@ using Android.Graphics;
 using mTIM.Managers;
 #elif __IOS__
 using Foundation;
+using mTIM.Managers;
 using UIKit;
 #endif
 

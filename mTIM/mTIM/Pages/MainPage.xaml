@@ -170,7 +170,7 @@
 			                                    <ColumnDefinition Width="*"></ColumnDefinition>
 		                                    </Grid.ColumnDefinitions>
                                                 <Button BackgroundColor="Transparent" TextTransform="None" TextColor="{Binding TextColor}" Clicked="CommentClicked" Text="{Binding Comment}" CommandParameter="{Binding .}" FontSize="Medium" VerticalOptions="Fill" Grid.Column="0" HorizontalOptions="StartAndExpand"/>
-                                                <ImageButton BackgroundColor="Transparent" IsVisible="{Binding IsShowDeleteIcon}" Clicked="OnDeleteClicked" CommandParameter="{Binding .}" x:Name="imgDelete" Grid.Column="1"  Source="icon_delete" Aspect="AspectFit" Padding="0,0,8,0" HeightRequest="50" WidthRequest="50" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
+                                                <ImageButton BackgroundColor="Transparent" IsVisible="{Binding ShouldBeDelete}" Clicked="OnDeleteClicked" CommandParameter="{Binding .}" x:Name="imgDelete" Grid.Column="1"  Source="icon_delete" Aspect="AspectFit" Padding="0,0,8,0" HeightRequest="50" WidthRequest="50" VerticalOptions="Center" HorizontalOptions="EndAndExpand"/>
                                                 <ImageButton BackgroundColor="Transparent" Clicked="OnEyeClicked" CommandParameter="{Binding .}" x:Name="imgEye" Grid.Column="3" Source="icon_eye" Aspect="AspectFit" HeightRequest="40" WidthRequest="40" VerticalOptions="Center" HorizontalOptions="CenterAndExpand"/>
                                         </Grid>
                                     </StackLayout>

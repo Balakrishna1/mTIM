@@ -15,8 +15,6 @@ namespace mTIM.Models
 
     public class FileInfo
     {
-        public int OfflineFileID { get; set; }
-        public int PostId { get; set; }
         public string Comment { get; set; }
         public int FileID { get; set; }
         public bool FileIDSpecified { get; set; }
@@ -24,7 +22,7 @@ namespace mTIM.Models
         public bool IsCommentEdited { get; set; }
         public bool IsDeleted { get; set; }
         public string OfflineFilePath { get; set; }
-        public bool IsShowDeleteIcon { get; set; }
+        public bool ShouldBeDelete { get; set; }
         public Color TextColor  => (IsOffline || IsCommentEdited) ? Color.Red : Color.Black;
     }
 }

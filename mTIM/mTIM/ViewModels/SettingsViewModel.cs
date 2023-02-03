@@ -103,7 +103,7 @@ namespace mTIM.ViewModels
             await FileHelper.WriteTextAsync(GlobalConstants.SETTINGS_FILE, content);
         }
 
-        public override void OnSyncCommand(bool isFromAuto = true)
+        public override async Task OnSyncCommand(bool isFromAuto = true)
         {
             base.OnSyncCommand(isFromAuto);
         }
