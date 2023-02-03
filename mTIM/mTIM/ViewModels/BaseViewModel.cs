@@ -169,6 +169,7 @@ namespace mTIM.ViewModels
             base.OnAppearing();
             Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             CheckNetworkConnection();
+            UploadOfflineFilesIntoServer();
         }
 
         public override void OnDisAppearing()

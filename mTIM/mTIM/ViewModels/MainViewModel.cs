@@ -53,7 +53,6 @@ namespace mTIM.ViewModels
             FileInfoHelper.Instance.FileUploadCompleted += FileUploadCompleted;
             FileInfoHelper.Instance.CommentUpdatedCompleted += EditCommentCompleted;
             Webservice.GraphicsDownloadedCallBack += GraphicsDownloadedCallBack;
-            UploadOfflineFilesIntoServer();
             LoadMesh();
         }
 
