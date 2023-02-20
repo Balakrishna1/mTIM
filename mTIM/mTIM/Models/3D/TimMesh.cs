@@ -7,7 +7,6 @@ namespace mTIM.Models.D
 {
     public class TimMesh
     {
-        public string ElementName { get; set; }
         public VertexBuffer vertexBuffer { get; set; }
         public IndexBuffer indexBuffer { get; set; }
         public List<TimElementMesh> elementMeshes { get; set; }
@@ -15,7 +14,6 @@ namespace mTIM.Models.D
         public List<int> indeces { get; set; }
         public List<int> lineIndices { get; set; }
         public AABB aabb { get; set; }
-        public Urho.Model model { get; set; }
         public int ProjectId { get; set; }
         public bool IsLoaded { get; set; }
 
@@ -175,22 +173,6 @@ namespace mTIM.Models.D
         public int numVertices;
         public int startIndex;
         public int primitiveCount;
-    };
-
-    public struct TimSubMesh
-    {
-        public TimBatch triangleBatch;
-        public TimBatch lineBatch;
-
-        public AABB aabb;
-        public int visualizableIndex;
-        public int refIndex;
-        public bool visible;
-        public bool opaque;
-        public bool active;
-        public Color color;
-        public int listId;
-        public int simplificationLevel;
     };
 
     public struct TimElementMesh

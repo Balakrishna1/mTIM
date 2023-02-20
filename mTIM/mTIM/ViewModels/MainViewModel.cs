@@ -86,7 +86,7 @@ namespace mTIM.ViewModels
                 Task task = Task.Run(async () =>
                 {
 #if DEBUG
-                    GlobalConstants.AppBaseURL = "http://mtimtest.precast-software.com:7778";
+                    GlobalConstants.AppBaseURL = "http://mtimtest.allplan.com:7778/";
 #else
                     GlobalConstants.AppBaseURL = string.Empty;
 #endif
@@ -139,11 +139,13 @@ namespace mTIM.ViewModels
                     {
                         OnSyncCommand(true);
                         string json = await FileHelper.ReadTextAsync(GlobalConstants.TASKLIST_FILE);
+                        string statusjson = await FileHelper.ReadTextAsync(GlobalConstants.EelementStatus_FILE);
                         Debug.WriteLine("Task List: " + json);
                         var list = JsonConvert.DeserializeObject<List<TimTaskModel>>(json);
                         if (list != null)
                         {
                             list.UpdateList();
+                            TimTaskListHelper.UpdateStateInfo(statusjson);
                             RefreshData();
                         }
                     }
@@ -1002,7 +1004,14 @@ namespace mTIM.ViewModels
                         }
                         break;
                     case DataType.Bool:
-                        SelectedModel.Value = !Convert.ToBoolean(SelectedModel.Value);
+                        string value = string.Empty;
+                        var result = (SelectedModel.Value?.ToString() == "J" || SelectedModel.Value?.ToString() == "N");
+                        if (result)
+                            value = SelectedModel.Value.ToString() == "J" ? "N" : "J";
+                        else
+                            value = (!Convert.ToBoolean(SelectedModel.Value)).ToString();
+                        SelectedModel.Value = value;
+                        RightIconCommand(SelectedModel);
                         break;
                     case DataType.Doc:
                         IsShowGalaryIcon = false;
@@ -1019,6 +1028,7 @@ namespace mTIM.ViewModels
                         InputText = SelectedModel.Value?.ToString(); ;
                         IsEditTextVisible = true;
                         updateTaskListVisibility();
+                        RightIconCommand(SelectedModel);
                         break;
                     default:
                         break;

@@ -5,13 +5,15 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using mTIM.Enums;
 using Newtonsoft.Json;
+using SkiaSharp;
+using Xamarin.Forms;
 
 namespace mTIM.Models.D
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class TimTaskModel : INotifyPropertyChanged
     {
-        public object Action { get; set; }
+        public string Action { get; set; }
         public string Color { get; set; }
         public object EvaluationType { get; set; }
         public string ExternId { get; set; }
@@ -37,6 +39,18 @@ namespace mTIM.Models.D
         public bool SplitGraphicSpecified { get; set; }
         public DataType Type { get; set; }
 
+        [JsonIgnore]
+        public bool ShowInLineList { get; set; }
+
+        [JsonIgnore]
+        public List<string> Conditions { get; set; } = new List<string>();
+
+        [JsonIgnore]
+        public string StatusColor { get; set; }
+
+        [JsonIgnore]
+        public int StatusIndex { get; set; }
+
         private object value;
         public object Value
         {
@@ -53,6 +67,12 @@ namespace mTIM.Models.D
 
         [JsonIgnore]
         public IEnumerable<TimTaskModel> Childrens { get; set; }
+
+        [JsonIgnore]
+        public IList<string> PostiveActions { get; set; } = new List<string>();
+
+        [JsonIgnore]
+        public IList<string> NegativeActions { get; set; } = new List<string>();
 
         //[JsonIgnore]
         //public IEnumerable<TimTaskModel> Ancestors { get; set; }
@@ -91,6 +111,7 @@ namespace mTIM.Models.D
 
         public void LoadValues()
         {
+            UpdateActions();
             switch (Type)
             {
                 case DataType.Int:
@@ -190,6 +211,26 @@ namespace mTIM.Models.D
         }
 
         /// <summary>
+        /// To update the actions.
+        /// </summary>
+        private void UpdateActions()
+        {
+            if (!string.IsNullOrEmpty(Action))
+            {
+                var actions = Action.ToString().Split("/");
+                if (actions?.Count() > 1)
+                {
+                    PostiveActions.Add(actions[0]);
+                    NegativeActions.Add(actions[1]);
+                }
+                else
+                {
+                    PostiveActions.Add(actions.FirstOrDefault());
+                }
+            }
+        }
+
+        /// <summary>
         /// To update the selected value
         /// </summary>
         /// <param name="value"></param>
@@ -206,5 +247,21 @@ namespace mTIM.Models.D
                 Value = value;
             }
         }
+
+        public void RecalcStatus(StatusConfiguration configuration)
+        {
+            int newStatusIndex = configuration.CalcStatusIndex(Conditions);
+            if (newStatusIndex < 0 || newStatusIndex >= configuration.States.Count())
+            {
+                StatusColor = Xamarin.Forms.Color.Black.ToHex();
+                StatusIndex = -1;
+            }
+            else
+            {
+                StatusColor = configuration.States[newStatusIndex].Color;
+                StatusIndex = newStatusIndex;
+            }
+        }  
+
     }
 }

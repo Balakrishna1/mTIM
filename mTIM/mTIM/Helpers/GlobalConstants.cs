@@ -17,12 +17,12 @@ namespace mTIM.Helpers
         public static string DeviceID { get; set; }
         public static string UniqueID { get; set; }
         public const string VERSION = "v1.2";
-        public const string DATA_VERSION = "v0.6";
         public static string CACHEPATH = "cache/" + VERSION + "/" + GetUser() + "/";
         public const string SETTINGS_FILE = "settings.json";
         public const string IMEI_FILE = "imei_02.json";
         public const string TASKLIST_FILE = "tasklist.json";
         public const string FILES_INFO = "filesinformation.json";
+        public const string EelementStatus_FILE = "elemetnstatus.json";
         public const string GraphicsBlob_FILE = "model_3d.proto";
         public const string FileExtesons = "file_extesons.json";
         public const string POST_RESULT = "postresult.json";

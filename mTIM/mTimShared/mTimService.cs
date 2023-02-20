@@ -112,6 +112,9 @@ namespace mTimShared
                     timService.GetFilesInformationCompleted -= TimService_GetFilesInformationCompleted;
                     timService.GetFilesInformationCompleted += TimService_GetFilesInformationCompleted;
                     timService.GetFilesInformationAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified);//To get the files.
+                    timService.GetStatusCompleted -= TimService_GetStatusCompleted;
+                    timService.GetStatusCompleted += TimService_GetStatusCompleted;
+                    timService.GetStatusAsync(GlobalConstants.IMEINumber, GlobalConstants.VersionNumber, e.GetTaskListIdForDayResult, e.GetTaskListIdForDayResultSpecified, Guid.Empty.ToString(), Guid.Empty.ToString());
                 }
                 else if (e.Error != null)
                 {
@@ -125,6 +128,27 @@ namespace mTimShared
             catch (Exception ex)
             {
                 Debug.WriteLine(string.Format("Error in TimService_GetTaskListIdForDayCompleted: {0}", ex?.Message));
+                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
+            }
+        }
+
+        private async void TimService_GetStatusCompleted(object sender, GetStatusCompletedEventArgs e)
+        {
+            try
+            {
+                if (e.Error == null && !e.Cancelled)
+                {
+                    if (e.Result != null)
+                    {
+                        var json = JsonConvert.SerializeObject(e.Result);
+                        await FileHelper.WriteTextAsync(GlobalConstants.EelementStatus_FILE, json);
+                        TimTaskListHelper.UpdateStateInfo(json);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("Error in TimService_GetStatusCompleted: {0}", ex?.Message));
                 CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
             }
         }
@@ -144,7 +168,6 @@ namespace mTimShared
                     if (e.Result != null && e.Result.Length > 0)
                     {
                         var json = JsonConvert.SerializeObject(e.Result);
-                        await FileHelper.WriteTextAsync(GlobalConstants.FILES_INFO, json);
                         FileInfoHelper.Instance.SaveFileInfo(json);
                         Debug.WriteLine(String.Format("File information: {0}", json));
                         DownloadList = new List<Task>();

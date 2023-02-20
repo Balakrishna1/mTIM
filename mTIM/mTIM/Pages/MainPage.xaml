@@ -20,7 +20,9 @@
                                 Color="{Binding Color, Mode=OneWay}"
                                 Level="{Binding Level, Mode=OneWay}"
                                 IsSelected="{Binding IsSelected, Mode=OneWay}"
-                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"
+                                ShowInLineList="{Binding ShowInLineList, Mode=OneWay}"
+                                Childrens="{Binding Childrens, Mode=OneWay}"/>
 			</DataTemplate>
 			<DataTemplate x:Key="aktionTemplate">
 				<views:mTIMAktionViewCell ID="{Binding Id, Mode=OneWay}"
@@ -29,7 +31,9 @@
                                 Color="{Binding Color, Mode=OneWay}"
                                 Level="{Binding Level, Mode=OneWay}"
                                 Value="{Binding Value, Mode=OneWay}"
-                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"
+                                ShowInLineList="{Binding ShowInLineList, Mode=OneWay}"
+                                Childrens="{Binding Childrens, Mode=OneWay}"/>
 			</DataTemplate>
             <DataTemplate x:Key="booleanTemplate">
 				<views:mTIMBooleanViewCell ID="{Binding Id, Mode=OneWay}"
@@ -38,7 +42,9 @@
                                 Color="{Binding Color, Mode=OneWay}"
                                 Level="{Binding Level, Mode=OneWay}"
                                 Value="{Binding Value, Mode=OneWay}"
-                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"
+                                ShowInLineList="{Binding ShowInLineList, Mode=OneWay}"
+                                Childrens="{Binding Childrens, Mode=OneWay}"/>
 				
 			</DataTemplate>
             <DataTemplate x:Key="docTemplate">
@@ -47,7 +53,9 @@
                                 Type="{Binding Type, Mode=OneWay}"
                                 Color="{Binding Color, Mode=OneWay}"
                                 Level="{Binding Level, Mode=OneWay}"
-                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"
+                                ShowInLineList="{Binding ShowInLineList, Mode=OneWay}"
+                                Childrens="{Binding Childrens, Mode=OneWay}"/>
 				
 			</DataTemplate>
             <DataTemplate x:Key="prjladenTemplate">
@@ -56,7 +64,9 @@
                                 Type="{Binding Type, Mode=OneWay}"
                                 Color="{Binding Color, Mode=OneWay}"
                                 Level="{Binding Level, Mode=OneWay}"
-                                HasChilds="{Binding HasChilds, Mode=OneWay}"/>
+                                HasChilds="{Binding HasChilds, Mode=OneWay}"
+                                ShowInLineList="{Binding ShowInLineList, Mode=OneWay}"
+                                Childrens="{Binding Childrens, Mode=OneWay}"/>
 				
 			</DataTemplate>
             <DataTemplate x:Key="valueTemplate">
@@ -68,6 +78,14 @@
                                 Value="{Binding Value, Mode=OneWay}"
                                 HasChilds="{Binding HasChilds, Mode=OneWay}"/>
 				
+			</DataTemplate>
+            <DataTemplate x:Key="aktionListTemplate">
+				<views:mTIMAktionViewCell ID="{Binding Id, Mode=OneWay}"
+                                Name="{Binding Name, Mode=OneWay}"
+                                Type="{Binding Type, Mode=OneWay}"
+                                Color="{Binding Color, Mode=OneWay}"
+                                Level="{Binding Level, Mode=OneWay}"
+                                Value="{Binding Value, Mode=OneWay}"/>
 			</DataTemplate>
 			<template:mTImDataTemplateSelector x:Key="mTImDataTemplateSelector" NormalTypeTemplate="{StaticResource normalTemplate}" AktionTypeTemplate="{StaticResource aktionTemplate}" BooleanTypeTemplate="{StaticResource booleanTemplate}" DocumentTypeTemplate="{StaticResource docTemplate}" PrjladenTypeTemplate="{StaticResource prjladenTemplate}" ValueTypeTemplate="{StaticResource valueTemplate}" />
 		</ResourceDictionary>

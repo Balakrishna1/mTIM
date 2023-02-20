@@ -23,6 +23,8 @@
 			  <Label x:Name="lblTime" VerticalOptions="Center" TextColor="Black" HorizontalOptions="EndAndExpand" FontSize="Small" Margin="0,0,15,0"/>
 			  <ImageButton x:Name="imgInfoButton" VerticalOptions="Center" HorizontalOptions="EndAndExpand" BackgroundColor="Transparent" Aspect="AspectFit" WidthRequest="30" HeightRequest="30"  Margin="0,0,15,0"/>
 		  </StackLayout>
+		  <StackLayout x:Name="stackInlineList" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Grid.Row="0" Grid.Column="1">
+		  </StackLayout>
       </Grid>
 	 </StackLayout>
   </views:TimBaseViewCell.View>

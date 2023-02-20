@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using mTIM.Models;
 using mTIM.Models.D;
+using Newtonsoft.Json;
 
 namespace mTIM.Helpers
 {
-    internal static class TimTaskListHelper
+    public static class TimTaskListHelper
     {
         private static List<TimTaskModel> Source { get; set; }
         public static IList<TimTaskModel> ProjectList { get; set; }
+        private static StatusConfiguration Configuration { get; set; }
+        private static CurrentElementsState CurrentElementsState { get; set; }
 
         /// <summary>
         /// To Build the tree from list.
@@ -63,11 +67,17 @@ namespace mTIM.Helpers
         {
             if (source.Contains(node))
             {
-                node.Childrens = source.Where(x => x.Parent.Equals(node.Id) && x.Level.Equals(node.Level + 1));
-                for (int i = 0; i < node.Childrens.Count(); i++)
+                var childrens = source.Where(x => x.Parent.Equals(node.Id) && x.Level.Equals(node.Level + 1));
+                if (childrens?.Count() > 0)
                 {
-                    node.Childrens.ElementAt(i).ProjectId = parentId;
-                    UpdateRootIdToChildren(node.Childrens.ElementAt(i), source, parentId);
+                    if (childrens.First().ShowInList)
+                        node.ShowInLineList = true;
+                    node.Childrens = childrens;
+                    for (int i = 0; i < node.Childrens.Count(); i++)
+                    {
+                        node.Childrens.ElementAt(i).ProjectId = parentId;
+                        UpdateRootIdToChildren(node.Childrens.ElementAt(i), source, parentId);
+                    }
                 }
             }
             else
@@ -132,7 +142,7 @@ namespace mTIM.Helpers
         /// <returns></returns>
         public static TimTaskModel GetItem(int id)
         {
-             return Source?.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            return Source?.Where(x => x.Id.Equals(id)).FirstOrDefault();
         }
 
 
@@ -154,7 +164,7 @@ namespace mTIM.Helpers
         /// <returns></returns>
         public static IEnumerable<TimTaskModel> GetParentsFromChildren(int id, int level)
         {
-           return Source.Where(x => x.Level.Equals(level) && x.Parent.Equals(id));
+            return Source.Where(x => x.Level.Equals(level) && x.Parent.Equals(id));
         }
 
         public static IList<TimTaskModel> GetPrecastElements()
@@ -181,6 +191,43 @@ namespace mTIM.Helpers
         public static IList<TimTaskModel> GetTotalList()
         {
             return Source;
+        }
+
+        public static void UpdateStateInfo(string stateJson)
+        {
+            if (!string.IsNullOrEmpty(stateJson))
+            {
+                var stateInformation = JsonConvert.DeserializeObject<StateInformation>(stateJson);
+                if (stateInformation != null)
+                {
+                    Configuration = stateInformation.Configuration;
+                    CurrentElementsState = stateInformation.State;
+                    UpdateElementStates();
+                    RecalcStatus();
+                }
+            }
+        }
+
+        private static void UpdateElementStates()
+        {
+            Source?.ForEach(x => x.Conditions.Clear());
+            if (CurrentElementsState != null && CurrentElementsState.Elements?.Count() > 0)
+            {
+                foreach (var element in CurrentElementsState.Elements)
+                {
+                    var taskData = Source.Where(x => x.ObjectId.Equals(element.ObjectID)).FirstOrDefault();
+                    if (taskData != null)
+                    {
+                        taskData.Conditions = taskData.Conditions;
+                    }
+                }
+            }
+        }
+
+        private static void RecalcStatus()
+        {
+            for (int i = 0; i < Source.Count(); i++)
+                Source[i].RecalcStatus(Configuration);
         }
     }
 }

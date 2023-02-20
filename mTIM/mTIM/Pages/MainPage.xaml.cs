@@ -225,14 +225,15 @@ namespace mTIM
         private void ValueClicked(int id)
         {
             AnalyticsManager.TrackEvent(System.Reflection.MethodBase.GetCurrentMethod().Name, AnalyticsType.ClickorSelected);
-            var item = ViewModel.SelectedItemList.Where(x => x.Id.Equals(id)).FirstOrDefault();
+            var item = TimTaskListHelper.GetItem(id);
             if (item != null)
                 ViewModel.SelectedValueItem(item);
         }
 
         private void SelectedItemList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            listView.SelectedItem = null;
+            if (listView.SelectedItem != null)
+                listView.SelectedItem = null;
         }
 
         private double width = 0;

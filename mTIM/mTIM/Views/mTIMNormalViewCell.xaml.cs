@@ -22,7 +22,7 @@ namespace mTIM.Views
             mTIMNormalViewCell targetView;
             targetView = (mTIMNormalViewCell)bindable;
             if (targetView != null)
-                targetView.rootView.BackgroundColor = ((bool)newValue) ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.White;
+                targetView.rootView.BackgroundColor = ((bool)newValue) ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
         }
 
         public mTIMNormalViewCell()
@@ -39,12 +39,26 @@ namespace mTIM.Views
                 lblName.FontSize = (int)lblName.FontSize - 4;
             }
             lblName.Text = Name;
-            rootView.BackgroundColor = IsSelected ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.Transparent;
+            rootView.BackgroundColor = IsSelected ? Xamarin.Forms.Color.LightGray : Xamarin.Forms.Color.White;
             if (HasChilds)
             {
-                imgInfoButton.Source = ImageSource.FromFile("icon_forword.png");
-                imgInfoButton.Clicked -= ImgInfoButton_Clicked;
-                imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                if(ShowInLineList)
+                {
+                    stackInfo.IsVisible = false;
+                    foreach(var item in Childrens)
+                    {
+                        var checkbox = new mTIMCheckbox(item);
+                        checkbox.Clicked -= Checkbox_Clicked;
+                        checkbox.Clicked += Checkbox_Clicked;
+                        stackInlineList.Children.Add(checkbox);
+                    }
+                }
+                else
+                {
+                    imgInfoButton.Source = ImageSource.FromFile("icon_forword.png");
+                    imgInfoButton.Clicked -= ImgInfoButton_Clicked;
+                    imgInfoButton.Clicked += ImgInfoButton_Clicked;
+                }
             }
             else
             {
@@ -54,6 +68,11 @@ namespace mTIM.Views
                 imgInfoButton.IsEnabled = false;
                 imgInfoButton.Source = ImageSource.FromFile("icon_gray_info.png");
             }
+        }
+
+        private void Checkbox_Clicked(int id, bool value)
+        {
+            ActionValueClicked?.Invoke(id);
         }
 
         async void OnItemTapped(object sender, EventArgs e)

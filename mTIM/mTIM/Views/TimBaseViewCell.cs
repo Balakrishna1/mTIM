@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using mTIM.Enums;
+using mTIM.Models.D;
 using Xamarin.Forms;
 
 namespace mTIM.Views
@@ -8,6 +10,7 @@ namespace mTIM.Views
     {
         public static Action<int> ActionRightIconClicked;
         public static Action<int> ActionValueClicked;
+        public static Action<int> ActionNegativeValueClicked;
         public static Action<int> ActionItemClicked;
 
         public TimBaseViewCell()
@@ -30,6 +33,12 @@ namespace mTIM.Views
             BindableProperty.Create("HasChilds", typeof(bool), typeof(TimBaseViewCell), false, BindingMode.TwoWay);
         //public static readonly BindableProperty IsSelectedProperty =
         //    BindableProperty.Create("IsSelected", typeof(bool), typeof(ElementViewCell), false, BindingMode.TwoWay, propertyChanged: HandleSelectionChangesPropertyChanged);
+
+        public static readonly BindableProperty ShowInLineListProperty =
+            BindableProperty.Create("ShowInLineList", typeof(bool), typeof(TimBaseViewCell), false, BindingMode.TwoWay);
+
+        public static readonly BindableProperty ChildrensProperty =
+            BindableProperty.Create("Childrens", typeof(IEnumerable<TimTaskModel>), typeof(TimBaseViewCell), new List<TimTaskModel>(), BindingMode.TwoWay);
 
         public int ID
         {
@@ -65,6 +74,18 @@ namespace mTIM.Views
         {
             get { return (bool)GetValue(HasChildsProperty); }
             set { SetValue(HasChildsProperty, value); }
+        }
+
+        public bool ShowInLineList
+        {
+            get { return (bool)GetValue(ShowInLineListProperty); }
+            set { SetValue(ShowInLineListProperty, value); }
+        }
+
+        public IEnumerable<TimTaskModel> Childrens
+        {
+            get { return (IEnumerable<TimTaskModel>)GetValue(ChildrensProperty); }
+            set { SetValue(ChildrensProperty, value); }
         }
     }
 }
