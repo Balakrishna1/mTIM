@@ -106,6 +106,7 @@
     <None Remove="Microsoft.AppCenter.Crashes" />
     <None Remove="Microsoft.AppCenter.Distribute" />
     <None Remove="Managers\" />
+    <None Remove="Scenes\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BottomSheet\BottomSheetXF.csproj" />
@@ -121,6 +122,7 @@
     <Folder Include="Models\3D\" />
     <Folder Include="DataTemplateSelectors\" />
     <Folder Include="Managers\" />
+    <Folder Include="Scenes\" />
   </ItemGroup>
   <ItemGroup>
     <XliffResource Include="MultilingualResources\mTIM.de.xlf" />

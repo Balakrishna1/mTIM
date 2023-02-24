@@ -25,7 +25,7 @@ namespace mTIM.Components
 
             var input = Application.Input;
 
-            if ((input.GetMouseButtonDown(MouseButton.Left) || input.NumTouches == 1) && App.TouchedNode == null)
+            if ((input.GetMouseButtonDown(MouseButton.Left) || input.NumTouches == 1))
             {
                 TouchState state = input.GetTouch(0);
                 if (state.Pressure != 1.0)
@@ -63,13 +63,6 @@ namespace mTIM.Components
 
 
             }
-
-            if (input.GetKeyDown(Key.W) || input.GetKeyDown(Key.Up)) Pan(PanDirection.Up);
-            if (input.GetKeyDown(Key.S) || input.GetKeyDown(Key.Down)) Pan(PanDirection.Down);
-            if (input.GetKeyDown(Key.A) || input.GetKeyDown(Key.Left)) Pan(PanDirection.Left);
-            if (input.GetKeyDown(Key.D) || input.GetKeyDown(Key.Right)) Pan(PanDirection.Right);
-            if (input.GetKeyDown(Key.KP_Plus)) Zoom(ZoomDirection.In);
-            if (input.GetKeyDown(Key.KP_Minus)) Zoom(ZoomDirection.Out);
         }
 
         float Distance(IntVector2 v1, IntVector2 v2)
@@ -91,40 +84,6 @@ namespace mTIM.Components
         }
 
         #region Zoom
-        public enum ZoomDirection
-        {
-            In = 1,
-            Out = 2
-        }
-
-        private const float _zoomInFactor = 1.1f;
-        private const float _zoomOutFactor = (float)(1.0 / _zoomInFactor);
-        private const float _zoomInFactorSmall = 1.02f;
-        private const float _zoomOutFactorSmall = (float)(1.0 / _zoomInFactorSmall);
-        public void Zoom(ZoomDirection dir, bool animate = false)
-        {            
-
-            if (animate)
-            {
-                var factor = (dir == ZoomDirection.In) ? _zoomInFactor : _zoomOutFactor;
-
-                ValueAnimation zoomAnimation = new ValueAnimation();
-                zoomAnimation.InterpolationMethod = InterpMethod.Linear;
-                zoomAnimation.SetKeyFrame(0.0f, App.Camera.Zoom);
-                zoomAnimation.SetKeyFrame(0.3f, App.Camera.Zoom * factor);
-
-                ObjectAnimation cameraAnimation = new ObjectAnimation();
-                cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 1f);
-
-                App.Camera.ObjectAnimation = cameraAnimation;
-            }
-            else
-            {
-                var factor = (dir == ZoomDirection.In) ? _zoomInFactorSmall : _zoomOutFactorSmall;
-
-                App.Camera.Zoom *= factor;
-            }
-        }
 
         protected void Zoom(int delta, int x, int y)
         {
@@ -148,63 +107,5 @@ namespace mTIM.Components
         }
 
         #endregion Zoom
-
-        #region Pan
-        public enum PanDirection
-        {
-            Up,
-            Down,
-            Left,
-            Right
-        }
-
-        private Vector3 GetVectorForDirection(PanDirection dir, bool animate)
-        {
-            Vector3 direction = new Vector3(0, 0, 0);
-
-            float factor = animate ? 0.1f : 0.05f;
-            switch (dir)
-            {
-                case PanDirection.Up:
-                    direction = -factor * App.Scene.Up;
-                    break;
-                case PanDirection.Down:
-                    direction = factor * App.Scene.Up;
-                    break;
-                case PanDirection.Left:
-                    direction = -factor * App.Scene.Right;
-                    break;
-                case PanDirection.Right:
-                    direction = factor * App.Scene.Right;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dir), dir, null);
-            }
-            return direction;
-        }
-
-        public void Pan(PanDirection dir, bool animate = false)
-        {
-            var direction = GetVectorForDirection(dir, animate);
-
-            if(animate)
-            {
-                ValueAnimation panAnimation = new ValueAnimation();
-                panAnimation.InterpolationMethod = InterpMethod.Linear;
-                panAnimation.SetKeyFrame(0.0f, App.RootNode.Position);
-                panAnimation.SetKeyFrame(0.3f, App.RootNode.Position + direction);
-
-                ObjectAnimation mainNodeAnimation = new ObjectAnimation();
-                mainNodeAnimation.AddAttributeAnimation("Position", panAnimation, WrapMode.Once, 1f);
-
-                App.RootNode.ObjectAnimation = mainNodeAnimation;
-            }
-            else
-            {
-                App.RootNode.Position += direction;
-            }
-            
-        }
-        #endregion Pan
     }
 }

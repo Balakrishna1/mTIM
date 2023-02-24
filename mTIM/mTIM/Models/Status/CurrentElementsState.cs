@@ -3,7 +3,7 @@
 namespace mTIM.Models
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    internal class CurrentElementsState
+    public class CurrentElementsState
     {
         public ElementState[] Elements { get; set; }
 

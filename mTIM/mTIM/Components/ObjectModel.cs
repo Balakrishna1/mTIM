@@ -11,6 +11,7 @@ namespace mTIM.Components
         public static string NormalColorCode = "#757474";//Gray color
         public static string TransparentColorCode = "#26757474"; //15% transpent gray color.
         public static string SelectionColorCode = "#6495ED"; //Blue color.
+        private bool _isActive;
 
         public override void OnAttachedToNode(Urho.Node node)
         {
@@ -94,6 +95,7 @@ namespace mTIM.Components
         /// <param name="isActive"></param>
         public void UpdateMaterial(bool isActive)
         {
+            _isActive = isActive;
             Urho.Application.InvokeOnMain(() =>
             {
                 Material activeMaterial = Material.FromColor(Color.FromHex(NormalColorCode), false);
@@ -136,6 +138,19 @@ namespace mTIM.Components
             Urho.Application.InvokeOnMain(() =>
             {
                 Material selectMaterial = Material.FromColor(Color.FromHex(SelectionColorCode), false);
+                selectMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
+                selectMaterial.CullMode = CullMode.MaxCullmodes;
+                selectMaterial.FillMode = FillMode.Solid;
+                selectMaterial.LineAntiAlias = true;
+                SetMaterial(selectMaterial);
+            });
+        }
+
+        public void UndoSelection()
+        {
+            Urho.Application.InvokeOnMain(() =>
+            {
+                Material selectMaterial = Material.FromColor(Color.FromHex(_isActive ? NormalColorCode : TransparentColorCode), false);
                 selectMaterial.SetTechnique(1, CoreAssets.Techniques.Diff);
                 selectMaterial.CullMode = CullMode.MaxCullmodes;
                 selectMaterial.FillMode = FillMode.Solid;
@@ -220,6 +235,7 @@ namespace mTIM.Components
         /// <param name="isActiveList"></param>
         public void LoadElementMesh(TimMesh mesh, TimElementMesh timElement, bool isActiveList)
         {
+            _isActive = isActiveList;
             Urho.Application.InvokeOnMain(() =>
             {
                 var vb = mesh.vertexBuffer ?? new VertexBuffer(Application.CurrentContext);

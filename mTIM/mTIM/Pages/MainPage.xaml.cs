@@ -1,25 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using mTIM.Helpers;
-using mTIM.Interfaces;
 using mTIM.Managers;
 using mTIM.Models;
 using mTIM.Models.D;
 using mTIM.ViewModels;
 using mTIM.Views;
-using Newtonsoft.Json;
-using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
 using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
-using Location = Xamarin.Essentials;
 
 namespace mTIM
 {

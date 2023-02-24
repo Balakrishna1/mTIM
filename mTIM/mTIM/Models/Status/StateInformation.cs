@@ -6,7 +6,7 @@ using System.Text;
 namespace mTIM.Models
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    internal class StateInformation
+    public class StateInformation
     {
         public StatusConfiguration Configuration { get; set; }
         public CurrentElementsState State { get; set; }

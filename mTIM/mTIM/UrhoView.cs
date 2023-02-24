@@ -139,9 +139,9 @@ namespace mTIM
                             App.Reset();
                             App.AddStuff();
                         }
+                        App.HideButtonsWindow();
                         App.LoadLinesDrawing(mesh);
                         App.LoadEelementsDrawing(mesh, true, isParent: true);
-                        App.HideButtonsWindow();
                     }
                     else
                     {

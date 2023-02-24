@@ -11,6 +11,7 @@ using mTIM.Components;
 using mTIM.Helpers;
 using mTIM.Models;
 using mTIM.Models.D;
+using mTIM.Scenes;
 using mTIM.ViewModels;
 using Urho;
 using Urho.Gui;
@@ -20,42 +21,32 @@ namespace mTIM
 {
     public class UrhoApp : Application
     {
-        public Scene Scene => _scene;
+        public BaseScene BaseScene => _mainScene;
         public Octree Octree => _octree;
         public Urho.Node RootNode => _rootNode;
-        public Camera Camera => _camera;
-        public Light Light => _light;
-        public bool IsInitialized => _scene != null;
-        public Urho.Node CameraNode => _cameraNode;
-        public Urho.Node TouchedNode;
-        private Window window;
+        public Camera Camera => _mainScene.Camera;
+        public bool IsInitialized => _mainScene != null;
+        public bool OptionTwoSelected => optionTwoSelected;
+        public Vector3 CameraPosition => new Vector3(0, 0, 6);
 
-        private Scene _scene;
+        private Window window;
+        private BaseScene _mainScene;
         private Octree _octree;
         private Urho.Node _rootNode;
-        private Camera _camera;
-        private Light _light;
-        private Urho.Node _cameraNode;
-
-        public Text SelectedElement;
-
         private ObjectModel model;
         private ObjectModel linesModel;
-
         private TimMesh timMesh { get; set; }
         private string selectedNodeName { get; set; }
-
-        public Vector3 CameraPosition => new Vector3(0, 0, 6);
+        private bool optionTwoSelected { get; set; }
         private XmlFile style;
-
         private readonly string tag = "UrhoApp";
-
 
         MainViewModel ViewModel = App.Current.MainPage.BindingContext as MainViewModel;
 
+        [Preserve]
         public UrhoApp(ApplicationOptions options = null) : base(options)
         {
-            _scene = null;
+            _mainScene = null;
         }
 
         /// <summary>
@@ -65,23 +56,18 @@ namespace mTIM
         {
             if (!IsInitialized)
                 return;
-
-            TouchedNode = null;
             _rootNode.RemoveAllChildren();
             _rootNode.SetWorldRotation(Quaternion.Identity);
-            _camera.Zoom = 1f;
+            _mainScene.Camera.Zoom = 1f;
         }
 
         protected override void Start()
         {
             base.Start();
-
-            InitScene();
-
-            AddCameraAndLight();
-
-            SetupViewport();
-
+            Input.Enabled = true;
+            Input.SetMouseVisible(true, false);
+            Input.TouchEmulation = true;
+            StartMainScene();
             AddStuff();
 
             // Load XML file containing default UI style sheet
@@ -90,15 +76,17 @@ namespace mTIM
 
             // Set the loaded style as default style
             this.UI.Root.SetDefaultStyle(style);
-
             CreateText();
-            Input.TouchBegin += Input_TouchBegin;
-            Input.TouchEnd += Input_TouchEnd;
+        }
+
+        protected override void OnUpdate(float timeStep)
+        {
+            base.OnUpdate(timeStep);
+            _mainScene?.OnUpdate(timeStep);
         }
 
         #region Initialisation
         private bool isButtonsActive;
-        private bool optionTwoSelected;
 
         /// <summary>
         /// To show the buttons in model window.
@@ -211,6 +199,7 @@ namespace mTIM
         {
             if (window != null)
                 this.UI.Root.RemoveChild(window);
+                optionTwoSelected = false;
             isButtonsActive = false;
         }
 
@@ -249,7 +238,10 @@ namespace mTIM
         /// <param name="text"></param>
         public void UpdateText(string text)
         {
-            textElement.Value = text;
+            Urho.Application.InvokeOnMainAsync(() =>
+            {
+                textElement.Value = text;
+            });
         }
 
         /// <summary>
@@ -264,23 +256,31 @@ namespace mTIM
             CrashReportManager.ReportError(e.Exception, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
         }
 
-        private void Engine_PostRenderUpdate(PostRenderUpdateEventArgs obj)
+        /// <summary>
+        /// This is used to create and set Scene,ViewPort and Camara to model view.
+        /// </summary>
+        private void StartMainScene()
         {
-            // If draw debug mode is enabled, draw viewport debug geometry, which will show eg. drawable bounding boxes and skeleton
-            // bones. Note that debug geometry has to be separately requested each frame. Disable depth test so that we can see the
-            // bones properly
-            if (this.IsActive)
-                Renderer.DrawDebugGeometry(false);
+            _mainScene?.Destroy();
+            Current.UI.Root.RemoveAllChildren();
+            _mainScene = new MainScene(Graphics.Width, Graphics.Height);
+            _rootNode = _mainScene.Scene.CreateChild("rootNode");
+            _mainScene.OnEndEvaluateNode += _mainScene_OnEndEvaluateNode;
         }
 
-        /// <summary>
-        /// Intialize the Scene and also creating the component and rootnode.
-        /// </summary>
-        private void InitScene()
+        private void _mainScene_OnEndEvaluateNode(object sender, TouchEventArgs args)
         {
-            _scene = new Scene();
-            _octree = _scene.CreateComponent<Octree>();
-            _rootNode = _scene.CreateChild("rootNode");
+            if (optionTwoSelected)
+                return;
+            int id = TryGetNumber(args.Node?.Name);
+            if (!TimTaskListHelper.IsParent(id))
+            {
+                ZoomOut();
+                UpdateSelectedElement(args.Node.Name);
+                ShowButtonsWindow();
+                ViewModel.SlectedElementPositionIn3D(id);
+                MoveToPosition(3000, args.X, args.Y);
+            }
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace mTIM
         /// </summary>
         public void AddStuff()
         {
-            _rootNode.RemoveAllChildren();
+            _rootNode?.RemoveAllChildren();
             this.AddChild<WorldInputHandler>("inputs");
             model = this.AddChild<ObjectModel>("model");
         }
@@ -413,106 +413,7 @@ namespace mTIM
             }
         }
 
-        /// <summary>
-        /// To Add the Camera and Light.
-        /// </summary>
-        private void AddCameraAndLight()
-        {
-            _cameraNode = _scene.CreateChild("cameraNode");
-            _camera = _cameraNode.CreateComponent<Camera>();
-            _camera.Orthographic = false;
-
-            _camera.OrthoSize = (float)Application.Current.Graphics.Height * Application.PixelSize;
-
-            _camera.Zoom = 1f;
-            _cameraNode.Position = CameraPosition;
-
-            Urho.Node lightNode = _cameraNode.CreateChild("lightNode");
-            _light = lightNode.CreateComponent<Light>();
-            _light.LightType = LightType.Point;
-            _light.Range = 100;
-            _light.Brightness = 0.9f;
-
-            _cameraNode.LookAt(Vector3.Zero, Vector3.Down, TransformSpace.World);
-        }
-
-        /// <summary>
-        /// SetupViewport
-        /// </summary>
-        void SetupViewport()
-        {
-            var renderer = Application.Current.Renderer;
-            Viewport vp = new Viewport(Application.Current.Context, Scene, _camera);
-            renderer.SetViewport(0, vp);
-            vp.SetClearColor(Color.White);
-
-            UnhandledException += UrhoViewApp_UnhandledException;
-#if DEBUG
-            Engine.PostRenderUpdate += Engine_PostRenderUpdate;
-#endif
-        }
-
         #endregion Initialisation
-        #region Input Touches
-
-        private void Input_TouchBegin(TouchBeginEventArgs obj)
-        {
-            try
-            {
-                if (optionTwoSelected)
-                    return;
-                //Debug.WriteLine($"Input_TouchBegin {obj.X},{obj.Y}");
-                Ray cameraRay = Camera.GetScreenRay((float)obj.X / Graphics.Width, (float)obj.Y / Graphics.Height);
-                var result = Octree.RaycastSingle(cameraRay, RayQueryLevel.Triangle, 100, DrawableFlags.Geometry);
-                if (result != null)
-                {
-                    TouchedNode = result.Value.Node;
-                    if (TouchedNode != null)
-                    {
-                        Debug.WriteLine($"Input Touch Node name: " + TouchedNode.Name);
-                        Debug.WriteLine(String.Format("Input Touch Position: {0} {1} {2}", result.Value.Position.X, result.Value.Position.Y, result.Value.Position.Z));
-                        int value = TryGetNumber(TouchedNode.Name);
-                        if (!TimTaskListHelper.IsParent(value))
-                        {
-                            var model = (ObjectModel)result.Value.Drawable;
-                            model.UpdateSelection();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Touch_Exception: { ex.Message}");
-                CrashReportManager.ReportError(ex, System.Reflection.MethodBase.GetCurrentMethod().Name, tag);
-            }
-        }
-
-        private void Input_TouchEnd(TouchEndEventArgs obj)
-        {
-            if (optionTwoSelected)
-                return;
-            Debug.WriteLine("TouchPositionX: " + obj.X + "TouchPositionY: " + obj.Y);
-            int id = TryGetNumber(TouchedNode?.Name);
-            if (!TimTaskListHelper.IsParent(id))
-            {
-                //var worldPosition = _camera.ScreenToWorldPoint(TouchedNode.Position);
-                //var screenPosition = _camera.WorldToScreenPoint(TouchedNode.Position);
-                //Debug.WriteLine("World PositionX: " + worldPosition.X + "World PositionY: " + worldPosition.Y);
-                //Debug.WriteLine("Screen PositionX: " + screenPosition.X + "Screen PositionY: " + screenPosition.Y);
-
-                //float xClip = (screenPosition.X + 0.5f) / (Graphics.Width / 2) - 1.0f;
-                //float yClip = 1.0f - (screenPosition.Y + 0.5f) / (Graphics.Height / 2);
-                //Debug.WriteLine("Window PositionX: " + xClip + " Window PositionY: " + yClip);
-
-                ZoomOut();
-                UpdateSelectedElement(TouchedNode.Name);
-                ShowButtonsWindow();
-                ViewModel.SlectedElementPositionIn3D(id);
-                MoveToPosition(3000, obj.X, obj.Y);
-            }
-            TouchedNode = null;
-        }
-        #endregion
 
         private ObjectModel slectedNode;
         public void UpdateSelectedElement(string name)
@@ -549,7 +450,7 @@ namespace mTIM
                 zoomAnimation.InterpolationMethod = InterpMethod.Linear;
                 zoomAnimation.SetKeyFrame(0.0f, Camera.Zoom);
                 zoomAnimation.SetKeyFrame(0.3f, 0.3f);
-                zoomAnimation.SetKeyFrame(0.7f, 3f);
+                zoomAnimation.SetKeyFrame(0.7f, 2.5f);
 
                 cameraAnimation.AddAttributeAnimation("Zoom", zoomAnimation, WrapMode.Once, 0.8f);
                 Camera.AnimationEnabled = true;
@@ -664,7 +565,7 @@ namespace mTIM
                         //Debug.WriteLine(String.Format("{0},{1},{2},{3}", elementMesh?.aabb.Minimum.X, elementMesh?.aabb.Minimum.Y, elementMesh?.aabb.Maximum.X, elementMesh?.aabb.Maximum.Y));
                         var elementPosition = (Vector3)elementMesh?.aabb.GetCenter();
                         Debug.WriteLine("PositionX: " + elementPosition.X + " PositionY: " + elementPosition.Y);
-                        screenPosition = _camera.WorldToScreenPoint(elementPosition);
+                        screenPosition = _mainScene.Camera.WorldToScreenPoint(elementPosition);
                     }
                     var objectModel = (ObjectModel)element?.Components?.FirstOrDefault();
                     if (objectModel != null)
@@ -685,7 +586,6 @@ namespace mTIM
         {
             Urho.Application.InvokeOnMainAsync(() =>
             {
-                optionTwoSelected = false;
                 if (_rootNode != null)
                 {
                     _rootNode.SetWorldRotation(Quaternion.Identity);
